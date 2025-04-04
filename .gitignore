@@ -41,7 +41,8 @@ config/credentials.json
 .env
 
 # External repositories
-OpenManus-RL/
+OpenManus-RL/*
+!OpenManus-RL/openmanus_rl/agentgym/agentenv-webarena/webarena/scripts/webarena-zeno.ipynb
 
 # Jupyter Notebook
 .ipynb_checkpoints
