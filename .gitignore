@@ -43,6 +43,10 @@ config/credentials.json
 # External repositories
 OpenManus-RL/
 
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
 # Ollama models
 models/ollama/
 

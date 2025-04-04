@@ -1,0 +1,28 @@
+{
+    "include": [
+        "."
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        "**/.ipynb_checkpoints"
+    ],
+    "ignore": [
+        "**/node_modules",
+        "**/__pycache__",
+        "**/.ipynb_checkpoints"
+    ],
+    "defineConstant": {
+        "DEBUG": true
+    },
+    "venvPath": ".",
+    "venv": "dmac_env",
+    "extraPaths": [
+        ".",
+        "./OpenManus-RL"
+    ],
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": "none",
+    "pythonVersion": "3.10",
+    "pythonPlatform": "Windows"
+}
