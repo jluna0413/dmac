@@ -118,6 +118,8 @@ class SimpleDashboardServer:
         self.app.router.add_get('/', self._handle_index)
         self.app.router.add_get('/login', self._handle_login)
         self.app.router.add_get('/direct-login', self._handle_direct_login)
+        self.app.router.add_get('/register', self._handle_register)
+        self.app.router.add_get('/forgot-password', self._handle_forgot_password)
         self.app.router.add_get('/dashboard', self._handle_dashboard)
         self.app.router.add_get('/agents', self._handle_agents)
         self.app.router.add_get('/tasks', self._handle_tasks)
@@ -279,6 +281,20 @@ class SimpleDashboardServer:
         return {
             'title': 'DMac - Chat',
             'page': 'chat',
+        }
+
+    @aiohttp_jinja2.template('register.html')
+    async def _handle_register(self, request):
+        """Handle a request to the registration page."""
+        return {
+            'title': 'DMac - Register',
+        }
+
+    @aiohttp_jinja2.template('forgot-password.html')
+    async def _handle_forgot_password(self, request):
+        """Handle a request to the forgot password page."""
+        return {
+            'title': 'DMac - Forgot Password',
         }
 
     async def _handle_api_tasks(self, request):
