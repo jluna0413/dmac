@@ -1,6 +1,6 @@
 /**
  * Voice Interaction Module
- * 
+ *
  * This module provides voice interaction functionality for the DMac application.
  */
 
@@ -55,7 +55,7 @@ class VoiceInteraction {
     initializeVoices() {
         // Get the available voices
         this.voices = this.synthesis.getVoices();
-        
+
         // If voices are not loaded yet, wait for them
         if (this.voices.length === 0) {
             this.synthesis.addEventListener('voiceschanged', () => {
@@ -104,7 +104,7 @@ class VoiceInteraction {
      */
     updateMicrophoneUI(isListening) {
         const micButtons = document.querySelectorAll('.voice-input-btn');
-        
+
         micButtons.forEach(button => {
             if (isListening) {
                 button.classList.add('listening');
@@ -134,7 +134,7 @@ class VoiceInteraction {
         this.recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             console.log('Voice recognized:', transcript);
-            
+
             if (callback && typeof callback === 'function') {
                 callback(transcript);
             }
@@ -175,7 +175,7 @@ class VoiceInteraction {
         this.synthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
-        
+
         // Set the preferred voice if available
         if (this.preferredVoice) {
             utterance.voice = this.preferredVoice;
@@ -231,7 +231,7 @@ class VoiceInteraction {
             }
 
             const data = await response.json();
-            
+
             if (data.success) {
                 // Speak the response
                 this.speak(data.response, () => {
@@ -245,13 +245,13 @@ class VoiceInteraction {
             }
         } catch (error) {
             console.error('Error calling voice processing API:', error);
-            
+
             // Hide loading indicator
             const loadingIndicator = document.getElementById('voice-loading-indicator');
             if (loadingIndicator) {
                 loadingIndicator.classList.add('d-none');
             }
-            
+
             this.speak('I\'m sorry, I encountered an error processing your request.');
         }
     }
@@ -266,13 +266,18 @@ const voiceInteraction = new VoiceInteraction();
 function addVoiceInteractionButtons() {
     // Add voice input buttons to all input fields
     const inputFields = document.querySelectorAll('input[type="text"], textarea');
-    
+
     inputFields.forEach(input => {
         // Skip if the input already has a voice button
         if (input.parentElement.querySelector('.voice-input-btn')) {
             return;
         }
-        
+
+        // Skip the chat input area which already has a voice button
+        if (input.id === 'user-input') {
+            return;
+        }
+
         // Create a wrapper if the input doesn't have one
         let wrapper = input.parentElement;
         if (!wrapper.classList.contains('input-group')) {
@@ -282,23 +287,23 @@ function addVoiceInteractionButtons() {
             input.parentNode.insertBefore(wrapper, input);
             wrapper.appendChild(input);
         }
-        
+
         // Create the voice input button
         const voiceButton = document.createElement('button');
         voiceButton.type = 'button';
         voiceButton.className = 'btn btn-outline-secondary voice-input-btn';
         voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
         voiceButton.title = 'Voice Input';
-        
+
         // Add click event to the button
         voiceButton.addEventListener('click', () => {
             voiceInteraction.startListening(text => {
                 input.value = text;
-                
+
                 // Trigger input event to update any listeners
                 const event = new Event('input', { bubbles: true });
                 input.dispatchEvent(event);
-                
+
                 // If this is a search input, trigger search
                 if (input.classList.contains('search-input') || input.id.includes('search')) {
                     const form = input.closest('form');
@@ -308,28 +313,28 @@ function addVoiceInteractionButtons() {
                 }
             });
         });
-        
+
         // Add the button to the wrapper
         wrapper.appendChild(voiceButton);
     });
-    
+
     // Add global voice assistant button to the navbar
     const navbar = document.querySelector('.navbar-nav');
     if (navbar && !document.getElementById('voice-assistant-btn')) {
         const voiceAssistantItem = document.createElement('li');
         voiceAssistantItem.className = 'nav-item';
-        
+
         const voiceAssistantButton = document.createElement('a');
         voiceAssistantButton.href = '#';
         voiceAssistantButton.className = 'nav-link';
         voiceAssistantButton.id = 'voice-assistant-btn';
         voiceAssistantButton.innerHTML = '<i class="fas fa-comment-alt"></i> Voice Assistant';
-        
+
         voiceAssistantButton.addEventListener('click', (e) => {
             e.preventDefault();
             showVoiceAssistantModal();
         });
-        
+
         voiceAssistantItem.appendChild(voiceAssistantButton);
         navbar.appendChild(voiceAssistantItem);
     }
@@ -383,16 +388,16 @@ function showVoiceAssistantModal() {
                 </div>
             </div>
         `;
-        
+
         // Add the modal to the body
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = modalHTML;
         document.body.appendChild(modalContainer.firstElementChild);
-        
+
         // Initialize the modal
         initializeVoiceAssistantModal();
     }
-    
+
     // Show the modal
     const modal = new bootstrap.Modal(document.getElementById('voice-assistant-modal'));
     modal.show();
@@ -408,7 +413,7 @@ function initializeVoiceAssistantModal() {
     const modelSelect = document.getElementById('voice-assistant-model');
     const voiceButton = modal.querySelector('.voice-input-btn');
     const conversationContainer = document.getElementById('voice-conversation-container');
-    
+
     // Load available models
     fetch('/api/ollama/models')
         .then(response => response.json())
@@ -416,7 +421,7 @@ function initializeVoiceAssistantModal() {
             if (data.models && data.models.length > 0) {
                 // Clear existing options
                 modelSelect.innerHTML = '';
-                
+
                 // Add models to the select
                 data.models.forEach(model => {
                     const option = document.createElement('option');
@@ -427,7 +432,7 @@ function initializeVoiceAssistantModal() {
             }
         })
         .catch(error => console.error('Error loading models:', error));
-    
+
     // Handle voice input button click
     voiceButton.addEventListener('click', () => {
         voiceInteraction.startListening(text => {
@@ -435,7 +440,7 @@ function initializeVoiceAssistantModal() {
             processAssistantInput(text);
         });
     });
-    
+
     // Handle send button click
     sendButton.addEventListener('click', () => {
         const text = input.value.trim();
@@ -443,7 +448,7 @@ function initializeVoiceAssistantModal() {
             processAssistantInput(text);
         }
     });
-    
+
     // Handle enter key press
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -453,37 +458,37 @@ function initializeVoiceAssistantModal() {
             }
         }
     });
-    
+
     // Process input and get response from the AI
     function processAssistantInput(text) {
         // Clear the input
         input.value = '';
-        
+
         // Add user message to the conversation
         addMessageToConversation(text, 'user');
-        
+
         // Get the selected model
         const model = modelSelect.value;
-        
+
         // Process the input and get a response
         voiceInteraction.processVoiceInput(text, model, response => {
             // Add assistant message to the conversation
             addMessageToConversation(response, 'assistant');
         });
     }
-    
+
     // Add a message to the conversation
     function addMessageToConversation(text, sender) {
         const messageDiv = document.createElement('div');
         messageDiv.className = sender + '-message';
-        
+
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
         messageContent.textContent = text;
-        
+
         messageDiv.appendChild(messageContent);
         conversationContainer.appendChild(messageDiv);
-        
+
         // Scroll to the bottom
         conversationContainer.scrollTop = conversationContainer.scrollHeight;
     }
@@ -493,11 +498,11 @@ function initializeVoiceAssistantModal() {
 document.addEventListener('DOMContentLoaded', () => {
     // Add voice interaction buttons to the page
     addVoiceInteractionButtons();
-    
+
     // Re-add buttons when the DOM changes (for dynamically added elements)
     const observer = new MutationObserver(() => {
         addVoiceInteractionButtons();
     });
-    
+
     observer.observe(document.body, { childList: true, subtree: true });
 });
