@@ -40,6 +40,9 @@ config/config.yaml
 config/credentials.json
 .env
 
+# External repositories
+OpenManus-RL/
+
 # Ollama models
 models/ollama/
 
