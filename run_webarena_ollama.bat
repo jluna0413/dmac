@@ -1,0 +1,9 @@
+@echo off
+echo Activating DMac virtual environment...
+call .\dmac_env\Scripts\activate
+
+echo Running WebArena experiments with Ollama models...
+python run_webarena_ollama.py --config webarena_config.json --output webarena_results
+
+echo Press any key to exit...
+pause > nul

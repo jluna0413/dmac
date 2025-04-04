@@ -18,58 +18,58 @@ logger = logging.getLogger('dmac.ui.dashboard')
 
 class Dashboard:
     """Dashboard for DMac."""
-    
+
     def __init__(self):
         """Initialize the dashboard."""
         self.enabled = config.get('ui.dashboard.enabled', True)
-        self.port = config.get('ui.dashboard.port', 8079)
-        self.host = config.get('ui.dashboard.host', 'localhost')
+        self.port = int(config.get('ui.dashboard.port', 8079))
+        self.host = str(config.get('ui.dashboard.host', 'localhost'))
         self.static_dir = Path(__file__).parent / 'static'
         self.templates_dir = Path(__file__).parent / 'templates'
         self.app = None
         self.runner = None
         self.site = None
         self.logger = logging.getLogger('dmac.ui.dashboard')
-        
+
         # Component status
         self.component_status = {}
-        
+
         # System status
         self.system_status = {
             'agents': {},
             'tasks': {},
             'models': {},
         }
-    
+
     async def initialize(self) -> bool:
         """Initialize the dashboard.
-        
+
         Returns:
             True if initialization was successful, False otherwise.
         """
         if not self.enabled:
             self.logger.info("Dashboard is disabled in the configuration")
             return False
-        
+
         self.logger.info("Initializing dashboard")
-        
+
         try:
             # Create the necessary directories if they don't exist
             os.makedirs(self.static_dir, exist_ok=True)
             os.makedirs(self.templates_dir, exist_ok=True)
-            
+
             # Create the necessary static files
             await self._create_static_files()
-            
+
             # Create the necessary template files
             await self._create_template_files()
-            
+
             self.logger.info("Dashboard initialized")
             return True
         except Exception as e:
             self.logger.exception(f"Error initializing dashboard: {e}")
             return False
-    
+
     async def _create_static_files(self) -> None:
         """Create the necessary static files."""
         # Create CSS file
@@ -341,22 +341,22 @@ footer {
     header {
         flex-direction: column;
     }
-    
+
     nav ul {
         margin-top: 10px;
     }
-    
+
     nav ul li {
         margin-left: 10px;
         margin-right: 10px;
     }
-    
+
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
 }
 """)
-        
+
         # Create JavaScript file
         js_file = self.static_dir / 'script.js'
         with open(js_file, 'w') as f:
@@ -365,10 +365,10 @@ footer {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the dashboard
     initDashboard();
-    
+
     // Set up event listeners
     setupEventListeners();
-    
+
     // Refresh the dashboard every 5 seconds
     setInterval(refreshDashboard, 5000);
 });
@@ -413,14 +413,14 @@ function fetchComponentStatus() {
 function updateComponentStatus(data) {
     const componentList = document.getElementById('component-list');
     if (!componentList) return;
-    
+
     componentList.innerHTML = '';
-    
+
     for (const [name, status] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         const statusClass = status.running ? 'status-running' : (status.enabled ? 'status-stopped' : 'status-disabled');
-        
+
         li.innerHTML = `
             <div>
                 <span class="component-name">${name}</span>
@@ -434,10 +434,10 @@ function updateComponentStatus(data) {
                 <button class="open-component-btn" data-component="${name}" ${status.running ? '' : 'disabled'}>Open</button>
             </div>
         `;
-        
+
         componentList.appendChild(li);
     }
-    
+
     // Re-attach event listeners
     document.querySelectorAll('.open-component-btn').forEach(function(button) {
         button.addEventListener('click', function() {
@@ -476,19 +476,19 @@ function fetchAgentStatus() {
 function updateAgentStatus(data) {
     const agentList = document.getElementById('agent-list');
     if (!agentList) return;
-    
+
     agentList.innerHTML = '';
-    
+
     if (Object.keys(data).length === 0) {
         agentList.innerHTML = '<li>No agents available</li>';
         return;
     }
-    
+
     for (const [id, agent] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         const stateClass = `agent-state-${agent.state.toLowerCase()}`;
-        
+
         li.innerHTML = `
             <div class="agent-name">${agent.name}</div>
             <div class="agent-type">${agent.agent_type}</div>
@@ -496,7 +496,7 @@ function updateAgentStatus(data) {
                 State: ${agent.state}
             </div>
         `;
-        
+
         agentList.appendChild(li);
     }
 }
@@ -515,26 +515,26 @@ function fetchTaskStatus() {
 function updateTaskStatus(data) {
     const taskList = document.getElementById('task-list');
     if (!taskList) return;
-    
+
     taskList.innerHTML = '';
-    
+
     if (Object.keys(data).length === 0) {
         taskList.innerHTML = '<li>No tasks available</li>';
         return;
     }
-    
+
     for (const [id, task] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         const statusClass = `task-status-${task.status.toLowerCase()}`;
-        
+
         li.innerHTML = `
             <div class="task-prompt">${task.prompt}</div>
             <div class="task-status ${statusClass}">
                 Status: ${task.status}
             </div>
         `;
-        
+
         taskList.appendChild(li);
     }
 }
@@ -553,17 +553,17 @@ function fetchModelStatus() {
 function updateModelStatus(data) {
     const modelList = document.getElementById('model-list');
     if (!modelList) return;
-    
+
     modelList.innerHTML = '';
-    
+
     if (Object.keys(data).length === 0) {
         modelList.innerHTML = '<li>No models available</li>';
         return;
     }
-    
+
     for (const [name, model] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         li.innerHTML = `
             <div class="model-name">${name}</div>
             <div class="model-type">${model.type}</div>
@@ -571,12 +571,12 @@ function updateModelStatus(data) {
                 Usage: ${model.usage_count} requests
             </div>
         `;
-        
+
         modelList.appendChild(li);
     }
 }
 """)
-    
+
     async def _create_template_files(self) -> None:
         """Create the necessary template files."""
         # Create index.html
@@ -604,7 +604,7 @@ function updateModelStatus(data) {
             </ul>
         </nav>
     </header>
-    
+
     <div class="container">
         <div class="dashboard-grid">
             <div class="dashboard-card">
@@ -614,7 +614,7 @@ function updateModelStatus(data) {
                     <li>Loading components...</li>
                 </ul>
             </div>
-            
+
             <div class="dashboard-card">
                 <h2>Active Agents</h2>
                 <ul id="agent-list" class="agent-list">
@@ -622,7 +622,7 @@ function updateModelStatus(data) {
                     <li>Loading agents...</li>
                 </ul>
             </div>
-            
+
             <div class="dashboard-card">
                 <h2>Recent Tasks</h2>
                 <ul id="task-list" class="task-list">
@@ -630,7 +630,7 @@ function updateModelStatus(data) {
                     <li>Loading tasks...</li>
                 </ul>
             </div>
-            
+
             <div class="dashboard-card">
                 <h2>Models</h2>
                 <ul id="model-list" class="model-list">
@@ -640,86 +640,95 @@ function updateModelStatus(data) {
             </div>
         </div>
     </div>
-    
+
     <footer>
         <p>DMac Dashboard &copy; 2023</p>
     </footer>
-    
+
     <script src="/static/script.js"></script>
 </body>
 </html>
 """)
-    
+
     async def start_server(self) -> bool:
         """Start the dashboard server.
-        
+
         Returns:
             True if the server was started successfully, False otherwise.
         """
         if not self.enabled:
             self.logger.warning("Dashboard is disabled")
             return False
-        
+
         if self.app:
             self.logger.warning("Dashboard server is already running")
             return True
-        
+
         self.logger.info(f"Starting dashboard server on {self.host}:{self.port}")
-        
+
         try:
             # Create the aiohttp application
             self.app = web.Application()
-            
+
             # Set up routes
             self.app.router.add_static('/static', self.static_dir)
+
+            # HTML routes
             self.app.router.add_get('/', self.handle_index)
+            self.app.router.add_get('/agents', self.handle_agents)
+            self.app.router.add_get('/tasks', self.handle_tasks)
+            self.app.router.add_get('/models', self.handle_models)
+            self.app.router.add_get('/settings', self.handle_settings)
+            self.app.router.add_get('/webarena', self.handle_webarena)
+
+            # API routes
             self.app.router.add_get('/api/components', self.handle_api_components_get)
             self.app.router.add_get('/api/components/{component_name}', self.handle_api_component_get)
             self.app.router.add_post('/api/components/{component_name}/open', self.handle_api_component_open)
             self.app.router.add_get('/api/agents', self.handle_api_agents_get)
             self.app.router.add_get('/api/tasks', self.handle_api_tasks_get)
             self.app.router.add_get('/api/models', self.handle_api_models_get)
-            
+
             # Start the server
             self.runner = web.AppRunner(self.app)
             await self.runner.setup()
             self.site = web.TCPSite(self.runner, self.host, self.port)
             await self.site.start()
-            
+
             self.logger.info(f"Dashboard server started on http://{self.host}:{self.port}")
             return True
         except Exception as e:
             self.logger.exception(f"Error starting dashboard server: {e}")
             return False
-    
+
     async def stop_server(self) -> None:
         """Stop the dashboard server."""
         if not self.app:
             return
-        
+
         self.logger.info("Stopping dashboard server")
-        
+
         try:
             if self.site:
                 await self.site.stop()
                 self.site = None
-            
+
             if self.runner:
                 await self.runner.cleanup()
                 self.runner = None
-            
+
             self.app = None
-            
+
             self.logger.info("Dashboard server stopped")
         except Exception as e:
             self.logger.exception(f"Error stopping dashboard server: {e}")
-    
+
     async def handle_index(self, request: web.Request) -> web.Response:
         """Handle the index page request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
@@ -727,144 +736,557 @@ function updateModelStatus(data) {
         index_path = self.templates_dir / 'index.html'
         with open(index_path, 'r') as f:
             content = f.read()
-        
+
         return web.Response(text=content, content_type='text/html')
-    
-    async def handle_api_components_get(self, request: web.Request) -> web.Response:
-        """Handle the GET /api/components request.
-        
+
+    async def handle_agents(self, request: web.Request) -> web.Response:
+        """Handle the agents page request.
+
         Args:
             request: The HTTP request.
-            
+
+        Returns:
+            The HTTP response.
+        """
+        # Create a simple HTML page for agents
+        content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - Agents</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac Agents</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/agents">Agents</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/models">Models</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Agent Management</h2>
+        <div class="dashboard-card">
+            <h3>Available Agents</h3>
+            <ul id="agent-list" class="agent-list">
+                <!-- Agent items will be added here dynamically -->
+                <li>Loading agents...</li>
+            </ul>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Create New Agent</h3>
+            <form id="create-agent-form">
+                <div class="form-group">
+                    <label for="agent-name">Agent Name:</label>
+                    <input type="text" id="agent-name" name="agent-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="agent-type">Agent Type:</label>
+                    <select id="agent-type" name="agent-type" required>
+                        <option value="">Select Agent Type</option>
+                        <option value="task">Task Agent</option>
+                        <option value="assistant">Assistant Agent</option>
+                        <option value="tool">Tool Agent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="agent-model">Model:</label>
+                    <select id="agent-model" name="agent-model" required>
+                        <option value="">Select Model</option>
+                        <option value="gemma3:12b">Gemma 3 (12B)</option>
+                        <option value="llama3:8b">Llama 3 (8B)</option>
+                        <option value="mistral:7b">Mistral (7B)</option>
+                    </select>
+                </div>
+                <button type="submit">Create Agent</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac Dashboard &copy; 2023</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+"""
+
+        return web.Response(text=content, content_type='text/html')
+
+    async def handle_tasks(self, request: web.Request) -> web.Response:
+        """Handle the tasks page request.
+
+        Args:
+            request: The HTTP request.
+
+        Returns:
+            The HTTP response.
+        """
+        # Create a simple HTML page for tasks
+        content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - Tasks</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac Tasks</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/agents">Agents</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/models">Models</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Task Management</h2>
+        <div class="dashboard-card">
+            <h3>Recent Tasks</h3>
+            <ul id="task-list" class="task-list">
+                <!-- Task items will be added here dynamically -->
+                <li>Loading tasks...</li>
+            </ul>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Create New Task</h3>
+            <form id="create-task-form">
+                <div class="form-group">
+                    <label for="task-prompt">Task Prompt:</label>
+                    <textarea id="task-prompt" name="task-prompt" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="task-agent">Agent:</label>
+                    <select id="task-agent" name="task-agent" required>
+                        <option value="">Select Agent</option>
+                        <option value="agent1">Agent 1</option>
+                        <option value="agent2">Agent 2</option>
+                        <option value="agent3">Agent 3</option>
+                    </select>
+                </div>
+                <button type="submit">Create Task</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac Dashboard &copy; 2023</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+"""
+
+        return web.Response(text=content, content_type='text/html')
+
+    async def handle_models(self, request: web.Request) -> web.Response:
+        """Handle the models page request.
+
+        Args:
+            request: The HTTP request.
+
+        Returns:
+            The HTTP response.
+        """
+        # Create a simple HTML page for models
+        content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - Models</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac Models</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/agents">Agents</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/models">Models</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Model Management</h2>
+        <div class="dashboard-card">
+            <h3>Available Models</h3>
+            <ul id="model-list" class="model-list">
+                <!-- Model items will be added here dynamically -->
+                <li>Loading models...</li>
+            </ul>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Ollama Models</h3>
+            <div class="model-actions">
+                <button onclick="location.href='/models/pull'">Pull New Model</button>
+                <button onclick="location.href='/models/manage'">Manage Models</button>
+            </div>
+            <div id="ollama-models" class="model-list">
+                <div class="model-item">
+                    <div class="model-name">gemma3:12b</div>
+                    <div class="model-type">Gemma 3 (12B)</div>
+                    <div class="model-usage">Usage: 0 requests</div>
+                </div>
+                <div class="model-item">
+                    <div class="model-name">llama3:8b</div>
+                    <div class="model-type">Llama 3 (8B)</div>
+                    <div class="model-usage">Usage: 0 requests</div>
+                </div>
+                <div class="model-item">
+                    <div class="model-name">mistral:7b</div>
+                    <div class="model-type">Mistral (7B)</div>
+                    <div class="model-usage">Usage: 0 requests</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac Dashboard &copy; 2023</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+"""
+
+        return web.Response(text=content, content_type='text/html')
+
+    async def handle_settings(self, request: web.Request) -> web.Response:
+        """Handle the settings page request.
+
+        Args:
+            request: The HTTP request.
+
+        Returns:
+            The HTTP response.
+        """
+        # Create a simple HTML page for settings
+        content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - Settings</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac Settings</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/agents">Agents</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/models">Models</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>System Settings</h2>
+        <div class="dashboard-card">
+            <h3>UI Settings</h3>
+            <form id="ui-settings-form">
+                <div class="form-group">
+                    <label for="dashboard-enabled">Dashboard:</label>
+                    <input type="checkbox" id="dashboard-enabled" name="dashboard-enabled" checked>
+                    <label for="dashboard-port">Port:</label>
+                    <input type="number" id="dashboard-port" name="dashboard-port" value="8079" min="1024" max="65535">
+                </div>
+                <div class="form-group">
+                    <label for="swarmui-enabled">SwarmUI:</label>
+                    <input type="checkbox" id="swarmui-enabled" name="swarmui-enabled" checked>
+                    <label for="swarmui-port">Port:</label>
+                    <input type="number" id="swarmui-port" name="swarmui-port" value="8080" min="1024" max="65535">
+                </div>
+                <div class="form-group">
+                    <label for="comfyui-enabled">ComfyUI:</label>
+                    <input type="checkbox" id="comfyui-enabled" name="comfyui-enabled" checked>
+                    <label for="comfyui-port">Port:</label>
+                    <input type="number" id="comfyui-port" name="comfyui-port" value="8081" min="1024" max="65535">
+                </div>
+                <div class="form-group">
+                    <label for="opencanvas-enabled">OpenCanvas:</label>
+                    <input type="checkbox" id="opencanvas-enabled" name="opencanvas-enabled" checked>
+                    <label for="opencanvas-port">Port:</label>
+                    <input type="number" id="opencanvas-port" name="opencanvas-port" value="8082" min="1024" max="65535">
+                </div>
+                <button type="submit">Save UI Settings</button>
+            </form>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Model Settings</h3>
+            <form id="model-settings-form">
+                <div class="form-group">
+                    <label for="ollama-api-url">Ollama API URL:</label>
+                    <input type="text" id="ollama-api-url" name="ollama-api-url" value="http://localhost:11434">
+                </div>
+                <div class="form-group">
+                    <label for="default-model">Default Model:</label>
+                    <select id="default-model" name="default-model">
+                        <option value="gemma3:12b">Gemma 3 (12B)</option>
+                        <option value="llama3:8b">Llama 3 (8B)</option>
+                        <option value="mistral:7b">Mistral (7B)</option>
+                    </select>
+                </div>
+                <button type="submit">Save Model Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac Dashboard &copy; 2023</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+"""
+
+        return web.Response(text=content, content_type='text/html')
+
+    async def handle_webarena(self, request: web.Request) -> web.Response:
+        """Handle the WebArena page request.
+
+        Args:
+            request: The HTTP request.
+
+        Returns:
+            The HTTP response.
+        """
+        # Create a simple HTML page for WebArena
+        content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - WebArena</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac WebArena</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/agents">Agents</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/models">Models</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>WebArena Experiments</h2>
+        <div class="dashboard-card">
+            <h3>Run Experiments</h3>
+            <div class="webarena-actions">
+                <button onclick="location.href='/webarena/run'">Run New Experiment</button>
+                <button onclick="location.href='/webarena/results'">View Results</button>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Recent Experiments</h3>
+            <div id="webarena-experiments" class="experiment-list">
+                <div class="experiment-item">
+                    <div class="experiment-name">Experiment 1</div>
+                    <div class="experiment-date">2023-10-15</div>
+                    <div class="experiment-status">Completed</div>
+                    <div class="experiment-actions">
+                        <button onclick="location.href='/webarena/results/1'">View Results</button>
+                    </div>
+                </div>
+                <div class="experiment-item">
+                    <div class="experiment-name">Experiment 2</div>
+                    <div class="experiment-date">2023-10-14</div>
+                    <div class="experiment-status">Completed</div>
+                    <div class="experiment-actions">
+                        <button onclick="location.href='/webarena/results/2'">View Results</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac Dashboard &copy; 2023</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
+"""
+
+        return web.Response(text=content, content_type='text/html')
+
+    async def handle_api_components_get(self, request: web.Request) -> web.Response:
+        """Handle the GET /api/components request.
+
+        Args:
+            request: The HTTP request.
+
         Returns:
             The HTTP response.
         """
         return web.json_response(self.component_status)
-    
+
     async def handle_api_component_get(self, request: web.Request) -> web.Response:
         """Handle the GET /api/components/{component_name} request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         component_name = request.match_info['component_name']
-        
+
         if component_name not in self.component_status:
             return web.json_response({
                 'success': False,
                 'error': f"Component {component_name} not found"
             }, status=404)
-        
+
         return web.json_response(self.component_status[component_name])
-    
+
     async def handle_api_component_open(self, request: web.Request) -> web.Response:
         """Handle the POST /api/components/{component_name}/open request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         component_name = request.match_info['component_name']
-        
+
         if component_name not in self.component_status:
             return web.json_response({
                 'success': False,
                 'error': f"Component {component_name} not found"
             }, status=404)
-        
+
         if not self.component_status[component_name]['running']:
             return web.json_response({
                 'success': False,
                 'error': f"Component {component_name} is not running"
             }, status=400)
-        
+
         # In a real implementation, you would open the component in a web browser
         # For now, we'll just simulate success
-        
+
         return web.json_response({
             'success': True,
             'message': f"Opening {component_name}",
             'url': self.component_status[component_name]['url']
         })
-    
+
     async def handle_api_agents_get(self, request: web.Request) -> web.Response:
         """Handle the GET /api/agents request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         return web.json_response(self.system_status['agents'])
-    
+
     async def handle_api_tasks_get(self, request: web.Request) -> web.Response:
         """Handle the GET /api/tasks request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         return web.json_response(self.system_status['tasks'])
-    
+
     async def handle_api_models_get(self, request: web.Request) -> web.Response:
         """Handle the GET /api/models request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         return web.json_response(self.system_status['models'])
-    
+
     def update_component_status(self, component_status: Dict[str, Any]) -> None:
         """Update the component status.
-        
+
         Args:
             component_status: The component status.
         """
         self.component_status = component_status
-    
+
     def update_agent_status(self, agent_id: str, status: Dict[str, Any]) -> None:
         """Update the status of an agent.
-        
+
         Args:
             agent_id: The ID of the agent.
             status: The status of the agent.
         """
         self.system_status['agents'][agent_id] = status
-    
+
     def update_task_status(self, task_id: str, status: Dict[str, Any]) -> None:
         """Update the status of a task.
-        
+
         Args:
             task_id: The ID of the task.
             status: The status of the task.
         """
         self.system_status['tasks'][task_id] = status
-    
+
     def update_model_status(self, model_name: str, status: Dict[str, Any]) -> None:
         """Update the status of a model.
-        
+
         Args:
             model_name: The name of the model.
             status: The status of the model.
         """
         self.system_status['models'][model_name] = status
-    
+
     async def cleanup(self) -> None:
         """Clean up resources used by the dashboard."""
         self.logger.info("Cleaning up dashboard")
-        
+
         # Stop the server
         await self.stop_server()
-        
+
         self.logger.info("Dashboard cleaned up")

@@ -1,0 +1,63 @@
+{
+  "agents": [
+    {
+      "name": "gemma3",
+      "model": "gemma3:12b",
+      "description": "Gemma 3 12B model"
+    },
+    {
+      "name": "llama3",
+      "model": "llama3:8b",
+      "description": "Llama 3 8B model"
+    },
+    {
+      "name": "mistral",
+      "model": "mistral:7b",
+      "description": "Mistral 7B model"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_1",
+      "description": "Find the cheapest laptop on the shopping site",
+      "site": "shopping",
+      "eval_types": ["navigation", "search"],
+      "achievable": true
+    },
+    {
+      "id": "task_2",
+      "description": "Search for posts about artificial intelligence on Reddit",
+      "site": "reddit",
+      "eval_types": ["search"],
+      "achievable": true
+    },
+    {
+      "id": "task_3",
+      "description": "Find directions from New York to Boston",
+      "site": "mapping",
+      "eval_types": ["navigation"],
+      "achievable": true
+    },
+    {
+      "id": "task_4",
+      "description": "Extract information about quantum computing from Wikipedia",
+      "site": "wikipedia",
+      "eval_types": ["information-extraction"],
+      "achievable": true
+    },
+    {
+      "id": "task_5",
+      "description": "Create a new issue on GitLab",
+      "site": "gitlab",
+      "eval_types": ["form-filling"],
+      "achievable": true
+    },
+    {
+      "id": "task_6",
+      "description": "Navigate to the contact page",
+      "site": "homepage",
+      "eval_types": ["navigation"],
+      "achievable": true
+    }
+  ]
+}
