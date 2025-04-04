@@ -20,6 +20,8 @@ from aiohttp import web
 from database import db_manager
 from integrations import ollama_client, webarena_client, web_scraper, voice_interaction
 from tasks import task_executor, get_all_tasks, get_task_by_id
+from api.web_research_api import setup_routes as setup_web_research_routes
+from api.opencanvas_api import setup_routes as setup_opencanvas_routes
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -158,6 +160,12 @@ class SimpleDashboardServer:
 
         # Add chat API routes
         self.app.router.add_post('/api/chat/message', self._handle_api_chat_message)
+
+        # Add web research API routes
+        setup_web_research_routes(self.app)
+
+        # Add OpenCanvas API routes
+        setup_opencanvas_routes(self.app)
 
         logger.info("API routes set up")
 
@@ -713,6 +721,7 @@ class SimpleDashboardServer:
         files = body.get('files', [])
         deep_research = body.get('deep_research', False)
         deep_thinking = body.get('deep_thinking', False)
+        instructions = body.get('instructions', {})
 
         if not model:
             return web.json_response({
@@ -743,12 +752,55 @@ class SimpleDashboardServer:
 
                     prompt += "\n--- End of file ---\n"
 
-            # Add instructions for deep research or thinking
-            if deep_research:
-                prompt = "Please conduct deep research on this topic and provide a comprehensive answer: " + prompt
+            # Perform web research if requested
+            web_research_results = None
+            if deep_research or instructions.get('use_web_search', False):
+                from utils.web_research import WebResearch
+                web_researcher = WebResearch()
 
+                # Research the topic
+                success, research_data = await asyncio.to_thread(
+                    web_researcher.research_topic,
+                    message,
+                    max_sources=3
+                )
+
+                if success:
+                    web_research_results = research_data
+
+                    # Add research results to the prompt
+                    prompt += "\n\n--- Web Research Results ---\n"
+                    prompt += "I've conducted research on your query and found the following information:\n"
+
+                    for i, source in enumerate(research_data.get('sources', []), 1):
+                        prompt += f"\nSource {i}: {source.get('title', 'Untitled')}\n"
+                        prompt += f"URL: {source.get('url', '')}\n"
+
+                        # Add a snippet of the content
+                        content = source.get('content', '')
+                        if content:
+                            # Limit content length to avoid token limits
+                            max_content_length = 1000
+                            if len(content) > max_content_length:
+                                content = content[:max_content_length] + "..."
+                            prompt += f"Content: {content}\n"
+
+                    prompt += "\n--- End of Web Research Results ---\n"
+                    prompt += "\nPlease use this research to provide an accurate and up-to-date response.\n"
+
+            # Add instructions for deep thinking
             if deep_thinking:
                 prompt = "Please think deeply about this problem and provide a detailed, step-by-step solution: " + prompt
+
+            # Add anti-hallucination instructions
+            if instructions.get('prevent_hallucinations', False):
+                prompt += "\n\n--- Important Instructions ---\n"
+                prompt += "1. Only provide information that you are confident is accurate.\n"
+                prompt += "2. If you're unsure about something, explicitly state your uncertainty.\n"
+                prompt += "3. Do not make up facts or information.\n"
+                prompt += "4. If you don't know the answer, say so clearly.\n"
+                prompt += "5. Base your response on verifiable information only.\n"
+                prompt += "--- End of Instructions ---\n"
 
             # Generate a response using the model
             result = await ollama_client.generate(model, prompt)
@@ -761,11 +813,25 @@ class SimpleDashboardServer:
 
             response_text = result.get('text', "I'm sorry, I couldn't generate a response.")
 
-            return web.json_response({
+            # Prepare the response data
+            response_data = {
                 'success': True,
                 'response': response_text,
                 'model': model
-            })
+            }
+
+            # Include research metadata if available
+            if web_research_results:
+                response_data['research_metadata'] = {
+                    'sources_count': len(web_research_results.get('sources', [])),
+                    'query': web_research_results.get('query', ''),
+                    'sources': [{
+                        'title': s.get('title', 'Untitled'),
+                        'url': s.get('url', '')
+                    } for s in web_research_results.get('sources', [])]
+                }
+
+            return web.json_response(response_data)
         except Exception as e:
             logger.exception(f"Error processing chat message: {e}")
             return web.json_response({

@@ -250,22 +250,27 @@
 }
 
 .navbar-menu-toggle {
-    background: transparent;
+    background-color: var(--md-primary-light);
     border: none;
-    color: var(--side-menu-icon);
+    color: var(--md-primary);
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-right: 16px;
+    box-shadow: var(--md-elevation-1);
+    font-size: 18px;
 }
 
 .navbar-menu-toggle:hover {
-    background-color: var(--side-menu-hover);
+    background-color: var(--md-primary);
+    color: white;
+    box-shadow: var(--md-elevation-2);
+    transform: translateY(-1px);
 }
 
 .navbar-brand {

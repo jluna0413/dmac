@@ -65,6 +65,9 @@ class UnifiedInput {
                     <button id="think-button" class="btn btn-outline-secondary" title="Deep Thinking Mode">
                         <i class="fas fa-brain"></i>
                     </button>
+                    <button id="opencanvas-button" class="btn btn-outline-secondary" title="Open Canvas">
+                        <i class="fas fa-project-diagram"></i>
+                    </button>
                     <button id="send-button" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i>
                     </button>
@@ -148,6 +151,10 @@ class UnifiedInput {
         // Think button
         const thinkButton = document.getElementById('think-button');
         thinkButton.addEventListener('click', () => this.toggleThinkingMode());
+
+        // OpenCanvas button
+        const openCanvasButton = document.getElementById('opencanvas-button');
+        openCanvasButton.addEventListener('click', () => this.openCanvas());
 
         // Model selector
         const modelSelector = document.getElementById('model-selector');
@@ -350,7 +357,14 @@ class UnifiedInput {
             model: this.currentModel,
             files: this.uploadedFiles,
             deep_research: this.isResearching,
-            deep_thinking: this.isThinking
+            deep_thinking: this.isThinking,
+            // Add anti-hallucination instructions
+            instructions: {
+                prevent_hallucinations: true,
+                admit_uncertainty: true,
+                verify_facts: true,
+                use_web_search: this.isResearching
+            }
         };
 
         // Show thinking indicator
@@ -425,6 +439,12 @@ class UnifiedInput {
 
         messageDiv.appendChild(messageContent);
         this.chatContainer.appendChild(messageDiv);
+
+        // Add feedback UI for assistant messages
+        if (sender === 'assistant' && window.feedbackSystem) {
+            const messageId = `msg-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            window.feedbackSystem.addFeedbackUI(messageDiv, messageId);
+        }
 
         // Scroll to the bottom
         this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
@@ -706,6 +726,49 @@ class UnifiedInput {
     }
 
     /**
+     * Open the Langchain OpenCanvas interface
+     */
+    openCanvas() {
+        const openCanvasButton = document.getElementById('opencanvas-button');
+
+        // Toggle active state for visual feedback
+        openCanvasButton.classList.add('active');
+        setTimeout(() => {
+            openCanvasButton.classList.remove('active');
+        }, 300);
+
+        // Show a message in the chat
+        this.addMessageToChat('Opening Langchain OpenCanvas interface...', 'system');
+
+        // Make an API call to open the OpenCanvas interface
+        fetch('/api/opencanvas/open', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                current_conversation: this.getConversationHistory()
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // If successful, open the URL in a new tab/window
+                    if (data.url) {
+                        window.open(data.url, '_blank');
+                    }
+                } else {
+                    // Show error message
+                    this.addMessageToChat('Error opening OpenCanvas: ' + (data.error || 'Unknown error'), 'system');
+                }
+            })
+            .catch(error => {
+                console.error('Error opening OpenCanvas:', error);
+                this.addMessageToChat('Error opening OpenCanvas. Please try again later.', 'system');
+            });
+    }
+
+    /**
      * Reset all modes
      */
     resetModes() {
@@ -723,6 +786,32 @@ class UnifiedInput {
         if (this.isListening) {
             this.toggleVoiceInput();
         }
+    }
+
+    /**
+     * Get the current conversation history
+     * @returns {Array} Array of message objects
+     */
+    getConversationHistory() {
+        const messages = [];
+        const messageElements = this.chatContainer.querySelectorAll('.message');
+
+        messageElements.forEach(element => {
+            let role = 'user';
+            if (element.classList.contains('assistant-message')) {
+                role = 'assistant';
+            } else if (element.classList.contains('system-message')) {
+                role = 'system';
+            }
+
+            const content = element.querySelector('.message-content').textContent.trim();
+            messages.push({
+                role: role,
+                content: content
+            });
+        });
+
+        return messages;
     }
 }
 
