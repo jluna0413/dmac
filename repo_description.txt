@@ -1,0 +1,12 @@
+DMac: A Multi-Agent AI Swarm
+
+A modular, locally hosted AI ecosystem that coordinates a swarm of specialized agents to perform a wide range of tasks including software engineering, manufacturing automation, and creative design.
+
+Key Features:
+- Prioritizes local LLMs through Ollama with strategic use of external services
+- Enhanced learning system that improves from all model interactions
+- Specialized agents for coding, manufacturing, design, UI, and IoT
+- Integrated workflow management and visualization tools
+- Continuous improvement through reinforcement learning
+
+Built with Python, Ollama, and a focus on local AI sovereignty.

@@ -88,17 +88,34 @@ cp config/config.example.yaml config/config.yaml
 nano config/config.yaml
 ```
 
-### Gemini API Key (Optional)
+### API Keys and Credentials (Optional)
 
-If you want to use Gemini as a fallback or for specific tasks, you'll need to set up an API key:
+DMac prioritizes local models through Ollama, but can also use external services like Gemini as a fallback or for specific tasks. For security reasons, API keys are stored separately from the main configuration:
 
-1. Go to [Google AI Studio](https://makersuite.google.com/)
-2. Create an API key
-3. Add the key to your configuration file or set it as an environment variable:
+1. Create a credentials file by copying the example:
 
 ```bash
-export GEMINI_API_KEY=your_api_key_here
+cp config/credentials.example.json config/credentials.json
 ```
+
+2. Edit the credentials file to add your API keys:
+
+```bash
+# Use your favorite text editor
+nano config/credentials.json
+```
+
+3. Alternatively, you can set environment variables:
+
+```bash
+# For Gemini API key
+export DMAC_MODELS_GEMINI_API_KEY=your_gemini_api_key_here
+
+# For other services
+export DMAC_INTEGRATIONS_GITHUB_TOKEN=your_github_token_here
+```
+
+**IMPORTANT**: Never commit your credentials.json file to version control! It's already added to .gitignore for your protection.
 
 ## Step 6: Pull Required Models
 

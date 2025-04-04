@@ -8,6 +8,16 @@ asyncio>=3.4.3
 # Ollama - required for local LLM management
 ollama>=0.1.0
 
+# Security dependencies
+cryptography>=44.0.0
+aiohttp>=3.8.0
+httpx>=0.24.0
+
+# NLP and evaluation
+rouge>=1.0.1
+rouge-score>=0.1.2
+nltk>=3.9.1
+
 # AI models
 openai>=1.0.0
 transformers>=4.30.0
@@ -16,10 +26,10 @@ tiktoken>=0.5.0
 ollama>=0.1.5
 httpx>=0.24.0
 
-# Voice interface
-coqui-stt>=1.0.0
-SpeechRecognition>=3.8.1
-pyaudio>=0.2.11
+# Voice interface (optional)
+# coqui-stt>=1.0.0
+# SpeechRecognition>=3.8.1
+# pyaudio>=0.2.11
 
 # CLI interface
 # Note: Cline is a fictional package for this example
@@ -45,7 +55,7 @@ numpy>=1.24.0
 # In a real implementation, you would use the actual UI frameworks
 # swarmui>=1.0.0
 # comfyui>=1.0.0
-langchain>=0.0.267
+# langchain>=0.0.267  # Optional
 
 # OpenManus-RL integration
 # This would typically be installed from the OpenManus-RL repository

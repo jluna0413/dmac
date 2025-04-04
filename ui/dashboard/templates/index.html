@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/agents">Agents</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/models">Models</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h2>UI Components</h2>
+                <ul id="component-list" class="component-list">
+                    <!-- Component items will be added here dynamically -->
+                    <li>Loading components...</li>
+                </ul>
+            </div>
+            
+            <div class="dashboard-card">
+                <h2>Active Agents</h2>
+                <ul id="agent-list" class="agent-list">
+                    <!-- Agent items will be added here dynamically -->
+                    <li>Loading agents...</li>
+                </ul>
+            </div>
+            
+            <div class="dashboard-card">
+                <h2>Recent Tasks</h2>
+                <ul id="task-list" class="task-list">
+                    <!-- Task items will be added here dynamically -->
+                    <li>Loading tasks...</li>
+                </ul>
+            </div>
+            
+            <div class="dashboard-card">
+                <h2>Models</h2>
+                <ul id="model-list" class="model-list">
+                    <!-- Model items will be added here dynamically -->
+                    <li>Loading models...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>DMac Dashboard &copy; 2023</p>
+    </footer>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>

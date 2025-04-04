@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - OpenCanvas Workflows</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac OpenCanvas Workflows</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/workflows">Workflows</a></li>
+                <li><a href="/editor">Editor</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="workflows-header">
+            <h2>Your Workflows</h2>
+            <button onclick="location.href='/editor'">Create New Workflow</button>
+        </div>
+
+        <div id="workflow-list" class="workflow-list">
+            <!-- Workflow cards will be added here dynamically -->
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac OpenCanvas Workflow &copy; 2023</p>
+    </footer>
+
+    <script>
+        // Fetch workflows when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchWorkflows();
+        });
+
+        function fetchWorkflows() {
+            fetch('/api/workflows')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayWorkflows(data.workflows);
+                    } else {
+                        alert('Error fetching workflows: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching workflows:', error);
+                });
+        }
+
+        function displayWorkflows(workflows) {
+            const workflowList = document.getElementById('workflow-list');
+            workflowList.innerHTML = '';
+
+            if (workflows.length === 0) {
+                workflowList.innerHTML = '<p>No workflows found. Create your first workflow!</p>';
+                return;
+            }
+
+            workflows.forEach(workflow => {
+                const card = document.createElement('div');
+                card.className = 'workflow-card';
+                card.onclick = function() {
+                    location.href = `/editor?id=${workflow.id}`;
+                };
+
+                const created = new Date(workflow.created).toLocaleString();
+                const updated = new Date(workflow.updated).toLocaleString();
+
+                card.innerHTML = `
+                    <h3>${workflow.name}</h3>
+                    <p>${workflow.description}</p>
+                    <div class="workflow-meta">
+                        <span>Created: ${created}</span>
+                        <span>Updated: ${updated}</span>
+                    </div>
+                `;
+
+                workflowList.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

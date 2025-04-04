@@ -9,28 +9,21 @@ This module manages the AI models used by DMac, including:
 import asyncio
 import json
 import logging
-import os
 import time
-from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
-import httpx
-
-# Import ollama - this is a required dependency
-import ollama
+# Import ollama integration
+from models.ollama_integration import OllamaIntegration
 
 from config.config import config
+from config.credentials import credentials
+from models.model_types import ModelType
+
+# Import after ModelType to avoid circular imports
 from models.learning_system import LearningSystem
 
 logger = logging.getLogger('dmac.models')
-
-
-class ModelType(Enum):
-    """Enum representing the type of model."""
-    GEMINI = "gemini"
-    DEEPSEEK = "deepseek"
-    LOCAL = "local"
 
 
 class ModelManager:
@@ -38,7 +31,8 @@ class ModelManager:
 
     def __init__(self):
         """Initialize the model manager."""
-        self.gemini_api_key = config.get('models.gemini.api_key', '')
+        # Get Gemini API key from credentials (more secure than config)
+        self.gemini_api_key = credentials.get('models.gemini.api_key', '')
         self.gemini_api_url = config.get('models.gemini.api_url', 'http://gemini.google.com')
         self.gemini_usage = self._load_gemini_usage()
         self.gemini_usage_cap = config.get('models.gemini.usage_cap', 1000)  # Default cap of 1000 requests
@@ -50,8 +44,8 @@ class ModelManager:
 
         self.logger = logging.getLogger('dmac.models')
 
-        # Initialize the Ollama client
-        self.ollama_client = None
+        # Initialize the Ollama integration
+        self.ollama_integration = OllamaIntegration()
 
         # Cache for model responses
         self.response_cache = {}
@@ -67,12 +61,9 @@ class ModelManager:
         """
         self.logger.info("Initializing model manager")
 
-        # Initialize Ollama client - this is a required dependency
-        try:
-            self.ollama_client = ollama.Client()
-            self.logger.info("Ollama client initialized")
-        except Exception as e:
-            self.logger.error(f"Error initializing Ollama client: {e}")
+        # Initialize Ollama integration
+        if not await self.ollama_integration.initialize():
+            self.logger.error("Failed to initialize Ollama integration")
             self.logger.error("Ollama is required for DMac to function properly.")
             self.logger.error("Please ensure Ollama is installed and running.")
             self.logger.error("Installation instructions: https://ollama.com/download")
@@ -113,12 +104,10 @@ class ModelManager:
         Returns:
             A list of available model names.
         """
-        # Ollama is a required dependency, so we should always have a client
-
         try:
-            # Use the Ollama client to list models
-            models = await asyncio.to_thread(self.ollama_client.list)
-            return [model['name'] for model in models['models']]
+            # Use the Ollama integration to get available models
+            models = await self.ollama_integration.get_available_models()
+            return [model['name'] for model in models]
         except Exception as e:
             self.logger.exception(f"Error getting available models: {e}")
             return []
@@ -132,16 +121,7 @@ class ModelManager:
         Returns:
             True if the model was pulled successfully, False otherwise.
         """
-        # Ollama is a required dependency, so we should always have a client
-
-        try:
-            self.logger.info(f"Pulling model: {model_name}")
-            await asyncio.to_thread(self.ollama_client.pull, model_name)
-            self.logger.info(f"Model pulled successfully: {model_name}")
-            return True
-        except Exception as e:
-            self.logger.exception(f"Error pulling model {model_name}: {e}")
-            return False
+        return await self.ollama_integration.pull_model(model_name)
 
     def _load_gemini_usage(self) -> Dict[str, int]:
         """Load Gemini usage data from a file.
@@ -295,12 +275,10 @@ class ModelManager:
 
             # Check if we have a valid API key
             if not self.gemini_api_key:
-                self.logger.warning("No Gemini API key provided, using simulated response")
-                # Simulate some processing time
-                await asyncio.sleep(2)
-
-                # Generate a simulated response
-                return f"Simulated Gemini response to: {prompt[:100]}..."
+                self.logger.warning("No Gemini API key provided in credentials")
+                self.logger.info("To use Gemini, add your API key to config/credentials.json or set the DMAC_MODELS_GEMINI_API_KEY environment variable")
+                self.logger.info("Falling back to local model")
+                return await self._generate_with_local(prompt)
 
             # Simulate some processing time
             await asyncio.sleep(2)
@@ -323,13 +301,10 @@ class ModelManager:
         """
         self.logger.info(f"Generating text with DeepSeek: {prompt[:50]}...")
 
-        # Ollama is a required dependency, so we should always have a client
-
         try:
-            # Use Ollama to generate text with DeepSeek
-            response = await asyncio.to_thread(
-                self.ollama_client.generate,
-                model=self.deepseek_model_name,
+            # Use Ollama integration to generate text with DeepSeek
+            response = await self.ollama_integration.generate(
+                model_name=self.deepseek_model_name,
                 prompt=prompt,
                 options={
                     "temperature": 0.7,
@@ -338,7 +313,16 @@ class ModelManager:
                 }
             )
 
-            return response['response']
+            # Add to learning system
+            if self.deepseek_learning_enabled:
+                await self.learning_system.add_learning_example(
+                    prompt=prompt,
+                    response=response['text'],
+                    model_type=ModelType.DEEPSEEK,
+                    metadata=response['metadata']
+                )
+
+            return response['text']
         except Exception as e:
             self.logger.exception(f"Error generating text with DeepSeek: {e}")
             # Fall back to local model
@@ -355,13 +339,10 @@ class ModelManager:
         """
         self.logger.info(f"Generating text with local model: {prompt[:50]}...")
 
-        # Ollama is a required dependency, so we should always have a client
-
         try:
-            # Use Ollama to generate text with the local model
-            response = await asyncio.to_thread(
-                self.ollama_client.generate,
-                model=self.local_model_name,
+            # Use Ollama integration to generate text with the local model
+            response = await self.ollama_integration.generate(
+                model_name=self.local_model_name,
                 prompt=prompt,
                 options={
                     "temperature": 0.7,
@@ -370,7 +351,15 @@ class ModelManager:
                 }
             )
 
-            return response['response']
+            # Add to learning system
+            await self.learning_system.add_learning_example(
+                prompt=prompt,
+                response=response['text'],
+                model_type=ModelType.LOCAL,
+                metadata=response['metadata']
+            )
+
+            return response['text']
         except Exception as e:
             self.logger.exception(f"Error generating text with local model: {e}")
             return f"Error generating text: {str(e)}"
@@ -420,7 +409,11 @@ class ModelManager:
         except Exception as e:
             self.logger.exception(f"Error cleaning up learning system: {e}")
 
-        # Close the Ollama client if necessary
-        # (Not needed for the current implementation)
+        # Clean up the Ollama integration
+        try:
+            await self.ollama_integration.cleanup()
+            self.logger.info("Ollama integration cleaned up")
+        except Exception as e:
+            self.logger.exception(f"Error cleaning up Ollama integration: {e}")
 
         self.logger.info("Model manager cleaned up")

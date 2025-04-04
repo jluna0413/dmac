@@ -1,0 +1,12 @@
+{
+  "admin": {
+    "password_hash": "94b98381da0378b761e313b2f64f94c19ab44bc9854bae821d724d619b5cac8b",
+    "salt": "33ed01626333006469934a77c75a08f9",
+    "roles": [
+      "admin"
+    ],
+    "email": "admin@example.com",
+    "created_at": 1743747674.2724268,
+    "last_login": null
+  }
+}

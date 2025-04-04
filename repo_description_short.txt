@@ -1,0 +1,1 @@
+DMac: A Multi-Agent AI Swarm that prioritizes local LLMs through Ollama. Coordinates specialized agents for software engineering, manufacturing automation, and creative design with continuous learning from all model interactions.

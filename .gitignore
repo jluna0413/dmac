@@ -37,6 +37,7 @@ logs/
 
 # Local configuration
 config/config.yaml
+config/credentials.json
 .env
 
 # Ollama models

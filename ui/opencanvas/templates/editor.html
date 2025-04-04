@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - OpenCanvas Workflow Editor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac OpenCanvas Workflow Editor</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/workflows">Workflows</a></li>
+                <li><a href="/editor">Editor</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="workflow-header">
+            <div>
+                <label for="workflow-name">Workflow Name:</label>
+                <input type="text" id="workflow-name" placeholder="Untitled Workflow">
+            </div>
+            <div>
+                <label for="workflow-description">Description:</label>
+                <input type="text" id="workflow-description" placeholder="Workflow description">
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <button id="add-agent-node">Add Agent</button>
+            <button id="add-tool-node">Add Tool</button>
+            <button id="add-data-node">Add Data</button>
+            <button id="add-output-node">Add Output</button>
+            <button id="save-workflow">Save Workflow</button>
+        </div>
+
+        <div class="editor-layout">
+            <div id="workflow-canvas" class="workflow-canvas">
+                <!-- Nodes and connections will be added here dynamically -->
+            </div>
+
+            <div id="properties-panel" class="properties-panel">
+                <h2>Properties</h2>
+                <p>Select a node to edit its properties.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac OpenCanvas Workflow &copy; 2023</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

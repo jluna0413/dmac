@@ -23,7 +23,7 @@ logger = logging.getLogger('dmac.ui.swarmui')
 
 class SwarmUIDashboard:
     """SwarmUI dashboard for DMac."""
-    
+
     def __init__(self):
         """Initialize the SwarmUI dashboard."""
         self.enabled = config.get('ui.swarmui.enabled', True)
@@ -36,7 +36,7 @@ class SwarmUIDashboard:
         self.site = None
         self.process = None
         self.logger = logging.getLogger('dmac.ui.swarmui')
-        
+
         # Dashboard data
         self.agents = {}
         self.tasks = {}
@@ -47,36 +47,36 @@ class SwarmUIDashboard:
             'uptime': 0,
             'start_time': time.time(),
         }
-    
+
     async def initialize(self) -> bool:
         """Initialize the SwarmUI dashboard.
-        
+
         Returns:
             True if initialization was successful, False otherwise.
         """
         if not self.enabled:
             self.logger.info("SwarmUI dashboard is disabled in the configuration")
             return False
-        
+
         self.logger.info("Initializing SwarmUI dashboard")
-        
+
         try:
             # Create the static and templates directories if they don't exist
             os.makedirs(self.static_dir, exist_ok=True)
             os.makedirs(self.templates_dir, exist_ok=True)
-            
+
             # Create the necessary static files
             await self._create_static_files()
-            
+
             # Create the necessary template files
             await self._create_template_files()
-            
+
             self.logger.info("SwarmUI dashboard initialized")
             return True
         except Exception as e:
             self.logger.exception(f"Error initializing SwarmUI dashboard: {e}")
             return False
-    
+
     async def _create_static_files(self) -> None:
         """Create the necessary static files."""
         # Create CSS file
@@ -298,22 +298,22 @@ footer {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
-    
+
     header {
         flex-direction: column;
     }
-    
+
     nav ul {
         margin-top: 10px;
     }
-    
+
     nav ul li {
         margin-left: 10px;
         margin-right: 10px;
     }
 }
 """)
-        
+
         # Create JavaScript file
         js_file = self.static_dir / 'script.js'
         with open(js_file, 'w') as f:
@@ -322,7 +322,7 @@ footer {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the dashboard
     initDashboard();
-    
+
     // Set up periodic updates
     setInterval(updateDashboard, 5000);
 });
@@ -349,15 +349,15 @@ function updateSystemStatus() {
             // Update CPU usage
             document.getElementById('cpu-usage-value').textContent = data.cpu_usage + '%';
             document.getElementById('cpu-usage-bar').style.width = data.cpu_usage + '%';
-            
+
             // Update memory usage
             document.getElementById('memory-usage-value').textContent = data.memory_usage + '%';
             document.getElementById('memory-usage-bar').style.width = data.memory_usage + '%';
-            
+
             // Update disk usage
             document.getElementById('disk-usage-value').textContent = data.disk_usage + '%';
             document.getElementById('disk-usage-bar').style.width = data.disk_usage + '%';
-            
+
             // Update uptime
             const uptime = formatUptime(data.uptime);
             document.getElementById('uptime-value').textContent = uptime;
@@ -374,25 +374,25 @@ function updateAgentStatus() {
         .then(data => {
             const agentList = document.getElementById('agent-list');
             agentList.innerHTML = '';
-            
+
             // Add each agent to the list
             for (const agentId in data) {
                 const agent = data[agentId];
                 const agentItem = document.createElement('div');
                 agentItem.className = 'agent-item';
-                
-                const statusClass = agent.state === 'IDLE' ? 'status-active' : 
+
+                const statusClass = agent.state === 'IDLE' ? 'status-active' :
                                    agent.state === 'ERROR' ? 'status-inactive' : 'status-warning';
-                
+
                 agentItem.innerHTML = `
-                    <div class="agent-icon">🤖</div>
+                    <div class="agent-icon">[AI]</div>
                     <div class="agent-name">${agent.name}</div>
                     <div class="agent-status">
                         <span class="status-indicator ${statusClass}"></span>
                         ${agent.state}
                     </div>
                 `;
-                
+
                 agentList.appendChild(agentItem);
             }
         })
@@ -408,20 +408,20 @@ function updateTaskList() {
         .then(data => {
             const taskList = document.getElementById('task-list');
             taskList.innerHTML = '';
-            
+
             // Add each task to the list
             for (const taskId in data) {
                 const task = data[taskId];
                 const taskItem = document.createElement('div');
                 taskItem.className = 'task-item';
-                
-                const statusClass = task.status === 'completed' ? 'status-completed' : 
-                                   task.status === 'error' ? 'status-error' : 
+
+                const statusClass = task.status === 'completed' ? 'status-completed' :
+                                   task.status === 'error' ? 'status-error' :
                                    task.status === 'running' ? 'status-running' : 'status-planning';
-                
+
                 const createdAt = new Date(task.created_at * 1000).toLocaleString();
                 const updatedAt = new Date(task.updated_at * 1000).toLocaleString();
-                
+
                 taskItem.innerHTML = `
                     <div class="task-header">
                         <div class="task-title">${task.prompt.substring(0, 50)}${task.prompt.length > 50 ? '...' : ''}</div>
@@ -432,7 +432,7 @@ function updateTaskList() {
                         <div>Updated: ${updatedAt}</div>
                     </div>
                 `;
-                
+
                 taskList.appendChild(taskItem);
             }
         })
@@ -446,17 +446,17 @@ function formatUptime(seconds) {
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
-    
+
     let result = '';
     if (days > 0) result += days + 'd ';
     if (hours > 0) result += hours + 'h ';
     if (minutes > 0) result += minutes + 'm ';
     if (secs > 0 || result === '') result += secs + 's';
-    
+
     return result;
 }
 """)
-    
+
     async def _create_template_files(self) -> None:
         """Create the necessary template files."""
         # Create index.html
@@ -483,7 +483,7 @@ function formatUptime(seconds) {
             </ul>
         </nav>
     </header>
-    
+
     <div class="container">
         <div class="dashboard-grid">
             <div class="card">
@@ -528,21 +528,21 @@ function formatUptime(seconds) {
                     </tr>
                 </table>
             </div>
-            
+
             <div class="card">
                 <h2>Agent Status</h2>
                 <div id="agent-list" class="agent-list">
                     <!-- Agent items will be added here dynamically -->
                 </div>
             </div>
-            
+
             <div class="card">
                 <h2>Recent Tasks</h2>
                 <div id="task-list" class="task-list">
                     <!-- Task items will be added here dynamically -->
                 </div>
             </div>
-            
+
             <div class="card">
                 <h2>Quick Actions</h2>
                 <div class="quick-actions">
@@ -553,83 +553,83 @@ function formatUptime(seconds) {
             </div>
         </div>
     </div>
-    
+
     <footer>
         <p>DMac SwarmUI Dashboard &copy; 2023</p>
     </footer>
-    
+
     <script src="/static/script.js"></script>
 </body>
 </html>
 """)
-    
+
     async def start_server(self) -> bool:
         """Start the SwarmUI dashboard server.
-        
+
         Returns:
             True if the server was started successfully, False otherwise.
         """
         if not self.enabled:
             self.logger.warning("SwarmUI dashboard is disabled")
             return False
-        
+
         if self.app:
             self.logger.warning("SwarmUI dashboard server is already running")
             return True
-        
+
         self.logger.info(f"Starting SwarmUI dashboard server on {self.host}:{self.port}")
-        
+
         try:
             # Create the aiohttp application
             self.app = web.Application()
-            
+
             # Set up routes
             self.app.router.add_static('/static', self.static_dir)
             self.app.router.add_get('/', self.handle_index)
             self.app.router.add_get('/api/system-status', self.handle_system_status)
             self.app.router.add_get('/api/agents', self.handle_agents)
             self.app.router.add_get('/api/tasks', self.handle_tasks)
-            
+
             # Start the server
             self.runner = web.AppRunner(self.app)
             await self.runner.setup()
             self.site = web.TCPSite(self.runner, self.host, self.port)
             await self.site.start()
-            
+
             self.logger.info(f"SwarmUI dashboard server started on http://{self.host}:{self.port}")
             return True
         except Exception as e:
             self.logger.exception(f"Error starting SwarmUI dashboard server: {e}")
             return False
-    
+
     async def stop_server(self) -> None:
         """Stop the SwarmUI dashboard server."""
         if not self.app:
             return
-        
+
         self.logger.info("Stopping SwarmUI dashboard server")
-        
+
         try:
             if self.site:
                 await self.site.stop()
                 self.site = None
-            
+
             if self.runner:
                 await self.runner.cleanup()
                 self.runner = None
-            
+
             self.app = None
-            
+
             self.logger.info("SwarmUI dashboard server stopped")
         except Exception as e:
             self.logger.exception(f"Error stopping SwarmUI dashboard server: {e}")
-    
+
     async def handle_index(self, request: web.Request) -> web.Response:
         """Handle the index page request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
@@ -637,61 +637,61 @@ function formatUptime(seconds) {
         index_path = self.templates_dir / 'index.html'
         with open(index_path, 'r') as f:
             content = f.read()
-        
+
         return web.Response(text=content, content_type='text/html')
-    
+
     async def handle_system_status(self, request: web.Request) -> web.Response:
         """Handle the system status API request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         # Update the system status
         self._update_system_status()
-        
+
         return web.json_response(self.system_status)
-    
+
     async def handle_agents(self, request: web.Request) -> web.Response:
         """Handle the agents API request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         return web.json_response(self.agents)
-    
+
     async def handle_tasks(self, request: web.Request) -> web.Response:
         """Handle the tasks API request.
-        
+
         Args:
             request: The HTTP request.
-            
+
         Returns:
             The HTTP response.
         """
         return web.json_response(self.tasks)
-    
+
     def _update_system_status(self) -> None:
         """Update the system status."""
         try:
             import psutil
-            
+
             # Update CPU usage
             self.system_status['cpu_usage'] = psutil.cpu_percent()
-            
+
             # Update memory usage
             memory = psutil.virtual_memory()
             self.system_status['memory_usage'] = memory.percent
-            
+
             # Update disk usage
             disk = psutil.disk_usage('/')
             self.system_status['disk_usage'] = disk.percent
-            
+
             # Update uptime
             self.system_status['uptime'] = time.time() - self.system_status['start_time']
         except ImportError:
@@ -700,30 +700,30 @@ function formatUptime(seconds) {
             self.system_status['memory_usage'] = 60
             self.system_status['disk_usage'] = 70
             self.system_status['uptime'] = time.time() - self.system_status['start_time']
-    
+
     def update_agent_status(self, agent_id: str, agent_data: Dict[str, Any]) -> None:
         """Update the status of an agent.
-        
+
         Args:
             agent_id: The ID of the agent.
             agent_data: The agent data.
         """
         self.agents[agent_id] = agent_data
-    
+
     def update_task_status(self, task_id: str, task_data: Dict[str, Any]) -> None:
         """Update the status of a task.
-        
+
         Args:
             task_id: The ID of the task.
             task_data: The task data.
         """
         self.tasks[task_id] = task_data
-    
+
     async def cleanup(self) -> None:
         """Clean up resources used by the SwarmUI dashboard."""
         self.logger.info("Cleaning up SwarmUI dashboard")
-        
+
         # Stop the server
         await self.stop_server()
-        
+
         self.logger.info("SwarmUI dashboard cleaned up")

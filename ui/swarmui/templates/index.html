@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - SwarmUI Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>DMac SwarmUI Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/agents">Agents</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2>System Status</h2>
+                <table>
+                    <tr>
+                        <td>CPU Usage</td>
+                        <td id="cpu-usage-value">0%</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="progress-bar">
+                                <div id="cpu-usage-bar" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Memory Usage</td>
+                        <td id="memory-usage-value">0%</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="progress-bar">
+                                <div id="memory-usage-bar" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Disk Usage</td>
+                        <td id="disk-usage-value">0%</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="progress-bar">
+                                <div id="disk-usage-bar" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Uptime</td>
+                        <td id="uptime-value">0s</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Agent Status</h2>
+                <div id="agent-list" class="agent-list">
+                    <!-- Agent items will be added here dynamically -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Tasks</h2>
+                <div id="task-list" class="task-list">
+                    <!-- Task items will be added here dynamically -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Quick Actions</h2>
+                <div class="quick-actions">
+                    <button onclick="location.href='/new-task'">New Task</button>
+                    <button onclick="location.href='/agents'">Manage Agents</button>
+                    <button onclick="location.href='/settings'">Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>DMac SwarmUI Dashboard &copy; 2023</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

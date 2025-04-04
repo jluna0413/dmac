@@ -4,7 +4,21 @@ Configuration module for DMac.
 
 import os
 import yaml
-from pathlib import Path
+
+# Import security utilities
+try:
+    from utils.config_validator import apply_defaults, validate_config
+    from utils.secure_file import set_secure_permissions
+    from utils.secure_logging import get_logger
+
+    # Use secure logger if available
+    logger = get_logger('dmac.config')
+    security_enabled = True
+except ImportError:
+    # Fall back to standard logging if security utilities are not available
+    import logging
+    logger = logging.getLogger('dmac.config')
+    security_enabled = False
 
 class Config:
     """Configuration class for DMac."""
@@ -21,13 +35,33 @@ class Config:
     def _load_config(self):
         """Load the configuration from the YAML file."""
         if not os.path.exists(self.config_path):
+            logger.warning(f"Configuration file not found: {self.config_path}")
             return self._create_default_config()
 
-        with open(self.config_path, 'r') as f:
-            return yaml.safe_load(f)
+        try:
+            with open(self.config_path, 'r') as f:
+                config = yaml.safe_load(f)
+
+            logger.info(f"Loaded configuration from {self.config_path}")
+
+            # Validate configuration if security is enabled
+            if security_enabled:
+                errors = validate_config(config)
+                if errors:
+                    for error in errors:
+                        logger.warning(f"Configuration validation error: {error}")
+                    logger.warning("Using default values for invalid configuration")
+                    config = apply_defaults(config)
+
+            return config
+        except Exception as e:
+            logger.error(f"Error loading configuration: {e}")
+            return self._create_default_config()
 
     def _create_default_config(self):
         """Create a default configuration."""
+        logger.info("Creating default configuration")
+
         default_config = {
             'orchestration': {
                 'max_agents': 10,
@@ -109,17 +143,40 @@ class Config:
                 },
             },
             'ui': {
+                'dashboard': {
+                    'enabled': True,
+                    'port': 8079,
+                    'host': 'localhost',
+                },
                 'swarmui': {
                     'enabled': True,
                     'port': 8080,
+                    'host': 'localhost',
                 },
                 'comfyui': {
                     'enabled': True,
                     'port': 8081,
+                    'host': 'localhost',
                 },
                 'opencanvas': {
                     'enabled': True,
                     'port': 8082,
+                    'host': 'localhost',
+                },
+            },
+            'security': {
+                'rate_limit': {
+                    'enabled': True,
+                    'max_requests': 100,
+                    'time_window': 60,
+                },
+                'auth': {
+                    'enabled': True,
+                    'session_expiry': 3600,
+                },
+                'encryption': {
+                    'enabled': True,
+                    'key_file': 'config/encryption_key.key',
                 },
             },
         }
@@ -164,7 +221,7 @@ class Config:
         keys = key.split('.')
         config = self.config
 
-        for i, k in enumerate(keys[:-1]):
+        for k in keys[:-1]:
             if k not in config:
                 config[k] = {}
             config = config[k]
@@ -172,13 +229,27 @@ class Config:
         config[keys[-1]] = value
 
         # Save the updated configuration
-        with open(self.config_path, 'w') as f:
-            yaml.dump(self.config, f, default_flow_style=False)
+        self.save()
 
     def save(self):
         """Save the configuration to the YAML file."""
-        with open(self.config_path, 'w') as f:
-            yaml.dump(self.config, f, default_flow_style=False)
+        try:
+            # Create the directory if it doesn't exist
+            os.makedirs(os.path.dirname(self.config_path), exist_ok=True)
+
+            # Save the configuration
+            with open(self.config_path, 'w') as f:
+                yaml.dump(self.config, f, default_flow_style=False)
+
+            # Set secure permissions if security is enabled
+            if security_enabled:
+                set_secure_permissions(self.config_path, owner_only=False)
+
+            logger.info(f"Saved configuration to {self.config_path}")
+            return True
+        except Exception as e:
+            logger.error(f"Error saving configuration: {e}")
+            return False
 
 
 # Create a singleton instance

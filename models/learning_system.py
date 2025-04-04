@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 
 from config.config import config
-from models.model_manager import ModelType
+from models.model_types import ModelType
 
 logger = logging.getLogger('dmac.models.learning')
 

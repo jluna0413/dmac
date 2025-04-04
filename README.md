@@ -20,6 +20,7 @@ DMac is built on top of OpenManus-RL, which provides the reinforcement learning 
 - **User Interfaces**: SwarmUI, ComfyUI, and LangChain OpenCanvas for monitoring and control.
 - **AI Models & Services**: DeepClaude framework, Gemini 2.5 pro API, and DeepSeek-RL 0.324.
 - **Enhanced Learning System**: Continuous learning from all model interactions with feedback mechanisms to improve response quality over time.
+- **Comprehensive Security**: Secure credential management, input validation, rate limiting, encryption, and authentication to protect the system and data.
 
 ## Installation
 
