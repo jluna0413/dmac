@@ -615,7 +615,7 @@ class SimpleDashboardServer:
                     'error': result['error']
                 }, status=500)
 
-            response_text = result.get('response', "I'm sorry, I couldn't generate a response.")
+            response_text = result.get('text', "I'm sorry, I couldn't generate a response.")
 
             return web.json_response({
                 'success': True,
@@ -743,7 +743,7 @@ class SimpleDashboardServer:
                     'error': result['error']
                 }, status=500)
 
-            response_text = result.get('response', "I'm sorry, I couldn't generate a response.")
+            response_text = result.get('text', "I'm sorry, I couldn't generate a response.")
 
             return web.json_response({
                 'success': True,
