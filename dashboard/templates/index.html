@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to DMac</h1>
+    <p class="lead">An AI Agent Swarm System for Collaborative Problem Solving</p>
+    <hr class="my-4">
+    <p>DMac enables multiple AI agents to collaborate on complex tasks, learning from interactions to improve over time.</p>
+    <a class="btn btn-primary btn-lg" href="/dashboard" role="button">Go to Dashboard</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Agent Swarms</h5>
+                <p class="card-text">Create and manage swarms of AI agents that collaborate to solve complex problems.</p>
+                <a href="/agents" class="btn btn-primary">Manage Agents</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Task Management</h5>
+                <p class="card-text">Create, assign, and track tasks for your agent swarms.</p>
+                <a href="/tasks" class="btn btn-primary">Manage Tasks</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Model Integration</h5>
+                <p class="card-text">Integrate with various AI models, including Ollama, Gemini, and DeepSeek.</p>
+                <a href="/models" class="btn btn-primary">Manage Models</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">WebArena Integration</h5>
+                <p class="card-text">Evaluate your agents in the WebArena environment, a benchmark for web agents.</p>
+                <div class="btn-group">
+                    <a href="/webarena" class="btn btn-primary">WebArena Overview</a>
+                    <a href="/webarena/dashboard" class="btn btn-success">WebArena Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Learning System</h5>
+                <p class="card-text">The system learns from agent interactions to improve performance over time.</p>
+                <a href="/settings" class="btn btn-primary">Configure Learning</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+        }
+    });
+</script>
+{% endblock %}

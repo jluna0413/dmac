@@ -1,0 +1,92 @@
+/* Voice Interaction Styles */
+
+/* Voice input button styles */
+.voice-input-btn {
+    transition: all 0.3s ease;
+}
+
+.voice-input-btn.listening {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    animation: pulse 1.5s infinite;
+}
+
+/* Pulse animation for the listening state */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+/* Voice assistant modal styles */
+#voice-conversation-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.user-message, .assistant-message {
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+}
+
+.assistant-message {
+    align-self: flex-start;
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.message-content {
+    word-break: break-word;
+}
+
+/* Voice assistant button in navbar */
+#voice-assistant-btn {
+    cursor: pointer;
+}
+
+#voice-assistant-btn:hover {
+    color: #007bff;
+}
+
+/* Loading indicator */
+#voice-loading-indicator {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .assistant-message {
+    background-color: #343a40;
+    color: #f8f9fa;
+}
+
+[data-theme="dark"] #voice-conversation-container {
+    background-color: #212529;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .user-message, .assistant-message {
+        max-width: 90%;
+    }
+}

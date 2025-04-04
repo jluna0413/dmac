@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}DMac - Chat{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/unified-input.css">
+    <link rel="stylesheet" href="/static/css/voice-interaction.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div id="chat-container" class="chat-container">
+        <!-- Welcome message -->
+        <div class="message assistant-message">
+            <div class="message-content">
+                <h4>Welcome to DMac AI Assistant</h4>
+                <p>I'm here to help you with your tasks. You can:</p>
+                <ul>
+                    <li>Ask me questions about AI, programming, or any topic</li>
+                    <li>Upload files for me to analyze</li>
+                    <li>Use voice input by clicking the microphone button</li>
+                    <li>Activate deep research mode for more thorough answers</li>
+                    <li>Enable deep thinking mode for complex problems</li>
+                </ul>
+                <p>How can I assist you today?</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- The unified input container will be added by JavaScript -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="/static/js/voice-interaction.js"></script>
+    <script src="/static/js/unified-input.js"></script>
+{% endblock %}

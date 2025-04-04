@@ -8,6 +8,7 @@ DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of speci
 - **Manufacturing Automation**: 3D printing, CNC machining, and laser engraving integrated with automated packaging design.
 - **Creative Design & Content Creation**: 3D modeling, video content production, and packaging visualization.
 - **Interactive UI & Virtual Agents**: Real-time dashboards (SwarmUI, ComfyUI), visual workflow building (LangChain OpenCanvas), and lifelike agent interaction (Unreal Engine 5 Metahumans).
+- **WebArena Integration**: Evaluate your agents in the WebArena environment, a benchmark for web agents with comprehensive open-source visualization and analysis tools.
 - **Home Automation & IoT** (Optional): Control of smart devices and industrial machinery as part of an integrated manufacturing process.
 
 ## Architecture
@@ -15,12 +16,13 @@ DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of speci
 DMac is built on top of OpenManus-RL, which provides the reinforcement learning framework for agent training and coordination. The system consists of the following components:
 
 - **Core Orchestration Layer**: Coordinates all specialized agents and manages task execution.
-- **Specialized Agents**: Coding, Manufacturing, Design, UI, and IoT agents that perform specific tasks.
-- **External Tool Integrations**: Voice interface, CLI interface, design tools, and manufacturing controllers.
-- **User Interfaces**: SwarmUI, ComfyUI, and LangChain OpenCanvas for monitoring and control.
-- **AI Models & Services**: DeepClaude framework, Gemini 2.5 pro API, and DeepSeek-RL 0.324.
+- **Specialized Agents**: Coding, Manufacturing, Design, UI, WebArena, and IoT agents that perform specific tasks.
+- **External Tool Integrations**: Voice interface, CLI interface, design tools, WebArena benchmark, and manufacturing controllers.
+- **User Interfaces**: SwarmUI, ComfyUI, WebArena Dashboard, and LangChain OpenCanvas for monitoring and control.
+- **AI Models & Services**: DeepClaude framework, Gemini 2.5 pro API, Ollama models, and DeepSeek-RL 0.324.
 - **Enhanced Learning System**: Continuous learning from all model interactions with feedback mechanisms to improve response quality over time.
 - **Comprehensive Security**: Secure credential management, input validation, rate limiting, encryption, and authentication to protect the system and data.
+- **WebArena Integration**: Benchmark environment for evaluating web agents with open-source visualization and analysis tools using Streamlit.
 
 ## Installation
 
@@ -62,6 +64,26 @@ python main.py
 # Single prompt
 python main.py --prompt "Generate a Python function to sort a list of integers"
 ```
+
+### WebArena Integration
+
+The WebArena integration allows you to evaluate your agents in the WebArena environment using open-source visualization tools:
+
+```
+# Start the DMac application with the dashboard
+python run_server.py
+
+# Access the WebArena dashboard at
+http://localhost:8080/webarena/dashboard
+```
+
+From the WebArena dashboard, you can:
+
+- Create and manage WebArena agents
+- Run experiments with different models and tasks
+- View the results of experiments
+- Generate visualizations and analyze performance using Streamlit
+- Compare different models including Ollama models like Gemma3:12b
 
 ## Configuration
 

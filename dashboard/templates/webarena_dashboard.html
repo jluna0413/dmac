@@ -1,0 +1,1338 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>WebArena Dashboard</h1>
+        <p>Manage and monitor your WebArena experiments from this dashboard.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">WebArena Agents</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="agentsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Current Run</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <div class="loading-container">
+                                        <div class="progress mb-3">
+                                            <div id="agentsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary me-3" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span id="agentsLoadingPercent" class="loading-percentage">0%</span>
+                                        </div>
+                                        <p id="agentsLoadingText" class="mt-2">Initializing agents data...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" id="createAgentBtn">Create New Agent</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Runs</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="recentRunsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Task</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <div class="loading-container">
+                                        <div class="progress mb-3">
+                                            <div id="runsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-info me-3" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span id="runsLoadingPercent" class="loading-percentage">0%</span>
+                                        </div>
+                                        <p id="runsLoadingText" class="mt-2">Fetching recent runs...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/webarena/runs" class="btn btn-primary">View All Runs</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Run New Experiment</h5>
+            </div>
+            <div class="card-body">
+                <form id="experimentForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="agentSelect">Agent</label>
+                                <select class="form-control" id="agentSelect" required>
+                                    <option value="">Select an agent...</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="taskSelect">Task</label>
+                                <select class="form-control" id="taskSelect" required>
+                                    <option value="">Select a task...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="modelSelect">Model</label>
+                                <select class="form-control" id="modelSelect" required>
+                                    <option value="">Select a model...</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="numEpisodes">Number of Episodes</label>
+                                        <input type="number" class="form-control" id="numEpisodes" min="1" max="10" value="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="timeout">Timeout (seconds)</label>
+                                        <input type="number" class="form-control" id="timeout" min="300" max="7200" value="3600">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger d-none" id="experimentError"></div>
+                    <div class="d-none" id="experimentLoadingContainer">
+                        <div class="progress mb-3">
+                            <div id="experimentLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="spinner-border text-success me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span id="experimentLoadingPercent" class="loading-percentage">0%</span>
+                        </div>
+                        <p id="experimentLoadingText" class="text-center">Preparing experiment...</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="runExperimentBtn">Run Experiment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Performance Overview</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Agent Modal -->
+<div class="modal fade" id="createAgentModal" tabindex="-1" aria-labelledby="createAgentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createAgentModalLabel">Create WebArena Agent</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createAgentForm">
+                    <div class="form-group mb-3">
+                        <label for="agentName">Agent Name</label>
+                        <input type="text" class="form-control" id="agentName" required>
+                    </div>
+                    <div class="alert alert-danger d-none" id="createAgentError"></div>
+                    <div class="d-none" id="createAgentLoadingContainer">
+                        <div class="progress mb-3">
+                            <div id="createAgentLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="spinner-border text-primary me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span id="createAgentLoadingPercent" class="loading-percentage">0%</span>
+                        </div>
+                        <p id="createAgentLoadingText" class="text-center">Creating agent...</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="createAgentSubmitBtn">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Run Details Modal -->
+<div class="modal fade" id="runDetailsModal" tabindex="-1" aria-labelledby="runDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="runDetailsModalLabel">Run Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="runDetailsLoading">
+                    <div class="progress mb-3">
+                        <div id="runDetailsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="spinner-border text-primary me-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span id="runDetailsLoadingPercent" class="loading-percentage">0%</span>
+                    </div>
+                    <p id="runDetailsLoadingText">Initializing run details...</p>
+                </div>
+                <div id="runDetailsContent" class="d-none">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Run Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>ID</th>
+                                    <td id="detailsRunId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Task</th>
+                                    <td id="detailsTaskName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Model</th>
+                                    <td id="detailsModelName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td id="detailsStatus"></td>
+                                </tr>
+                                <tr>
+                                    <th>Start Time</th>
+                                    <td id="detailsStartTime"></td>
+                                </tr>
+                                <tr>
+                                    <th>Duration</th>
+                                    <td id="detailsDuration"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Results</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Success Rate</th>
+                                    <td id="detailsSuccessRate"></td>
+                                </tr>
+                                <tr>
+                                    <th>Avg. Completion Time</th>
+                                    <td id="detailsCompletionTime"></td>
+                                </tr>
+                                <tr>
+                                    <th>Total Actions</th>
+                                    <td id="detailsTotalActions"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h6>Action Breakdown</h6>
+                            <canvas id="detailsActionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-primary" id="viewFullDetailsButton">View Full Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Load agents
+        loadAgents();
+
+        // Load recent runs
+        loadRecentRuns();
+
+        // Initialize chart
+        initializeChart();
+
+        // Set up event handlers
+        $('#createAgentBtn').click(function() {
+            $('#createAgentModal').modal('show');
+        });
+
+        $('#createAgentSubmitBtn').click(function() {
+            createAgent();
+        });
+
+        $('#experimentForm').submit(function(e) {
+            e.preventDefault();
+            runExperiment();
+        });
+
+        // Refresh data every 30 seconds
+        setInterval(function() {
+            loadAgents();
+            loadRecentRuns();
+        }, 30000);
+    });
+
+    function loadAgents() {
+        const token = localStorage.getItem('dmac_token');
+
+        // Show loading indicators
+        $('#agentsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#agentsLoadingPercent').text('10%');
+        $('#agentsLoadingText').text('Connecting to server...');
+
+        $.ajax({
+            url: '/api/agents/webarena',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                // Update loading indicators
+                $('#agentsLoadingBar').css('width', '50%').attr('aria-valuenow', 50);
+                $('#agentsLoadingPercent').text('50%');
+                $('#agentsLoadingText').text('Processing agent data...');
+
+                const agents = response.agents || [];
+
+                // Simulate a slight delay to show the loading process
+                setTimeout(function() {
+                    // Update loading indicators
+                    $('#agentsLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#agentsLoadingPercent').text('90%');
+                    $('#agentsLoadingText').text('Rendering agent list...');
+
+                    // Update agents table
+                    let tableHtml = '';
+                    if (agents.length === 0) {
+                        tableHtml = '<tr><td colspan="4" class="text-center">No agents found</td></tr>';
+                    } else {
+                        agents.forEach(agent => {
+                            tableHtml += `
+                                <tr>
+                                    <td>${agent.id.substring(0, 8)}...</td>
+                                    <td>${agent.name}</td>
+                                    <td>${agent.current_run_id || 'None'}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-agent-btn" data-agent-id="${agent.id}">View</button>
+                                        <button class="btn btn-sm btn-danger delete-agent-btn" data-agent-id="${agent.id}">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    // Update agent select
+                    let selectHtml = '<option value="">Select an agent...</option>';
+                    agents.forEach(agent => {
+                        selectHtml += `<option value="${agent.id}">${agent.name}</option>`;
+                    });
+
+                    // Complete the loading
+                    setTimeout(function() {
+                        $('#agentsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#agentsLoadingPercent').text('100%');
+                        $('#agentsLoadingText').text('Completed!');
+
+                        setTimeout(function() {
+                            // Update the UI
+                            $('#agentsTable tbody').html(tableHtml);
+                            $('#agentSelect').html(selectHtml);
+
+                            // Attach event handlers
+                            $('.view-agent-btn').click(function() {
+                                const agentId = $(this).data('agent-id');
+                                viewAgent(agentId);
+                            });
+
+                            $('.delete-agent-btn').click(function() {
+                                const agentId = $(this).data('agent-id');
+                                deleteAgent(agentId);
+                            });
+
+                            // Load tasks and models when an agent is selected
+                            $('#agentSelect').change(function() {
+                                const agentId = $(this).val();
+                                if (agentId) {
+                                    loadTasks(agentId);
+                                    loadModels(agentId);
+                                } else {
+                                    $('#taskSelect').html('<option value="">Select a task...</option>');
+                                    $('#modelSelect').html('<option value="">Select a model...</option>');
+                                }
+                            });
+                        }, 500);
+                    }, 300);
+                }, 500);
+            },
+            error: function(xhr) {
+                console.error('Error loading agents:', xhr);
+                $('#agentsLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-primary').addClass('bg-danger');
+                $('#agentsLoadingPercent').text('Error');
+                $('#agentsLoadingText').text('Error loading agents');
+
+                setTimeout(function() {
+                    $('#agentsTable tbody').html('<tr><td colspan="4" class="text-center">Error loading agents</td></tr>');
+                    $('#agentSelect').html('<option value="">Error loading agents</option>');
+                }, 1000);
+            }
+        });
+    }
+
+    function loadRecentRuns() {
+        const token = localStorage.getItem('dmac_token');
+
+        // Show loading indicators
+        $('#runsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#runsLoadingPercent').text('10%');
+        $('#runsLoadingText').text('Connecting to server...');
+
+        $.ajax({
+            url: '/api/webarena/runs?limit=5',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                // Update loading indicators
+                $('#runsLoadingBar').css('width', '50%').attr('aria-valuenow', 50);
+                $('#runsLoadingPercent').text('50%');
+                $('#runsLoadingText').text('Processing run data...');
+
+                const runs = response.runs || [];
+
+                // Simulate a slight delay to show the loading process
+                setTimeout(function() {
+                    // Update loading indicators
+                    $('#runsLoadingBar').css('width', '75%').attr('aria-valuenow', 75);
+                    $('#runsLoadingPercent').text('75%');
+                    $('#runsLoadingText').text('Rendering run list...');
+
+                    // Update runs table
+                    let tableHtml = '';
+                    if (runs.length === 0) {
+                        tableHtml = '<tr><td colspan="5" class="text-center">No runs found</td></tr>';
+                    } else {
+                        runs.forEach(run => {
+                            tableHtml += `
+                                <tr>
+                                    <td>${run.id}</td>
+                                    <td>${run.task_name}</td>
+                                    <td>${run.model_name}</td>
+                                    <td><span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-run-btn" data-run-id="${run.id}">View</button>
+                                        <a href="/webarena/runs/${run.id}" class="btn btn-sm btn-primary">Details</a>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    // Update loading indicators
+                    $('#runsLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#runsLoadingPercent').text('90%');
+                    $('#runsLoadingText').text('Updating performance chart...');
+
+                    // Update performance chart
+                    updatePerformanceChart(runs);
+
+                    // Complete the loading
+                    setTimeout(function() {
+                        $('#runsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#runsLoadingPercent').text('100%');
+                        $('#runsLoadingText').text('Completed!');
+
+                        setTimeout(function() {
+                            // Update the UI
+                            $('#recentRunsTable tbody').html(tableHtml);
+
+                            // Attach event handlers
+                            $('.view-run-btn').click(function() {
+                                const runId = $(this).data('run-id');
+                                viewRun(runId);
+                            });
+                        }, 500);
+                    }, 300);
+                }, 500);
+            },
+            error: function(xhr) {
+                console.error('Error loading runs:', xhr);
+                $('#runsLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-info').addClass('bg-danger');
+                $('#runsLoadingPercent').text('Error');
+                $('#runsLoadingText').text('Error loading runs');
+
+                setTimeout(function() {
+                    $('#recentRunsTable tbody').html('<tr><td colspan="5" class="text-center">Error loading runs</td></tr>');
+                }, 1000);
+            }
+        });
+    }
+
+    function loadTasks(agentId) {
+        const token = localStorage.getItem('dmac_token');
+
+        $.ajax({
+            url: `/api/agents/webarena/${agentId}/tasks`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                if (response.success) {
+                    const tasks = response.tasks || [];
+
+                    // Update task select
+                    let selectHtml = '<option value="">Select a task...</option>';
+                    tasks.forEach(task => {
+                        selectHtml += `<option value="${task.id}">${task.name}</option>`;
+                    });
+                    $('#taskSelect').html(selectHtml);
+                } else {
+                    console.error('Error loading tasks:', response.error);
+                    $('#taskSelect').html('<option value="">Error loading tasks</option>');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading tasks:', xhr);
+                $('#taskSelect').html('<option value="">Error loading tasks</option>');
+            }
+        });
+    }
+
+    function loadModels(agentId) {
+        const token = localStorage.getItem('dmac_token');
+
+        // First, try to load Ollama models
+        $.ajax({
+            url: '/api/ollama/models',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(ollamaResponse) {
+                // Then load WebArena models
+                $.ajax({
+                    url: `/api/agents/webarena/${agentId}/models`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    success: function(webArenaResponse) {
+                        // Combine models from both sources
+                        let models = [];
+
+                        // Add Ollama models
+                        if (ollamaResponse.success && ollamaResponse.models) {
+                            ollamaResponse.models.forEach(model => {
+                                models.push({
+                                    name: model.name,
+                                    displayName: `Ollama: ${model.name}`,
+                                    source: 'ollama',
+                                    status: model.status || 'Available'
+                                });
+                            });
+                        }
+
+                        // Add WebArena models
+                        if (webArenaResponse.success && webArenaResponse.models) {
+                            webArenaResponse.models.forEach(model => {
+                                models.push({
+                                    name: model.name,
+                                    displayName: model.name,
+                                    source: 'webarena',
+                                    status: model.status || 'Available'
+                                });
+                            });
+                        }
+
+                        // If no models were found, add some default Ollama models
+                        if (models.length === 0) {
+                            const defaultModels = [
+                                { name: 'GandalfBaum/deepseek_r1-claude3.7:latest', displayName: 'GandalfBaum/deepseek_r1-claude3.7:latest', source: 'ollama' },
+                                { name: 'gemma3:12b', displayName: 'gemma3:12b', source: 'ollama' },
+                                { name: 'qwen2.5-coder:1.5b-base', displayName: 'qwen2.5-coder:1.5b-base', source: 'ollama' },
+                                { name: 'qwq:latest', displayName: 'qwq:latest', source: 'ollama' },
+                                { name: 'gemini-pro', displayName: 'gemini-pro', source: 'api' }
+                            ];
+                            models = defaultModels;
+                        }
+
+                        // Update model select
+                        let selectHtml = '<option value="">Select a model...</option>';
+
+                        // Group models by source
+                        const ollamaModels = models.filter(model => model.source === 'ollama');
+                        const apiModels = models.filter(model => model.source === 'api');
+                        const webArenaModels = models.filter(model => model.source === 'webarena');
+
+                        if (ollamaModels.length > 0) {
+                            selectHtml += '<optgroup label="Ollama Models">';
+                            ollamaModels.forEach(model => {
+                                selectHtml += `<option value="${model.name}" data-source="${model.source}">${model.displayName}</option>`;
+                            });
+                            selectHtml += '</optgroup>';
+                        }
+
+                        if (apiModels.length > 0) {
+                            selectHtml += '<optgroup label="API Models">';
+                            apiModels.forEach(model => {
+                                selectHtml += `<option value="${model.name}" data-source="${model.source}">${model.displayName}</option>`;
+                            });
+                            selectHtml += '</optgroup>';
+                        }
+
+                        if (webArenaModels.length > 0) {
+                            selectHtml += '<optgroup label="WebArena Models">';
+                            webArenaModels.forEach(model => {
+                                selectHtml += `<option value="${model.name}" data-source="${model.source}">${model.displayName}</option>`;
+                            });
+                            selectHtml += '</optgroup>';
+                        }
+
+                        $('#modelSelect').html(selectHtml);
+                    },
+                    error: function(xhr) {
+                        console.error('Error loading WebArena models:', xhr);
+
+                        // Still try to show Ollama models
+                        let models = [];
+
+                        // Add Ollama models
+                        if (ollamaResponse.success && ollamaResponse.models) {
+                            ollamaResponse.models.forEach(model => {
+                                models.push({
+                                    name: model.name,
+                                    displayName: `Ollama: ${model.name}`,
+                                    source: 'ollama',
+                                    status: model.status || 'Available'
+                                });
+                            });
+                        }
+
+                        // If no models were found, add some default Ollama models
+                        if (models.length === 0) {
+                            const defaultModels = [
+                                { name: 'GandalfBaum/deepseek_r1-claude3.7:latest', displayName: 'GandalfBaum/deepseek_r1-claude3.7:latest', source: 'ollama' },
+                                { name: 'gemma3:12b', displayName: 'gemma3:12b', source: 'ollama' },
+                                { name: 'qwen2.5-coder:1.5b-base', displayName: 'qwen2.5-coder:1.5b-base', source: 'ollama' },
+                                { name: 'qwq:latest', displayName: 'qwq:latest', source: 'ollama' },
+                                { name: 'gemini-pro', displayName: 'gemini-pro', source: 'api' }
+                            ];
+                            models = defaultModels;
+                        }
+
+                        // Update model select
+                        let selectHtml = '<option value="">Select a model...</option>';
+
+                        // Group models by source
+                        const ollamaModels = models.filter(model => model.source === 'ollama');
+                        const apiModels = models.filter(model => model.source === 'api');
+
+                        if (ollamaModels.length > 0) {
+                            selectHtml += '<optgroup label="Ollama Models">';
+                            ollamaModels.forEach(model => {
+                                selectHtml += `<option value="${model.name}" data-source="${model.source}">${model.displayName}</option>`;
+                            });
+                            selectHtml += '</optgroup>';
+                        }
+
+                        if (apiModels.length > 0) {
+                            selectHtml += '<optgroup label="API Models">';
+                            apiModels.forEach(model => {
+                                selectHtml += `<option value="${model.name}" data-source="${model.source}">${model.displayName}</option>`;
+                            });
+                            selectHtml += '</optgroup>';
+                        }
+
+                        $('#modelSelect').html(selectHtml);
+                    }
+                });
+            },
+            error: function(xhr) {
+                console.error('Error loading Ollama models:', xhr);
+
+                // Fall back to just WebArena models
+                $.ajax({
+                    url: `/api/agents/webarena/${agentId}/models`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            const models = response.models || [];
+
+                            // Add some default models if none were found
+                            if (models.length === 0) {
+                                const defaultModels = [
+                                    { name: 'GandalfBaum/deepseek_r1-claude3.7:latest', displayName: 'GandalfBaum/deepseek_r1-claude3.7:latest', source: 'ollama' },
+                                    { name: 'gemma3:12b', displayName: 'gemma3:12b', source: 'ollama' },
+                                    { name: 'qwen2.5-coder:1.5b-base', displayName: 'qwen2.5-coder:1.5b-base', source: 'ollama' },
+                                    { name: 'qwq:latest', displayName: 'qwq:latest', source: 'ollama' },
+                                    { name: 'gemini-pro', displayName: 'gemini-pro', source: 'api' }
+                                ];
+
+                                // Update model select with default models
+                                let selectHtml = '<option value="">Select a model...</option>';
+                                selectHtml += '<optgroup label="Ollama Models">';
+                                defaultModels.filter(model => model.source === 'ollama').forEach(model => {
+                                    selectHtml += `<option value="${model.name}" data-source="${model.source}">${model.displayName}</option>`;
+                                });
+                                selectHtml += '</optgroup>';
+                                selectHtml += '<optgroup label="API Models">';
+                                defaultModels.filter(model => model.source === 'api').forEach(model => {
+                                    selectHtml += `<option value="${model.name}" data-source="${model.source}">${model.displayName}</option>`;
+                                });
+                                selectHtml += '</optgroup>';
+                                $('#modelSelect').html(selectHtml);
+                            } else {
+                                // Update model select with WebArena models
+                                let selectHtml = '<option value="">Select a model...</option>';
+                                models.forEach(model => {
+                                    selectHtml += `<option value="${model.name}">${model.name}</option>`;
+                                });
+                                $('#modelSelect').html(selectHtml);
+                            }
+                        } else {
+                            console.error('Error loading models:', response.error);
+                            $('#modelSelect').html('<option value="">Error loading models</option>');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error loading models:', xhr);
+                        $('#modelSelect').html('<option value="">Error loading models</option>');
+                    }
+                });
+            }
+        });
+    }
+
+    function createAgent() {
+        const token = localStorage.getItem('dmac_token');
+        const name = $('#agentName').val();
+
+        if (!name) {
+            $('#createAgentError').text('Please enter an agent name').removeClass('d-none');
+            return;
+        }
+
+        // Hide error message
+        $('#createAgentError').addClass('d-none');
+
+        // Show loading container
+        $('#createAgentLoadingContainer').removeClass('d-none');
+
+        // Disable button
+        $('#createAgentSubmitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...');
+
+        // Start loading animation
+        $('#createAgentLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#createAgentLoadingPercent').text('10%');
+        $('#createAgentLoadingText').text('Initializing agent creation...');
+
+        setTimeout(function() {
+            $('#createAgentLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#createAgentLoadingPercent').text('30%');
+            $('#createAgentLoadingText').text('Sending request to server...');
+
+            $.ajax({
+                url: '/api/agents/webarena',
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({ name }),
+                success: function(response) {
+                    // Update loading bar
+                    $('#createAgentLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                    $('#createAgentLoadingPercent').text('60%');
+                    $('#createAgentLoadingText').text('Agent created successfully!');
+
+                    setTimeout(function() {
+                        // Update loading bar
+                        $('#createAgentLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                        $('#createAgentLoadingPercent').text('90%');
+                        $('#createAgentLoadingText').text('Refreshing agent list...');
+
+                        // Reload agents
+                        loadAgents();
+
+                        setTimeout(function() {
+                            // Complete loading
+                            $('#createAgentLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                            $('#createAgentLoadingPercent').text('100%');
+                            $('#createAgentLoadingText').text('Completed!');
+
+                            setTimeout(function() {
+                                // Close modal
+                                $('#createAgentModal').modal('hide');
+
+                                // Reset form
+                                $('#createAgentForm')[0].reset();
+
+                                // Hide loading container
+                                $('#createAgentLoadingContainer').addClass('d-none');
+
+                                // Reset loading bar
+                                $('#createAgentLoadingBar').css('width', '0%').attr('aria-valuenow', 0);
+
+                                // Enable button
+                                $('#createAgentSubmitBtn').prop('disabled', false).text('Create');
+
+                                // Show success message
+                                alert(`Agent "${name}" created successfully`);
+                            }, 500);
+                        }, 1000);
+                    }, 500);
+                },
+                error: function(xhr) {
+                    // Update loading bar to show error
+                    $('#createAgentLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-primary').addClass('bg-danger');
+                    $('#createAgentLoadingPercent').text('Error');
+                    $('#createAgentLoadingText').text('Error creating agent');
+
+                    // Show error message
+                    let errorMessage = 'Error creating agent';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMessage = xhr.responseJSON.error;
+                    }
+                    $('#createAgentError').text(errorMessage).removeClass('d-none');
+
+                    // Enable button after a delay
+                    setTimeout(function() {
+                        // Hide loading container
+                        $('#createAgentLoadingContainer').addClass('d-none');
+
+                        // Reset loading bar
+                        $('#createAgentLoadingBar').css('width', '0%').attr('aria-valuenow', 0).removeClass('bg-danger').addClass('bg-primary');
+
+                        // Enable button
+                        $('#createAgentSubmitBtn').prop('disabled', false).text('Create');
+                    }, 2000);
+                }
+            });
+        }, 500);
+    }
+
+    function deleteAgent(agentId) {
+        if (!confirm('Are you sure you want to delete this agent?')) {
+            return;
+        }
+
+        const token = localStorage.getItem('dmac_token');
+
+        $.ajax({
+            url: `/api/agents/webarena/${agentId}`,
+            type: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                // Reload agents
+                loadAgents();
+
+                // Show success message
+                alert('Agent deleted successfully');
+            },
+            error: function(xhr) {
+                // Show error message
+                let errorMessage = 'Error deleting agent';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
+                alert(errorMessage);
+            }
+        });
+    }
+
+    function viewAgent(agentId) {
+        const token = localStorage.getItem('dmac_token');
+
+        $.ajax({
+            url: `/api/agents/webarena/${agentId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                // Show agent details
+                alert(`Agent Details:\nID: ${response.agent_id}\nName: ${response.name}\nType: ${response.type}\nCurrent Run: ${response.current_run_id || 'None'}`);
+            },
+            error: function(xhr) {
+                // Show error message
+                let errorMessage = 'Error viewing agent';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
+                alert(errorMessage);
+            }
+        });
+    }
+
+    function runExperiment() {
+        const token = localStorage.getItem('dmac_token');
+
+        // Get form values
+        const agentId = $('#agentSelect').val();
+        const taskName = $('#taskSelect').val();
+        const modelName = $('#modelSelect').val();
+        const numEpisodes = $('#numEpisodes').val();
+        const timeout = $('#timeout').val();
+
+        // Validate form
+        if (!agentId) {
+            $('#experimentError').text('Please select an agent').removeClass('d-none');
+            return;
+        }
+
+        if (!taskName) {
+            $('#experimentError').text('Please select a task').removeClass('d-none');
+            return;
+        }
+
+        if (!modelName) {
+            $('#experimentError').text('Please select a model').removeClass('d-none');
+            return;
+        }
+
+        // Hide error message
+        $('#experimentError').addClass('d-none');
+
+        // Show loading container
+        $('#experimentLoadingContainer').removeClass('d-none');
+
+        // Disable button
+        $('#runExperimentBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Running...');
+
+        // Start loading animation
+        $('#experimentLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#experimentLoadingPercent').text('10%');
+        $('#experimentLoadingText').text('Validating experiment parameters...');
+
+        setTimeout(function() {
+            $('#experimentLoadingBar').css('width', '25%').attr('aria-valuenow', 25);
+            $('#experimentLoadingPercent').text('25%');
+            $('#experimentLoadingText').text('Preparing experiment environment...');
+
+            setTimeout(function() {
+                $('#experimentLoadingBar').css('width', '40%').attr('aria-valuenow', 40);
+                $('#experimentLoadingPercent').text('40%');
+                $('#experimentLoadingText').text('Sending request to server...');
+
+                $.ajax({
+                    url: `/api/agents/webarena/${agentId}/runs`,
+                    type: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        task_name: taskName,
+                        model_name: modelName,
+                        num_episodes: parseInt(numEpisodes),
+                        timeout: parseInt(timeout)
+                    }),
+                    success: function(response) {
+                        if (response.success) {
+                            // Update loading bar
+                            $('#experimentLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                            $('#experimentLoadingPercent').text('60%');
+                            $('#experimentLoadingText').text('Experiment started successfully!');
+
+                            setTimeout(function() {
+                                // Update loading bar
+                                $('#experimentLoadingBar').css('width', '80%').attr('aria-valuenow', 80);
+                                $('#experimentLoadingPercent').text('80%');
+                                $('#experimentLoadingText').text('Refreshing run list...');
+
+                                // Reload runs
+                                loadRecentRuns();
+
+                                setTimeout(function() {
+                                    // Complete loading
+                                    $('#experimentLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                                    $('#experimentLoadingPercent').text('100%');
+                                    $('#experimentLoadingText').text('Completed!');
+
+                                    setTimeout(function() {
+                                        // Reset form
+                                        $('#experimentForm')[0].reset();
+
+                                        // Hide loading container
+                                        $('#experimentLoadingContainer').addClass('d-none');
+
+                                        // Reset loading bar
+                                        $('#experimentLoadingBar').css('width', '0%').attr('aria-valuenow', 0);
+
+                                        // Enable button
+                                        $('#runExperimentBtn').prop('disabled', false).text('Run Experiment');
+
+                                        // Show success message
+                                        alert(`Experiment started successfully! Run ID: ${response.run_id}`);
+                                    }, 500);
+                                }, 1000);
+                            }, 500);
+                        } else {
+                            // Update loading bar to show error
+                            $('#experimentLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-success').addClass('bg-danger');
+                            $('#experimentLoadingPercent').text('Error');
+                            $('#experimentLoadingText').text('Error running experiment');
+
+                            // Show error message
+                            $('#experimentError').text(response.error || 'Error running experiment').removeClass('d-none');
+
+                            // Enable button after a delay
+                            setTimeout(function() {
+                                // Hide loading container
+                                $('#experimentLoadingContainer').addClass('d-none');
+
+                                // Reset loading bar
+                                $('#experimentLoadingBar').css('width', '0%').attr('aria-valuenow', 0).removeClass('bg-danger').addClass('bg-success');
+
+                                // Enable button
+                                $('#runExperimentBtn').prop('disabled', false).text('Run Experiment');
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr) {
+                        // Update loading bar to show error
+                        $('#experimentLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-success').addClass('bg-danger');
+                        $('#experimentLoadingPercent').text('Error');
+                        $('#experimentLoadingText').text('Error running experiment');
+
+                        // Show error message
+                        let errorMessage = 'Error running experiment';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        }
+                        $('#experimentError').text(errorMessage).removeClass('d-none');
+
+                        // Enable button after a delay
+                        setTimeout(function() {
+                            // Hide loading container
+                            $('#experimentLoadingContainer').addClass('d-none');
+
+                            // Reset loading bar
+                            $('#experimentLoadingBar').css('width', '0%').attr('aria-valuenow', 0).removeClass('bg-danger').addClass('bg-success');
+
+                            // Enable button
+                            $('#runExperimentBtn').prop('disabled', false).text('Run Experiment');
+                        }, 2000);
+                    }
+                });
+            }, 500);
+        }, 500);
+    }
+
+    function viewRun(runId) {
+        const token = localStorage.getItem('dmac_token');
+
+        // Show modal
+        $('#runDetailsModal').modal('show');
+
+        // Show loading indicator
+        $('#runDetailsLoading').removeClass('d-none');
+        $('#runDetailsContent').addClass('d-none');
+
+        // Set the full details link
+        $('#viewFullDetailsButton').attr('href', `/webarena/runs/${runId}`);
+
+        // Start loading animation
+        $('#runDetailsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#runDetailsLoadingPercent').text('10%');
+        $('#runDetailsLoadingText').text('Connecting to server...');
+
+        // Load run details
+        setTimeout(function() {
+            $('#runDetailsLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#runDetailsLoadingPercent').text('30%');
+            $('#runDetailsLoadingText').text('Fetching run details...');
+
+            $.ajax({
+                url: `/api/webarena/runs/${runId}`,
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    // Update loading bar
+                    $('#runDetailsLoadingBar').css('width', '50%').attr('aria-valuenow', 50);
+                    $('#runDetailsLoadingPercent').text('50%');
+                    $('#runDetailsLoadingText').text('Processing run data...');
+
+                    const run = response.run_status;
+
+                    setTimeout(function() {
+                        // Update loading bar
+                        $('#runDetailsLoadingBar').css('width', '70%').attr('aria-valuenow', 70);
+                        $('#runDetailsLoadingPercent').text('70%');
+                        $('#runDetailsLoadingText').text('Preparing visualization...');
+
+                        // Set run information
+                        $('#detailsRunId').text(run.id);
+                        $('#detailsTaskName').text(run.task_name);
+                        $('#detailsModelName').text(run.model_name);
+                        $('#detailsStatus').html(`<span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span>`);
+                        $('#detailsStartTime').text(formatDate(run.start_time));
+
+                        if (run.duration) {
+                            $('#detailsDuration').text(`${run.duration.toFixed(2)} seconds`);
+                        } else if (run.start_time && run.end_time) {
+                            const duration = run.end_time - run.start_time;
+                            $('#detailsDuration').text(`${duration.toFixed(2)} seconds`);
+                        } else {
+                            $('#detailsDuration').text('N/A');
+                        }
+
+                        // Set results information
+                        if (run.results) {
+                            const results = run.results;
+
+                            if (results.success_rate !== undefined) {
+                                $('#detailsSuccessRate').text(`${(results.success_rate * 100).toFixed(2)}%`);
+                            } else {
+                                $('#detailsSuccessRate').text('N/A');
+                            }
+
+                            if (results.completion_time !== undefined) {
+                                $('#detailsCompletionTime').text(`${results.completion_time.toFixed(2)} seconds`);
+                            } else {
+                                $('#detailsCompletionTime').text('N/A');
+                            }
+
+                            if (results.total_actions !== undefined) {
+                                $('#detailsTotalActions').text(results.total_actions);
+                            } else {
+                                $('#detailsTotalActions').text('N/A');
+                            }
+
+                            // Update loading bar
+                            $('#runDetailsLoadingBar').css('width', '85%').attr('aria-valuenow', 85);
+                            $('#runDetailsLoadingPercent').text('85%');
+                            $('#runDetailsLoadingText').text('Generating chart...');
+
+                            // Create action breakdown chart
+                            if (results.action_counts) {
+                                const actionLabels = Object.keys(results.action_counts);
+                                const actionData = actionLabels.map(action => results.action_counts[action]);
+
+                                if (window.detailsActionChart) {
+                                    window.detailsActionChart.destroy();
+                                }
+
+                                const actionCtx = document.getElementById('detailsActionChart').getContext('2d');
+                                window.detailsActionChart = new Chart(actionCtx, {
+                                    type: 'pie',
+                                    data: {
+                                        labels: actionLabels,
+                                        datasets: [{
+                                            data: actionData,
+                                            backgroundColor: [
+                                                '#28a745', '#17a2b8', '#ffc107', '#dc3545', '#6f42c1',
+                                                '#fd7e14', '#20c997', '#e83e8c', '#6c757d', '#007bff'
+                                            ]
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        legend: {
+                                            position: 'right'
+                                        }
+                                    }
+                                });
+                            }
+                        } else {
+                            $('#detailsSuccessRate').text('N/A');
+                            $('#detailsCompletionTime').text('N/A');
+                            $('#detailsTotalActions').text('N/A');
+                        }
+
+                        // Complete loading
+                        setTimeout(function() {
+                            $('#runDetailsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                            $('#runDetailsLoadingPercent').text('100%');
+                            $('#runDetailsLoadingText').text('Completed!');
+
+                            setTimeout(function() {
+                                // Hide loading indicator and show content
+                                $('#runDetailsLoading').addClass('d-none');
+                                $('#runDetailsContent').removeClass('d-none');
+                            }, 500);
+                        }, 300);
+                    }, 500);
+                },
+                error: function(xhr) {
+                    console.error('Error loading run details:', xhr);
+                    $('#runDetailsLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-primary').addClass('bg-danger');
+                    $('#runDetailsLoadingPercent').text('Error');
+                    $('#runDetailsLoadingText').text('Error loading run details');
+
+                    setTimeout(function() {
+                        $('#runDetailsModal').modal('hide');
+                        alert('Error loading run details');
+                    }, 1000);
+                }
+            });
+        }, 500);
+    }
+
+    function initializeChart() {
+        // Performance overview chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        window.performanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Success Rate',
+                    data: [],
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Run'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Success Rate'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    function updatePerformanceChart(runs) {
+        // Extract completed runs with results
+        const completedRuns = runs.filter(run => run.status === 'completed' && run.results);
+
+        if (completedRuns.length === 0) {
+            return;
+        }
+
+        // Update performance chart
+        const performanceLabels = completedRuns.map(run => run.id);
+        const performanceData = completedRuns.map(run => {
+            if (run.results && run.results.success_rate !== undefined) {
+                return run.results.success_rate;
+            }
+            return 0;
+        });
+
+        window.performanceChart.data.labels = performanceLabels;
+        window.performanceChart.data.datasets[0].data = performanceData;
+        window.performanceChart.update();
+    }
+
+    function getStatusBadgeClass(status) {
+        switch (status) {
+            case 'completed':
+            case 'success':
+                return 'bg-success';
+            case 'running':
+            case 'active':
+                return 'bg-info';
+            case 'pending':
+                return 'bg-warning';
+            case 'failed':
+            case 'error':
+                return 'bg-danger';
+            default:
+                return 'bg-secondary';
+        }
+    }
+
+    function formatDate(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp * 1000);
+        return date.toLocaleString();
+    }
+</script>
+{% endblock %}

@@ -102,9 +102,20 @@ class Config:
                 'deepseek': {
                     'model_path': '',
                     'version': '0.324',
+                    'model_name': 'deepseek-coder',
+                    'learning_enabled': True,
+                    'learning_rate': 0.001,
+                    'batch_size': 32,
+                    'epochs': 10,
+                    'evaluation_interval': 100,
                 },
                 'local': {
                     'model_name': 'gemma3:12b',
+                },
+                'ollama': {
+                    'enabled': True,
+                    'api_url': 'http://localhost:11434',
+                    'models': ['llama2', 'mistral', 'gemma'],
                 },
             },
             'integrations': {
@@ -178,6 +189,32 @@ class Config:
                     'enabled': True,
                     'key_file': 'config/encryption_key.key',
                 },
+            },
+            'webarena': {
+                'enabled': True,
+                'dir': 'external/webarena',
+                'data_dir': 'data/webarena',
+                'max_concurrent_runs': 2,
+                'default_timeout': 3600,
+                'ollama': {
+                    'enabled': True,
+                    'default_system_prompt': "You are a helpful AI assistant that controls a web browser to help users with their tasks."
+                },
+                'visualization': {
+                    'enabled': True
+                }
+            },
+            'dashboard': {
+                'enabled': True,
+                'host': '0.0.0.0',
+                'port': 8080,
+                'static_dir': 'dashboard/static',
+                'templates_dir': 'dashboard/templates'
+            },
+            'api': {
+                'enabled': True,
+                'host': '0.0.0.0',
+                'port': 8000
             },
         }
 

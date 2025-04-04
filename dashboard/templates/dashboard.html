@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Dashboard</h1>
+        <p>Welcome to the DMac dashboard. Here you can monitor the status of your agent swarms, tasks, and models.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Agent Swarms</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="swarmChart"></canvas>
+            </div>
+            <div class="card-footer">
+                <a href="/agents" class="btn btn-primary btn-sm">View Details</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Tasks</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="taskChart"></canvas>
+            </div>
+            <div class="card-footer">
+                <a href="/tasks" class="btn btn-primary btn-sm">View Details</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Models</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="modelChart"></canvas>
+            </div>
+            <div class="card-footer">
+                <a href="/models" class="btn btn-primary btn-sm">View Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Tasks</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="recentTasksTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">WebArena Runs</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="webArenaRunsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Task</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/webarena/runs" class="btn btn-primary btn-sm">View All Runs</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Agents</h5>
+                                <h2 id="agentCount">-</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Swarms</h5>
+                                <h2 id="swarmCount">-</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Active Tasks</h5>
+                                <h2 id="activeTaskCount">-</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Models</h5>
+                                <h2 id="modelCount">-</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Initialize charts
+        initializeCharts();
+        
+        // Load data
+        loadDashboardData();
+        
+        // Refresh data every 30 seconds
+        setInterval(loadDashboardData, 30000);
+    });
+    
+    function initializeCharts() {
+        // Swarm chart
+        const swarmCtx = document.getElementById('swarmChart').getContext('2d');
+        window.swarmChart = new Chart(swarmCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Active', 'Idle', 'Error'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['#28a745', '#17a2b8', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        });
+        
+        // Task chart
+        const taskCtx = document.getElementById('taskChart').getContext('2d');
+        window.taskChart = new Chart(taskCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Running', 'Completed', 'Failed'],
+                datasets: [{
+                    data: [0, 0, 0, 0],
+                    backgroundColor: ['#ffc107', '#17a2b8', '#28a745', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        });
+        
+        // Model chart
+        const modelCtx = document.getElementById('modelChart').getContext('2d');
+        window.modelChart = new Chart(modelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Gemini', 'DeepSeek', 'Local'],
+                datasets: [{
+                    label: 'Usage',
+                    data: [0, 0, 0],
+                    backgroundColor: ['#6f42c1', '#fd7e14', '#20c997']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+    
+    function loadDashboardData() {
+        const token = localStorage.getItem('dmac_token');
+        
+        // Load system status
+        $.ajax({
+            url: '/api/system/status',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                // Update counts
+                $('#agentCount').text(response.agent_count || 0);
+                $('#swarmCount').text(response.swarm_count || 0);
+                $('#activeTaskCount').text(response.active_task_count || 0);
+                $('#modelCount').text(response.model_count || 0);
+                
+                // Update swarm chart
+                if (response.swarm_status) {
+                    window.swarmChart.data.datasets[0].data = [
+                        response.swarm_status.active || 0,
+                        response.swarm_status.idle || 0,
+                        response.swarm_status.error || 0
+                    ];
+                    window.swarmChart.update();
+                }
+                
+                // Update task chart
+                if (response.task_status) {
+                    window.taskChart.data.datasets[0].data = [
+                        response.task_status.pending || 0,
+                        response.task_status.running || 0,
+                        response.task_status.completed || 0,
+                        response.task_status.failed || 0
+                    ];
+                    window.taskChart.update();
+                }
+                
+                // Update model chart
+                if (response.model_usage) {
+                    window.modelChart.data.datasets[0].data = [
+                        response.model_usage.gemini || 0,
+                        response.model_usage.deepseek || 0,
+                        response.model_usage.local || 0
+                    ];
+                    window.modelChart.update();
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading system status:', xhr);
+            }
+        });
+        
+        // Load recent tasks
+        $.ajax({
+            url: '/api/tasks?limit=5',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const tasks = response.tasks || [];
+                let html = '';
+                
+                if (tasks.length === 0) {
+                    html = '<tr><td colspan="5" class="text-center">No tasks found</td></tr>';
+                } else {
+                    tasks.forEach(task => {
+                        html += `
+                            <tr>
+                                <td>${task.id}</td>
+                                <td>${task.type}</td>
+                                <td><span class="badge ${getStatusBadgeClass(task.status)}">${task.status}</span></td>
+                                <td>${formatDate(task.created_at)}</td>
+                                <td>
+                                    <a href="/tasks/${task.id}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                $('#recentTasksTable tbody').html(html);
+            },
+            error: function(xhr) {
+                console.error('Error loading recent tasks:', xhr);
+                $('#recentTasksTable tbody').html('<tr><td colspan="5" class="text-center">Error loading tasks</td></tr>');
+            }
+        });
+        
+        // Load WebArena runs
+        $.ajax({
+            url: '/api/webarena/runs?limit=5',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const runs = response.runs || [];
+                let html = '';
+                
+                if (runs.length === 0) {
+                    html = '<tr><td colspan="5" class="text-center">No runs found</td></tr>';
+                } else {
+                    runs.forEach(run => {
+                        html += `
+                            <tr>
+                                <td>${run.id}</td>
+                                <td>${run.task_name}</td>
+                                <td>${run.model_name}</td>
+                                <td><span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span></td>
+                                <td>
+                                    <a href="/webarena/runs/${run.id}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                $('#webArenaRunsTable tbody').html(html);
+            },
+            error: function(xhr) {
+                console.error('Error loading WebArena runs:', xhr);
+                $('#webArenaRunsTable tbody').html('<tr><td colspan="5" class="text-center">Error loading runs</td></tr>');
+            }
+        });
+    }
+    
+    function getStatusBadgeClass(status) {
+        switch (status) {
+            case 'completed':
+            case 'success':
+                return 'bg-success';
+            case 'running':
+            case 'active':
+                return 'bg-info';
+            case 'pending':
+                return 'bg-warning';
+            case 'failed':
+            case 'error':
+                return 'bg-danger';
+            default:
+                return 'bg-secondary';
+        }
+    }
+    
+    function formatDate(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp * 1000);
+        return date.toLocaleString();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="/static/css/material-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono&display=swap">
+    <link rel="icon" href="/static/img/dmac-logo.svg">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/theme-switcher.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 login-container">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h3>DMac Login</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="loginForm">
+                            <div class="form-group mb-3">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="alert alert-danger d-none" id="loginError"></div>
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>Don't have an account? <a href="#" id="registerLink">Register</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Modal -->
+        <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="registerForm">
+                            <div class="form-group mb-3">
+                                <label for="regUsername">Username</label>
+                                <input type="text" class="form-control" id="regUsername" name="username" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="regEmail">Email</label>
+                                <input type="email" class="form-control" id="regEmail" name="email" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="regPassword">Password</label>
+                                <input type="password" class="form-control" id="regPassword" name="password" required>
+                                <small class="form-text text-muted">Password must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.</small>
+                            </div>
+                            <div class="alert alert-danger d-none" id="registerError"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="registerButton">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Check if the user is already logged in
+            const token = localStorage.getItem('dmac_token');
+            if (token) {
+                // Redirect to dashboard
+                window.location.href = '/dashboard';
+            }
+
+            // Handle login form submission
+            $('#loginForm').submit(function(e) {
+                e.preventDefault();
+
+                const username = $('#username').val();
+                const password = $('#password').val();
+
+                // Hide any previous error
+                $('#loginError').addClass('d-none');
+
+                // Send login request
+                $.ajax({
+                    url: '/api/auth/login',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ username, password }),
+                    success: function(response) {
+                        // Store the token
+                        localStorage.setItem('dmac_token', response.token);
+
+                        // Redirect to dashboard
+                        window.location.href = '/dashboard';
+                    },
+                    error: function(xhr) {
+                        // Show error message
+                        let errorMessage = 'Login failed';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        }
+                        $('#loginError').text(errorMessage).removeClass('d-none');
+                    }
+                });
+            });
+
+            // Show registration modal
+            $('#registerLink').click(function(e) {
+                e.preventDefault();
+                $('#registerModal').modal('show');
+            });
+
+            // Handle registration
+            $('#registerButton').click(function() {
+                const username = $('#regUsername').val();
+                const email = $('#regEmail').val();
+                const password = $('#regPassword').val();
+
+                // Hide any previous error
+                $('#registerError').addClass('d-none');
+
+                // Send registration request
+                $.ajax({
+                    url: '/api/auth/register',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ username, email, password }),
+                    success: function(response) {
+                        // Close the modal
+                        $('#registerModal').modal('hide');
+
+                        // Show success message
+                        alert('Registration successful! You can now log in.');
+                    },
+                    error: function(xhr) {
+                        // Show error message
+                        let errorMessage = 'Registration failed';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        }
+                        $('#registerError').text(errorMessage).removeClass('d-none');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

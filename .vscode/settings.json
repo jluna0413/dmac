@@ -21,12 +21,20 @@
         "**/.DS_Store": true,
         "**/__pycache__": true,
         "**/.pytest_cache": true,
-        "**/.ipynb_checkpoints": true
+        "**/.ipynb_checkpoints": true,
+        "**/webarena-zeno.ipynb": true,
+        "**/webarena-zeno-fixed.ipynb": true,
+        "**/zeno_client.pyi": true,
+        "**/zeno_client_wrapper.py": true
     },
     "search.exclude": {
         "**/node_modules": true,
         "**/bower_components": true,
         "**/*.code-search": true,
-        "**/.ipynb_checkpoints": true
+        "**/.ipynb_checkpoints": true,
+        "**/webarena-zeno.ipynb": true,
+        "**/webarena-zeno-fixed.ipynb": true,
+        "**/zeno_client.pyi": true,
+        "**/zeno_client_wrapper.py": true
     }
 }

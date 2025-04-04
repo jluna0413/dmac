@@ -1,0 +1,190 @@
+/* Main Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-fluid {
+    flex: 1;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/* Card Styles */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* Table Styles */
+.table th {
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Chart Styles */
+canvas {
+    min-height: 250px;
+}
+
+/* Badge Styles */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+/* Button Styles */
+.btn-group .btn {
+    margin-right: 0;
+}
+
+/* Navbar Styles */
+.navbar {
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Jumbotron Styles */
+.jumbotron {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    background-color: #e9ecef;
+    border-radius: 0.3rem;
+}
+
+/* Form Styles */
+.form-group label {
+    font-weight: 500;
+}
+
+/* Modal Styles */
+.modal-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.modal-footer {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* Dashboard Specific Styles */
+.dashboard-stat {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-stat h2 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-stat p {
+    margin-bottom: 0;
+    color: #6c757d;
+}
+
+/* WebArena Specific Styles */
+.task-card {
+    height: 100%;
+}
+
+.task-card .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-card .btn {
+    margin-top: auto;
+}
+
+/* Loading Styles */
+.loading-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.progress {
+    height: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+}
+
+.progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 1rem 0;
+    }
+
+    to {
+        background-position: 0 0;
+    }
+}
+
+/* Visualization Styles */
+.visualization-card {
+    height: 100%;
+}
+
+.visualization-card img {
+    max-height: 200px;
+    object-fit: contain;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .card-title {
+        font-size: 1.25rem;
+    }
+
+    canvas {
+        min-height: 200px;
+    }
+
+    .dashboard-stat h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    canvas {
+        min-height: 150px;
+    }
+
+    .dashboard-stat h2 {
+        font-size: 1.75rem;
+    }
+}

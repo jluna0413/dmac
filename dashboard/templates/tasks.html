@@ -1,0 +1,957 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Tasks</h1>
+        <p>Manage and monitor tasks in the DMac system.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Active Tasks</h5>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">Create New Task</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="tasksTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Agent</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="loading-container">
+                                        <div class="progress mb-3">
+                                            <div id="tasksLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary me-3" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span id="tasksLoadingPercent" class="loading-percentage">0%</span>
+                                        </div>
+                                        <p id="tasksLoadingText" class="mt-2">Loading tasks...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Task Types</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Code Generation
+                        <span class="badge bg-primary rounded-pill">3</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Web Navigation
+                        <span class="badge bg-primary rounded-pill">2</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        UI Design
+                        <span class="badge bg-primary rounded-pill">1</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Manufacturing
+                        <span class="badge bg-primary rounded-pill">2</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Design
+                        <span class="badge bg-primary rounded-pill">1</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Task Completion</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="taskCompletionChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Task Modal -->
+<div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content elevation-3">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createTaskModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Create New Task
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="createTaskForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="taskName" class="form-label">Task Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                    <input type="text" class="form-control" id="taskName" placeholder="Enter task name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="taskType" class="form-label">Task Type</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-tasks"></i></span>
+                                    <select class="form-control" id="taskType">
+                                        <option value="">Select task type...</option>
+                                        <option value="code">Code Generation</option>
+                                        <option value="web">Web Navigation</option>
+                                        <option value="ui">UI Design</option>
+                                        <option value="manufacturing">Manufacturing</option>
+                                        <option value="design">Design</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="taskAgent" class="form-label">Agent</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-robot"></i></span>
+                            <select class="form-control" id="taskAgent">
+                                <option value="">Select agent...</option>
+                                <option value="agent_1">Code Generator</option>
+                                <option value="agent_2">Web Navigator</option>
+                                <option value="agent_3">UI Designer</option>
+                                <option value="agent_4">Manufacturing Controller</option>
+                                <option value="agent_5">Design Assistant</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Description</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                            <textarea class="form-control" id="taskDescription" rows="3" placeholder="Enter task description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Attachments</label>
+                        <div class="card">
+                            <div class="card-body p-0">
+                                <ul class="nav nav-tabs" id="attachmentTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab" aria-controls="documents" aria-selected="true">
+                                            <i class="fas fa-file-alt me-1"></i> Documents
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="code-tab" data-bs-toggle="tab" data-bs-target="#code" type="button" role="tab" aria-controls="code" aria-selected="false">
+                                            <i class="fas fa-code me-1"></i> Code
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="media-tab" data-bs-toggle="tab" data-bs-target="#media" type="button" role="tab" aria-controls="media" aria-selected="false">
+                                            <i class="fas fa-photo-video me-1"></i> Media
+                                        </button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content p-3" id="attachmentTabsContent">
+                                    <div class="tab-pane fade show active" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+                                        <div class="mb-3">
+                                            <label for="documentUpload" class="form-label">Upload Documents</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-file-upload"></i></span>
+                                                <input class="form-control" type="file" id="documentUpload" multiple accept=".pdf,.docx,.txt,.xlsx,.csv,.pptx">
+                                            </div>
+                                            <div class="form-text">Supported formats: PDF, DOCX, TXT, XLSX, CSV, PPTX</div>
+                                        </div>
+                                        <div id="documentList" class="mt-3 attachment-list">
+                                            <!-- Document list will be populated here -->
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="code" role="tabpanel" aria-labelledby="code-tab">
+                                        <div class="mb-3">
+                                            <label for="codeUpload" class="form-label">Upload Code Files</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-file-code"></i></span>
+                                                <input class="form-control" type="file" id="codeUpload" multiple accept=".py,.js,.html,.css,.java,.cpp,.c,.h,.json,.xml,.yaml,.yml">
+                                            </div>
+                                            <div class="form-text">Supported formats: PY, JS, HTML, CSS, JAVA, CPP, C, H, JSON, XML, YAML</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="codeSnippet" class="form-label">Or Paste Code Snippet</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-code"></i></span>
+                                                <textarea class="form-control" id="codeSnippet" rows="3" placeholder="Paste code snippet here"></textarea>
+                                            </div>
+                                        </div>
+                                        <div id="codeList" class="mt-3 attachment-list">
+                                            <!-- Code file list will be populated here -->
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="media" role="tabpanel" aria-labelledby="media-tab">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="imageUpload" class="form-label">Images</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text"><i class="fas fa-image"></i></span>
+                                                        <input class="form-control" type="file" id="imageUpload" multiple accept="image/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="audioUpload" class="form-label">Audio</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text"><i class="fas fa-music"></i></span>
+                                                        <input class="form-control" type="file" id="audioUpload" multiple accept="audio/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="videoUpload" class="form-label">Video</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text"><i class="fas fa-video"></i></span>
+                                                        <input class="form-control" type="file" id="videoUpload" multiple accept="video/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="mediaList" class="mt-3 attachment-list">
+                                            <!-- Media file list will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger d-none" id="createTaskError"></div>
+                    <div class="d-none" id="createTaskLoadingContainer">
+                        <div class="progress mb-3">
+                            <div id="createTaskLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="spinner-border text-primary me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span id="createTaskLoadingPercent" class="loading-percentage">0%</span>
+                        </div>
+                        <p id="createTaskLoadingText" class="text-center">Creating task...</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="createTaskSubmitBtn">
+                    <i class="fas fa-check me-1"></i> Create
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Details Modal -->
+<div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskDetailsModalLabel">Task Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="taskDetailsLoading">
+                    <div class="progress mb-3">
+                        <div id="taskDetailsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="spinner-border text-primary me-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span id="taskDetailsLoadingPercent" class="loading-percentage">0%</span>
+                    </div>
+                    <p id="taskDetailsLoadingText">Loading task details...</p>
+                </div>
+                <div id="taskDetailsContent" class="d-none">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Basic Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>ID</th>
+                                    <td id="detailsTaskId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Name</th>
+                                    <td id="detailsTaskName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Type</th>
+                                    <td id="detailsTaskType"></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td id="detailsTaskStatus"></td>
+                                </tr>
+                                <tr>
+                                    <th>Agent</th>
+                                    <td id="detailsTaskAgent"></td>
+                                </tr>
+                                <tr>
+                                    <th>Created</th>
+                                    <td id="detailsTaskCreated"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Progress</h6>
+                            <div class="progress mb-3">
+                                <div id="detailsTaskProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                            </div>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Started</th>
+                                    <td id="detailsTaskStarted"></td>
+                                </tr>
+                                <tr>
+                                    <th>Estimated Completion</th>
+                                    <td id="detailsTaskEstimatedCompletion"></td>
+                                </tr>
+                                <tr>
+                                    <th>Time Elapsed</th>
+                                    <td id="detailsTaskTimeElapsed"></td>
+                                </tr>
+                                <tr>
+                                    <th>Steps Completed</th>
+                                    <td id="detailsTaskStepsCompleted"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h6>Description</h6>
+                            <p id="detailsTaskDescription"></p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h6>Recent Activity</h6>
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Step Completed</h6>
+                                        <small>3 minutes ago</small>
+                                    </div>
+                                    <p class="mb-1">Generated code for user interface component</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Step Started</h6>
+                                        <small>10 minutes ago</small>
+                                    </div>
+                                    <p class="mb-1">Started working on UI component generation</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Task Started</h6>
+                                        <small>1 hour ago</small>
+                                    </div>
+                                    <p class="mb-1">Task started by agent</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="cancelTaskBtn">Cancel Task</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Load tasks
+        loadTasks();
+
+        // Set up event handlers
+        $('#createTaskSubmitBtn').click(function() {
+            createTask();
+        });
+
+        // Initialize task completion chart
+        initTaskCompletionChart();
+    });
+
+    function loadTasks() {
+        const token = localStorage.getItem('dmac_token');
+
+        // Show loading indicators
+        $('#tasksLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#tasksLoadingPercent').text('10%');
+        $('#tasksLoadingText').text('Connecting to server...');
+
+        // Simulate loading tasks
+        setTimeout(function() {
+            $('#tasksLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#tasksLoadingPercent').text('30%');
+            $('#tasksLoadingText').text('Fetching task data...');
+
+            setTimeout(function() {
+                $('#tasksLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                $('#tasksLoadingPercent').text('60%');
+                $('#tasksLoadingText').text('Processing task information...');
+
+                setTimeout(function() {
+                    $('#tasksLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#tasksLoadingPercent').text('90%');
+                    $('#tasksLoadingText').text('Preparing task list...');
+
+                    // Mock task data
+                    const tasks = [
+                        { id: 'task_1', name: 'Generate Login Component', type: 'code', status: 'In Progress', agent: 'Code Generator', progress: 75 },
+                        { id: 'task_2', name: 'Navigate Shopping Website', type: 'web', status: 'In Progress', agent: 'Web Navigator', progress: 45 },
+                        { id: 'task_3', name: 'Design Dashboard UI', type: 'ui', status: 'Pending', agent: 'UI Designer', progress: 0 },
+                        { id: 'task_4', name: 'Control Manufacturing Process', type: 'manufacturing', status: 'In Progress', agent: 'Manufacturing Controller', progress: 60 },
+                        { id: 'task_5', name: 'Create Logo Design', type: 'design', status: 'Completed', agent: 'Design Assistant', progress: 100 }
+                    ];
+
+                    setTimeout(function() {
+                        $('#tasksLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#tasksLoadingPercent').text('100%');
+                        $('#tasksLoadingText').text('Completed!');
+
+                        setTimeout(function() {
+                            // Update tasks table
+                            let tableHtml = '';
+                            tasks.forEach(task => {
+                                let statusClass;
+                                if (task.status === 'In Progress') {
+                                    statusClass = 'bg-info';
+                                } else if (task.status === 'Completed') {
+                                    statusClass = 'bg-success';
+                                } else if (task.status === 'Pending') {
+                                    statusClass = 'bg-warning';
+                                } else {
+                                    statusClass = 'bg-secondary';
+                                }
+
+                                tableHtml += `
+                                    <tr>
+                                        <td>${task.id}</td>
+                                        <td>${task.name}</td>
+                                        <td>${task.type}</td>
+                                        <td><span class="badge ${statusClass}">${task.status}</span></td>
+                                        <td>${task.agent}</td>
+                                        <td>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: ${task.progress}%" aria-valuenow="${task.progress}" aria-valuemin="0" aria-valuemax="100">${task.progress}%</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info view-task-btn" data-task-id="${task.id}">View</button>
+                                            <button class="btn btn-sm btn-danger cancel-task-btn" data-task-id="${task.id}">Cancel</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                            $('#tasksTable tbody').html(tableHtml);
+
+                            // Attach event handlers
+                            $('.view-task-btn').click(function() {
+                                const taskId = $(this).data('task-id');
+                                viewTaskDetails(taskId);
+                            });
+
+                            $('.cancel-task-btn').click(function() {
+                                const taskId = $(this).data('task-id');
+                                cancelTask(taskId);
+                            });
+                        }, 500);
+                    }, 300);
+                }, 700);
+            }, 600);
+        }, 500);
+    }
+
+    // File upload handling
+    let uploadedDocuments = [];
+    let uploadedCodeFiles = [];
+    let uploadedMediaFiles = [];
+
+    // Handle document uploads
+    $('#documentUpload').change(function(e) {
+        handleFileUpload(e.target.files, 'document', uploadedDocuments, '#documentList');
+    });
+
+    // Handle code file uploads
+    $('#codeUpload').change(function(e) {
+        handleFileUpload(e.target.files, 'code', uploadedCodeFiles, '#codeList');
+    });
+
+    // Handle image uploads
+    $('#imageUpload').change(function(e) {
+        handleFileUpload(e.target.files, 'image', uploadedMediaFiles, '#mediaList');
+    });
+
+    // Handle audio uploads
+    $('#audioUpload').change(function(e) {
+        handleFileUpload(e.target.files, 'audio', uploadedMediaFiles, '#mediaList');
+    });
+
+    // Handle video uploads
+    $('#videoUpload').change(function(e) {
+        handleFileUpload(e.target.files, 'video', uploadedMediaFiles, '#mediaList');
+    });
+
+    function handleFileUpload(files, fileType, fileArray, listSelector) {
+        if (!files || files.length === 0) return;
+
+        // Process each file
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileId = `file-${Date.now()}-${i}`;
+
+            // Add file to array
+            fileArray.push({
+                id: fileId,
+                file: file,
+                type: fileType,
+                name: file.name,
+                size: file.size,
+                lastModified: file.lastModified
+            });
+
+            // Create file item in the list
+            const fileItem = $(`
+                <div class="card mb-2" id="${fileId}">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="${getFileIcon(file.name)}"></i>
+                                <span class="ms-2">${file.name}</span>
+                                <small class="text-muted ms-2">${formatFileSize(file.size)}</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-danger remove-file" data-file-id="${fileId}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            // Add file item to the list
+            $(listSelector).append(fileItem);
+        }
+
+        // Clear the file input
+        $(files[0].target).val('');
+
+        // Attach event handlers to remove buttons
+        $('.remove-file').click(function() {
+            const fileId = $(this).data('file-id');
+            removeFile(fileId, fileArray, listSelector);
+        });
+    }
+
+    function removeFile(fileId, fileArray, listSelector) {
+        // Remove file from array
+        const index = fileArray.findIndex(file => file.id === fileId);
+        if (index !== -1) {
+            fileArray.splice(index, 1);
+        }
+
+        // Remove file item from the list
+        $(`#${fileId}`).remove();
+    }
+
+    function getFileIcon(fileName) {
+        const extension = fileName.split('.').pop().toLowerCase();
+
+        // Document icons
+        if (['pdf'].includes(extension)) return 'fas fa-file-pdf';
+        if (['doc', 'docx'].includes(extension)) return 'fas fa-file-word';
+        if (['xls', 'xlsx', 'csv'].includes(extension)) return 'fas fa-file-excel';
+        if (['ppt', 'pptx'].includes(extension)) return 'fas fa-file-powerpoint';
+        if (['txt', 'rtf'].includes(extension)) return 'fas fa-file-alt';
+
+        // Code icons
+        if (['py'].includes(extension)) return 'fab fa-python';
+        if (['js'].includes(extension)) return 'fab fa-js';
+        if (['html'].includes(extension)) return 'fab fa-html5';
+        if (['css'].includes(extension)) return 'fab fa-css3';
+        if (['java'].includes(extension)) return 'fab fa-java';
+        if (['json', 'xml', 'yaml', 'yml'].includes(extension)) return 'fas fa-code';
+        if (['cpp', 'c', 'h'].includes(extension)) return 'fas fa-file-code';
+
+        // Media icons
+        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(extension)) return 'fas fa-file-image';
+        if (['mp3', 'wav', 'ogg', 'flac'].includes(extension)) return 'fas fa-file-audio';
+        if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'].includes(extension)) return 'fas fa-file-video';
+
+        // Default icon
+        return 'fas fa-file';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function createTask() {
+        const token = localStorage.getItem('dmac_token');
+        const name = $('#taskName').val();
+        const type = $('#taskType').val();
+        const agent = $('#taskAgent').val();
+        const description = $('#taskDescription').val();
+        const codeSnippet = $('#codeSnippet').val();
+
+        if (!name) {
+            $('#createTaskError').text('Please enter a task name').removeClass('d-none');
+            return;
+        }
+
+        if (!type) {
+            $('#createTaskError').text('Please select a task type').removeClass('d-none');
+            return;
+        }
+
+        if (!agent) {
+            $('#createTaskError').text('Please select an agent').removeClass('d-none');
+            return;
+        }
+
+        // Prepare task data
+        const taskData = {
+            name: name,
+            type: type,
+            agent: agent,
+            description: description,
+            codeSnippet: codeSnippet,
+            attachments: {
+                documents: uploadedDocuments.length,
+                code: uploadedCodeFiles.length,
+                media: uploadedMediaFiles.length,
+                total: uploadedDocuments.length + uploadedCodeFiles.length + uploadedMediaFiles.length
+            }
+        };
+
+        // Hide error message
+        $('#createTaskError').addClass('d-none');
+
+        // Show loading container
+        $('#createTaskLoadingContainer').removeClass('d-none');
+
+        // Disable button
+        $('#createTaskSubmitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...');
+
+        // Start loading animation
+        $('#createTaskLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#createTaskLoadingPercent').text('10%');
+        $('#createTaskLoadingText').text('Initializing task creation...');
+
+        setTimeout(function() {
+            $('#createTaskLoadingBar').css('width', '20%').attr('aria-valuenow', 20);
+            $('#createTaskLoadingPercent').text('20%');
+            $('#createTaskLoadingText').text('Preparing attachments...');
+
+            // Simulate processing attachments
+            const totalAttachments = taskData.attachments.total;
+            if (totalAttachments > 0) {
+                let processedAttachments = 0;
+                const processInterval = setInterval(function() {
+                    processedAttachments++;
+                    const progress = 20 + Math.min(40, Math.floor((processedAttachments / totalAttachments) * 40));
+                    $('#createTaskLoadingBar').css('width', `${progress}%`).attr('aria-valuenow', progress);
+                    $('#createTaskLoadingPercent').text(`${progress}%`);
+                    $('#createTaskLoadingText').text(`Processing attachment ${processedAttachments} of ${totalAttachments}...`);
+
+                    if (processedAttachments >= totalAttachments) {
+                        clearInterval(processInterval);
+                        proceedWithTaskCreation();
+                    }
+                }, 500);
+            } else {
+                setTimeout(function() {
+                    $('#createTaskLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                    $('#createTaskLoadingPercent').text('60%');
+                    proceedWithTaskCreation();
+                }, 500);
+            }
+        }, 500);
+
+        function proceedWithTaskCreation() {
+            $('#createTaskLoadingText').text('Sending request to server...');
+
+            setTimeout(function() {
+                $('#createTaskLoadingBar').css('width', '70%').attr('aria-valuenow', 70);
+                $('#createTaskLoadingPercent').text('70%');
+                $('#createTaskLoadingText').text('Initializing task...');
+
+                setTimeout(function() {
+                    $('#createTaskLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#createTaskLoadingPercent').text('90%');
+                    $('#createTaskLoadingText').text('Assigning task to agent...');
+
+                    setTimeout(function() {
+                        // Complete loading
+                        $('#createTaskLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#createTaskLoadingPercent').text('100%');
+                        $('#createTaskLoadingText').text('Task created successfully!');
+
+                        setTimeout(function() {
+                            // Hide loading container
+                            $('#createTaskLoadingContainer').addClass('d-none');
+
+                            // Reset loading bar
+                            $('#createTaskLoadingBar').css('width', '0%').attr('aria-valuenow', 0);
+
+                            // Enable button
+                            $('#createTaskSubmitBtn').prop('disabled', false).text('Create');
+
+                            // Close modal
+                            $('#createTaskModal').modal('hide');
+
+                            // Reset form
+                            $('#createTaskForm')[0].reset();
+
+                            // Clear file lists
+                            $('#documentList, #codeList, #mediaList').empty();
+                            uploadedDocuments = [];
+                            uploadedCodeFiles = [];
+                            uploadedMediaFiles = [];
+
+                            // Reload tasks
+                            loadTasks();
+
+                            // Show success message with attachment info
+                            let attachmentInfo = '';
+                            if (taskData.attachments.total > 0) {
+                                attachmentInfo = ` with ${taskData.attachments.total} attachment(s)`;
+                            }
+                            alert(`Task "${name}" created successfully${attachmentInfo}!`);
+                        }, 500);
+                    }, 500);
+                }, 600);
+            }, 700);
+        }
+    }
+
+    function viewTaskDetails(taskId) {
+        // Show modal
+        $('#taskDetailsModal').modal('show');
+
+        // Show loading indicator
+        $('#taskDetailsLoading').removeClass('d-none');
+        $('#taskDetailsContent').addClass('d-none');
+
+        // Start loading animation
+        $('#taskDetailsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#taskDetailsLoadingPercent').text('10%');
+        $('#taskDetailsLoadingText').text('Connecting to server...');
+
+        setTimeout(function() {
+            $('#taskDetailsLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#taskDetailsLoadingPercent').text('30%');
+            $('#taskDetailsLoadingText').text('Fetching task details...');
+
+            setTimeout(function() {
+                $('#taskDetailsLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                $('#taskDetailsLoadingPercent').text('60%');
+                $('#taskDetailsLoadingText').text('Processing task information...');
+
+                // Mock task details based on ID
+                let taskDetails;
+
+                if (taskId === 'task_1') {
+                    taskDetails = {
+                        id: 'task_1',
+                        name: 'Generate Login Component',
+                        type: 'code',
+                        status: 'In Progress',
+                        agent: 'Code Generator',
+                        created: '2023-07-01 10:00:00',
+                        started: '2023-07-01 10:05:00',
+                        estimatedCompletion: '2023-07-01 11:00:00',
+                        timeElapsed: '45 minutes',
+                        stepsCompleted: '3/4',
+                        progress: 75,
+                        description: 'Generate a React login component with form validation and API integration.'
+                    };
+                } else if (taskId === 'task_2') {
+                    taskDetails = {
+                        id: 'task_2',
+                        name: 'Navigate Shopping Website',
+                        type: 'web',
+                        status: 'In Progress',
+                        agent: 'Web Navigator',
+                        created: '2023-07-02 11:30:00',
+                        started: '2023-07-02 11:35:00',
+                        estimatedCompletion: '2023-07-02 12:30:00',
+                        timeElapsed: '25 minutes',
+                        stepsCompleted: '9/20',
+                        progress: 45,
+                        description: 'Navigate an e-commerce website to find and purchase a specific product.'
+                    };
+                } else {
+                    taskDetails = {
+                        id: taskId,
+                        name: 'Unknown Task',
+                        type: 'unknown',
+                        status: 'Unknown',
+                        agent: 'Unknown',
+                        created: 'Unknown',
+                        started: 'Unknown',
+                        estimatedCompletion: 'Unknown',
+                        timeElapsed: 'Unknown',
+                        stepsCompleted: 'Unknown',
+                        progress: 0,
+                        description: 'No description available.'
+                    };
+                }
+
+                setTimeout(function() {
+                    $('#taskDetailsLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#taskDetailsLoadingPercent').text('90%');
+                    $('#taskDetailsLoadingText').text('Preparing visualization...');
+
+                    setTimeout(function() {
+                        // Update task details
+                        $('#detailsTaskId').text(taskDetails.id);
+                        $('#detailsTaskName').text(taskDetails.name);
+                        $('#detailsTaskType').text(taskDetails.type);
+
+                        let statusClass;
+                        if (taskDetails.status === 'In Progress') {
+                            statusClass = 'bg-info';
+                        } else if (taskDetails.status === 'Completed') {
+                            statusClass = 'bg-success';
+                        } else if (taskDetails.status === 'Pending') {
+                            statusClass = 'bg-warning';
+                        } else {
+                            statusClass = 'bg-secondary';
+                        }
+
+                        $('#detailsTaskStatus').html(`<span class="badge ${statusClass}">${taskDetails.status}</span>`);
+                        $('#detailsTaskAgent').text(taskDetails.agent);
+                        $('#detailsTaskCreated').text(taskDetails.created);
+
+                        $('#detailsTaskProgress').css('width', `${taskDetails.progress}%`).attr('aria-valuenow', taskDetails.progress).text(`${taskDetails.progress}%`);
+                        $('#detailsTaskStarted').text(taskDetails.started);
+                        $('#detailsTaskEstimatedCompletion').text(taskDetails.estimatedCompletion);
+                        $('#detailsTaskTimeElapsed').text(taskDetails.timeElapsed);
+                        $('#detailsTaskStepsCompleted').text(taskDetails.stepsCompleted);
+
+                        $('#detailsTaskDescription').text(taskDetails.description);
+
+                        // Complete loading
+                        $('#taskDetailsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#taskDetailsLoadingPercent').text('100%');
+                        $('#taskDetailsLoadingText').text('Completed!');
+
+                        setTimeout(function() {
+                            // Hide loading indicator and show content
+                            $('#taskDetailsLoading').addClass('d-none');
+                            $('#taskDetailsContent').removeClass('d-none');
+                        }, 300);
+                    }, 400);
+                }, 500);
+            }, 600);
+        }, 500);
+    }
+
+    function cancelTask(taskId) {
+        if (confirm(`Are you sure you want to cancel task "${taskId}"?`)) {
+            alert(`Task "${taskId}" cancelled successfully!`);
+            loadTasks();
+        }
+    }
+
+    function initTaskCompletionChart() {
+        const ctx = document.getElementById('taskCompletionChart').getContext('2d');
+
+        // Mock completion data
+        const data = {
+            labels: ['Completed', 'In Progress', 'Pending', 'Failed'],
+            datasets: [{
+                data: [12, 5, 3, 1],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.7)',  // Success (green)
+                    'rgba(23, 162, 184, 0.7)',  // Info (blue)
+                    'rgba(255, 193, 7, 0.7)',   // Warning (yellow)
+                    'rgba(220, 53, 69, 0.7)'    // Danger (red)
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(23, 162, 184, 1)',
+                    'rgba(255, 193, 7, 1)',
+                    'rgba(220, 53, 69, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        window.taskCompletionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

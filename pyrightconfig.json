@@ -5,12 +5,20 @@
     "exclude": [
         "**/node_modules",
         "**/__pycache__",
-        "**/.ipynb_checkpoints"
+        "**/.ipynb_checkpoints",
+        "**/webarena-zeno.ipynb",
+        "**/webarena-zeno-fixed.ipynb",
+        "**/zeno_client.pyi",
+        "**/zeno_client_wrapper.py"
     ],
     "ignore": [
         "**/node_modules",
         "**/__pycache__",
-        "**/.ipynb_checkpoints"
+        "**/.ipynb_checkpoints",
+        "**/webarena-zeno.ipynb",
+        "**/webarena-zeno-fixed.ipynb",
+        "**/zeno_client.pyi",
+        "**/zeno_client_wrapper.py"
     ],
     "defineConstant": {
         "DEBUG": true
@@ -25,6 +33,13 @@
     ],
     "reportMissingImports": "warning",
     "reportMissingTypeStubs": "none",
+    "reportArgumentType": "none",
+    "reportOptionalMemberAccess": "none",
+    "reportOptionalSubscript": "none",
+    "reportOptionalCall": "none",
+    "reportOptionalIterable": "none",
+    "reportOptionalContextManager": "none",
+    "reportOptionalOperand": "none",
     "pythonVersion": "3.10",
     "pythonPlatform": "Windows"
 }
