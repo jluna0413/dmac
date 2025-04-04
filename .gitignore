@@ -44,6 +44,7 @@ config/credentials.json
 OpenManus-RL/*
 !OpenManus-RL/openmanus_rl/agentgym/agentenv-webarena/webarena/scripts/webarena-zeno.ipynb
 !OpenManus-RL/openmanus_rl/agentgym/agentenv-webarena/webarena/scripts/webarena-open.ipynb
+!OpenManus-RL/openmanus_rl/agentgym/agentenv-webarena/webarena/scripts/webarena-open-with-sample.ipynb
 !OpenManus-RL/openmanus_rl/agentgym/agentenv-webarena/webarena/scripts/webarena_dashboard.py
 
 # Jupyter Notebook
