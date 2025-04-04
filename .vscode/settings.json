@@ -1,17 +1,14 @@
 {
     "cline.chromeExecutablePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
     "cline.modelSettings.o3Mini.reasoningEffort": "high",
-    "cline.vsCodeLmModelSelector": {"ollama": "gemma3:12b"},
+    "cline.vsCodeLmModelSelector": {
+        "ollama": "gemma3:12b"
+    },
     "ollama.api.url": "http://localhost:11434",
     "ollama.model": "gemma3:12b",
     "ollama.useContext": true,
     "ollama.maxTokens": 8000,
-
     "python.defaultInterpreterPath": "${workspaceFolder}/dmac_env/Scripts/python.exe",
-    "python.analysis.extraPaths": [
-        "${workspaceFolder}",
-        "${workspaceFolder}/OpenManus-RL"
-    ],
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
     "python.formatting.provider": "black",

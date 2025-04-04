@@ -19,7 +19,9 @@
     "venv": "dmac_env",
     "extraPaths": [
         ".",
-        "./OpenManus-RL"
+        "./OpenManus-RL",
+        "./OpenManus-RL/openmanus_rl",
+        "./OpenManus-RL/openmanus_rl/agentgym"
     ],
     "reportMissingImports": "warning",
     "reportMissingTypeStubs": "none",
