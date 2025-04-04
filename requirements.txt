@@ -1,0 +1,52 @@
+# Core dependencies
+pydantic>=2.0.0
+pyyaml>=6.0
+loguru>=0.7.0
+tenacity>=9.0.0
+asyncio>=3.4.3
+
+# Ollama - required for local LLM management
+ollama>=0.1.0
+
+# AI models
+openai>=1.0.0
+transformers>=4.30.0
+torch>=2.0.0
+tiktoken>=0.5.0
+ollama>=0.1.5
+httpx>=0.24.0
+
+# Voice interface
+coqui-stt>=1.0.0
+SpeechRecognition>=3.8.1
+pyaudio>=0.2.11
+
+# CLI interface
+# Note: Cline is a fictional package for this example
+# In a real implementation, you would use a real CLI framework
+# such as click, typer, or argparse
+
+# Design tools
+# Note: These are fictional packages for this example
+# In a real implementation, you would use the actual Python APIs
+# provided by Blender and Unreal Engine
+
+# Manufacturing tools
+# Note: These are fictional packages for this example
+# In a real implementation, you would use the actual APIs
+# provided by OctoPrint, Slic3r, and Cricut
+
+# UI tools
+aiohttp>=3.8.5
+jinja2>=3.1.2
+psutil>=5.9.5
+numpy>=1.24.0
+# Note: The following are fictional packages for this example
+# In a real implementation, you would use the actual UI frameworks
+# swarmui>=1.0.0
+# comfyui>=1.0.0
+langchain>=0.0.267
+
+# OpenManus-RL integration
+# This would typically be installed from the OpenManus-RL repository
+# openmanus-rl>=0.1.0

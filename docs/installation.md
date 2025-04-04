@@ -1,0 +1,162 @@
+# DMac Installation Guide
+
+This guide will help you install and set up DMac and its dependencies.
+
+## Prerequisites
+
+DMac requires the following prerequisites:
+
+1. **Python 3.8+**: DMac is built with Python and requires version 3.8 or higher.
+2. **Ollama**: DMac uses Ollama to run local LLMs, which is a core requirement.
+3. **Required Python packages**: Listed in `requirements.txt`.
+
+## Step 1: Install Python
+
+If you don't have Python 3.8+ installed, download and install it from the [official Python website](https://www.python.org/downloads/).
+
+Verify your Python installation:
+
+```bash
+python --version
+```
+
+## Step 2: Install Ollama
+
+Ollama is a critical dependency for DMac as it manages our local LLM ecosystem. DMac prioritizes using local models through Ollama and only uses external services like Gemini strategically when needed.
+
+### Windows
+
+1. Download the Ollama installer from [https://ollama.com/download](https://ollama.com/download)
+2. Run the installer and follow the instructions
+3. After installation, Ollama will start automatically
+
+### macOS
+
+1. Download the Ollama app from [https://ollama.com/download](https://ollama.com/download)
+2. Open the downloaded file and drag Ollama to the Applications folder
+3. Launch Ollama from the Applications folder
+
+### Linux
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+After installation, start the Ollama service:
+
+```bash
+ollama serve
+```
+
+## Step 3: Verify Ollama Installation
+
+Verify that Ollama is installed and running:
+
+```bash
+ollama list
+```
+
+You should see a list of available models (which might be empty if you haven't pulled any models yet).
+
+## Step 4: Install DMac
+
+1. Clone the DMac repository:
+
+```bash
+git clone https://github.com/yourusername/dmac.git
+cd dmac
+```
+
+2. Install the required Python packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Step 5: Configure DMac
+
+1. Copy the example configuration file:
+
+```bash
+cp config/config.example.yaml config/config.yaml
+```
+
+2. Edit the configuration file to set your API keys and preferences:
+
+```bash
+# Use your favorite text editor
+nano config/config.yaml
+```
+
+### Gemini API Key (Optional)
+
+If you want to use Gemini as a fallback or for specific tasks, you'll need to set up an API key:
+
+1. Go to [Google AI Studio](https://makersuite.google.com/)
+2. Create an API key
+3. Add the key to your configuration file or set it as an environment variable:
+
+```bash
+export GEMINI_API_KEY=your_api_key_here
+```
+
+## Step 6: Pull Required Models
+
+DMac requires certain models to function properly. Pull them using Ollama:
+
+```bash
+# Pull the local model
+ollama pull gemma3:12b
+
+# Pull the DeepSeek model
+ollama pull GandalfBaum/deepseek_r1-claude3.7
+```
+
+## Step 7: Run DMac
+
+Start DMac:
+
+```bash
+python main.py
+```
+
+## Troubleshooting
+
+### Ollama Issues
+
+If you encounter issues with Ollama:
+
+1. Make sure Ollama is running:
+   ```bash
+   ollama serve
+   ```
+
+2. Check if the required models are available:
+   ```bash
+   ollama list
+   ```
+
+3. If models are missing, pull them:
+   ```bash
+   ollama pull gemma3:12b
+   ollama pull GandalfBaum/deepseek_r1-claude3.7
+   ```
+
+### Python Package Issues
+
+If you encounter issues with Python packages:
+
+```bash
+pip install --upgrade -r requirements.txt
+```
+
+## Learning System
+
+DMac features an enhanced learning system that allows the AI models to improve over time:
+
+- **Continuous Learning**: The system learns from all interactions with all models
+- **Feedback Mechanism**: Users can provide feedback on responses
+- **Training Process**: DeepSeek-RL is periodically trained on the collected learning data
+- **Model Evaluation**: The system regularly evaluates model performance to track improvements
+
+The learning system prioritizes improving our local models to reduce dependency on external services over time.
