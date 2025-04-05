@@ -19,6 +19,23 @@ class UnifiedInput {
         this.isListening = false;
         this.uploadedFiles = [];
 
+        // Hot word triggers
+        this.researchHotWords = [
+            'search', 'look up', 'find', 'google', 'web', 'internet',
+            'current', 'latest', 'recent', 'now', 'today', 'what is the',
+            'research', 'browse', 'online', 'information'
+        ];
+
+        this.thinkingHotWords = [
+            'think', 'ponder', 'analyze', 'consider', 'reflect', 'contemplate',
+            'deep dive', 'deep thinking', 'deep analysis', 'carefully', 'thoroughly'
+        ];
+
+        this.deepResearchHotWords = [
+            'research', 'brainstorm', 'investigate', 'explore', 'study',
+            'deep research', 'comprehensive', 'extensive', 'in-depth', 'detailed'
+        ];
+
         // Initialize the voice interaction
         this.voiceInteraction = new VoiceInteraction();
 
@@ -158,7 +175,7 @@ class UnifiedInput {
 
         // Research button
         const researchButton = document.getElementById('research-button');
-        researchButton.addEventListener('click', () => this.toggleResearchMode());
+        researchButton.addEventListener('click', () => this.toggleResearchMode(true));
 
         // Search engine options
         const searchEngineOptions = document.querySelectorAll('.search-engine');
@@ -179,7 +196,7 @@ class UnifiedInput {
 
         // Think button
         const thinkButton = document.getElementById('think-button');
-        thinkButton.addEventListener('click', () => this.toggleThinkingMode());
+        thinkButton.addEventListener('click', () => this.toggleThinkingMode(true));
 
         // OpenCanvas button
         const openCanvasButton = document.getElementById('opencanvas-button');
@@ -379,6 +396,9 @@ class UnifiedInput {
         if (!message && this.uploadedFiles.length === 0) {
             return;
         }
+
+        // Check for hot words and activate appropriate modes
+        this.detectAndActivateHotWords(message);
 
         // Clear the input
         userInput.value = '';
@@ -723,8 +743,10 @@ class UnifiedInput {
 
     /**
      * Toggle research mode
+     *
+     * @param {boolean} showToast - Whether to show a toast notification (default: false)
      */
-    toggleResearchMode() {
+    toggleResearchMode(showToast = false) {
         const researchButton = document.getElementById('research-button');
 
         this.isResearching = !this.isResearching;
@@ -734,18 +756,28 @@ class UnifiedInput {
 
             // If thinking mode is on, turn it off
             if (this.isThinking) {
-                this.toggleThinkingMode();
+                this.toggleThinkingMode(false);
             }
 
             // Show indicator with current search engine
             const engineName = this.currentSearchEngine === 'google' ? 'Google' : 'DuckDuckGo';
             document.getElementById('thinking-indicator').style.display = 'block';
             document.getElementById('thinking-text').textContent = `Web search mode activated - Using ${engineName} to find up-to-date information`;
+
+            // Show toast if requested
+            if (showToast) {
+                this.showToast('Web Search', `Web search mode activated using ${engineName}`);
+            }
         } else {
             researchButton.classList.remove('active');
 
             // Hide indicator
             document.getElementById('thinking-indicator').style.display = 'none';
+
+            // Show toast if requested
+            if (showToast) {
+                this.showToast('Web Search', 'Web search mode deactivated');
+            }
         }
     }
 
@@ -796,9 +828,67 @@ class UnifiedInput {
     }
 
     /**
-     * Toggle thinking mode
+     * Detect hot words in the message and activate appropriate modes
+     *
+     * @param {string} message - The user's message
      */
-    toggleThinkingMode() {
+    detectAndActivateHotWords(message) {
+        if (!message) return;
+
+        const messageLower = message.toLowerCase();
+        let modeActivated = false;
+
+        // Check for research hot words
+        if (!modeActivated && this.containsAnyHotWord(messageLower, this.researchHotWords)) {
+            // If not already in research mode, activate it
+            if (!this.isResearching) {
+                this.toggleResearchMode(false);
+                this.showToast('Web Search', 'Web search mode activated based on your message');
+            }
+            modeActivated = true;
+        }
+
+        // Check for thinking hot words
+        if (!modeActivated && this.containsAnyHotWord(messageLower, this.thinkingHotWords)) {
+            // If not already in thinking mode, activate it
+            if (!this.isThinking) {
+                this.toggleThinkingMode(false);
+                this.showToast('Deep Thinking', 'Deep thinking mode activated based on your message');
+            }
+            modeActivated = true;
+        }
+
+        // Check for deep research hot words
+        if (!modeActivated && this.containsAnyHotWord(messageLower, this.deepResearchHotWords)) {
+            // For now, deep research is a combination of research and thinking
+            if (!this.isResearching) {
+                this.toggleResearchMode(false);
+            }
+            if (!this.isThinking) {
+                this.toggleThinkingMode(false);
+            }
+            this.showToast('Deep Research', 'Deep research mode activated based on your message');
+            modeActivated = true;
+        }
+    }
+
+    /**
+     * Check if a message contains any of the hot words
+     *
+     * @param {string} message - The user's message (lowercase)
+     * @param {string[]} hotWords - Array of hot words to check for
+     * @returns {boolean} - True if the message contains any of the hot words
+     */
+    containsAnyHotWord(message, hotWords) {
+        return hotWords.some(word => message.includes(word));
+    }
+
+    /**
+     * Toggle thinking mode
+     *
+     * @param {boolean} showToast - Whether to show a toast notification (default: false)
+     */
+    toggleThinkingMode(showToast = false) {
         const thinkButton = document.getElementById('think-button');
 
         this.isThinking = !this.isThinking;
@@ -808,17 +898,27 @@ class UnifiedInput {
 
             // If research mode is on, turn it off
             if (this.isResearching) {
-                this.toggleResearchMode();
+                this.toggleResearchMode(false);
             }
 
             // Show indicator
             document.getElementById('thinking-indicator').style.display = 'block';
             document.getElementById('thinking-text').textContent = 'Deep thinking mode activated...';
+
+            // Show toast if requested
+            if (showToast) {
+                this.showToast('Deep Thinking', 'Deep thinking mode activated');
+            }
         } else {
             thinkButton.classList.remove('active');
 
             // Hide indicator
             document.getElementById('thinking-indicator').style.display = 'none';
+
+            // Show toast if requested
+            if (showToast) {
+                this.showToast('Deep Thinking', 'Deep thinking mode deactivated');
+            }
         }
     }
 

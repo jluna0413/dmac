@@ -2,7 +2,7 @@
 
 DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of specialized agents to perform a wide range of tasks including software engineering, manufacturing automation, creative design, and more.
 
-![Version](https://img.shields.io/badge/version-1.2.1-blue)
+![Version](https://img.shields.io/badge/version-1.2.2-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
@@ -91,7 +91,11 @@ The web UI provides a modern Material Design interface for interacting with the 
 2. **Dashboard**: Access the main dashboard with tabs for Agents, Tasks, Models, and Analytics
 
 3. **Chat**: Interact with the AI agent swarm through the chat interface
-   - Use the Research button to enable web search for real-time information
+   - Use hot words to automatically trigger different modes:
+     - Web search mode: "search", "look up", "find", etc.
+     - Deep thinking mode: "think", "ponder", "analyze", etc.
+     - Deep research mode: "research", "brainstorm", "investigate", etc.
+   - Or use the buttons to manually activate modes
    - Choose between different search engines (DuckDuckGo or Google)
    - Clear the search cache to get fresh results
    - Ask questions about current events, latest versions, or any topic requiring up-to-date information
@@ -151,6 +155,12 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Recent Updates
+
+### Version 1.2.2 (April 5, 2025)
+- Added hot word detection for automatic mode activation
+- Implemented trigger words for web search, deep thinking, and deep research modes
+- Added toast notifications for mode activation
+- Enhanced visual indicators for active modes
 
 ### Version 1.2.1 (April 5, 2025)
 - Enhanced web search functionality with multiple search engines (DuckDuckGo and Google)

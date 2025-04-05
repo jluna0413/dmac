@@ -2,6 +2,16 @@
 
 All notable changes to the DMac project will be documented in this file.
 
+## [1.2.2] - 2025-04-05
+
+### Added
+- Hot word detection for automatic mode activation
+  - Web search hot words (search, look up, find, etc.)
+  - Deep thinking hot words (think, ponder, analyze, etc.)
+  - Deep research hot words (research, brainstorm, investigate, etc.)
+- Toast notifications for mode activation
+- Visual indicators for active modes
+
 ## [1.2.1] - 2025-04-05
 
 ### Added
