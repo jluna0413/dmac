@@ -149,6 +149,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 32),
 
+                    // Error message
+                    if (_errorMessage != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.error.withAlpha(25),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          _errorMessage!,
+                          style: TextStyle(color: theme.colorScheme.error),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
                     // Email field
                     TextFormField(
                       controller: _emailController,
@@ -160,10 +177,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
-                        }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                            .hasMatch(value)) {
-                          return 'Please enter a valid email';
                         }
                         return null;
                       },
@@ -210,23 +223,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Error message
-                    if (_errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.error.withAlpha(25),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          _errorMessage!,
-                          style: TextStyle(color: theme.colorScheme.error),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
 
                     // Login button
                     ElevatedButton(
@@ -327,7 +323,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 24),
 
                     // Register link
@@ -343,7 +338,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -378,11 +374,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('$role Account:', style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text('$role Account:',
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
         Row(
           children: [
-            const Text('Email: ', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Email: ',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             Text(email),
             IconButton(
               icon: const Icon(Icons.copy, size: 16),
@@ -396,7 +394,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         Row(
           children: [
-            const Text('Password: ', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Password: ',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             Text(password),
           ],
         ),

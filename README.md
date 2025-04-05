@@ -2,6 +2,11 @@
 
 DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of specialized agents to perform a wide range of tasks including software engineering, manufacturing automation, creative design, and more.
 
+![Version](https://img.shields.io/badge/version-0.2.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Flutter](https://img.shields.io/badge/Flutter-3.0+-blue)
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
+
 ## Features
 
 - **Software Engineering & "Vibe Coding"**: Code generation, real-time debugging, and iterative refinement using voice (STT) and text commands.
@@ -30,6 +35,8 @@ DMac is built on top of OpenManus-RL, which provides the reinforcement learning 
 
 For detailed installation instructions, see [docs/installation.md](docs/installation.md).
 
+### Backend Installation
+
 1. Install Ollama from [ollama.com/download](https://ollama.com/download)
 2. Clone the repository:
    ```
@@ -37,23 +44,46 @@ For detailed installation instructions, see [docs/installation.md](docs/installa
    cd dmac
    ```
 
-2. Install the dependencies:
+3. Install the dependencies:
    ```
    pip install -r requirements.txt
    ```
 
-3. Configure the system:
+4. Configure the system:
    ```
    # Edit the configuration file
    nano config/config.yaml
    ```
 
-4. Run the application:
+5. Run the backend application:
    ```
    python main.py
    ```
 
+### Flutter App Installation
+
+1. Make sure you have Flutter installed. If not, follow the instructions at [flutter.dev/docs/get-started/install](https://flutter.dev/docs/get-started/install)
+
+2. Navigate to the Flutter app directory:
+   ```
+   cd flutter-app
+   ```
+
+3. Get the dependencies:
+   ```
+   flutter pub get
+   ```
+
+4. Run the app:
+   ```
+   flutter run -d chrome  # For web
+   flutter run -d android  # For Android
+   flutter run -d ios      # For iOS
+   ```
+
 ## Usage
+
+### Backend Usage
 
 DMac can be used in interactive mode or with a single prompt:
 
@@ -64,6 +94,21 @@ python main.py
 # Single prompt
 python main.py --prompt "Generate a Python function to sort a list of integers"
 ```
+
+### Flutter App Usage
+
+The Flutter app provides a modern UI for interacting with the DMac system:
+
+1. **Login**: Use the provided test accounts or auto-generate a login for testing
+   - Admin: admin@dmac.ai (any password works for testing)
+   - User: user@dmac.ai (any password works for testing)
+   - Developer: dev@dmac.ai (any password works for testing)
+
+2. **Dashboard**: Access the main dashboard with tabs for Agents, Tasks, Models, and Analytics
+
+3. **Chat**: Interact with the AI agent swarm through the chat interface
+
+4. **WebArena**: Run experiments and evaluate models in the WebArena environment
 
 ### WebArena Integration
 
@@ -112,6 +157,17 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Recent Updates
+
+### Version 0.2.0
+- Added Flutter app for improved UI/UX
+- Implemented user authentication system
+- Added dashboard with Agents, Tasks, Models, and Analytics views
+- Integrated WebArena experiments and visualization
+- Added reinforcement learning with OpenManus-RL and DeepSeek-RL
+- Integrated Langchain and Open Deep Research
+- Improved security and user management
 
 ## Acknowledgements
 

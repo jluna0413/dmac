@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:dmac_app/src/services/auth_service.dart';
+import 'package:dmac_app/src/services/mock_auth_service.dart';
 import 'package:dmac_app/src/services/storage_service.dart';
-import 'package:dmac_app/src/screens/home_screen.dart';
-import 'package:dmac_app/src/screens/auth/login_screen.dart';
-import 'package:dmac_app/src/screens/onboarding_screen.dart';
+
 import 'package:dmac_app/src/utils/app_theme.dart';
 
 /// Splash screen shown when the app starts
@@ -16,76 +14,72 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Set up animations
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
       ),
     );
-    
+
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic),
       ),
     );
-    
+
     // Start animation
     _animationController.forward();
-    
+
     // Navigate to the appropriate screen after a delay
     Timer(const Duration(seconds: 2), _navigateToNextScreen);
   }
-  
+
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-  
+
   /// Navigate to the appropriate screen based on authentication state
   Future<void> _navigateToNextScreen() async {
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<MockAuthService>(context, listen: false);
     final storageService = Provider.of<StorageService>(context, listen: false);
-    
+
     // Check if onboarding is complete
-    final onboardingComplete = storageService.getBool(StorageService.keyOnboardingComplete) ?? false;
-    
+    final onboardingComplete =
+        storageService.getBool(StorageService.keyOnboardingComplete) ?? false;
+
     if (!onboardingComplete) {
       // Navigate to onboarding screen
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-        );
+        Navigator.of(context).pushReplacementNamed('/onboarding');
       }
-    } else if (authService.isAuthenticated) {
+    } else if (authService.currentUser != null) {
       // Navigate to home screen
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
+        Navigator.of(context).pushReplacementNamed('/home');
       }
     } else {
       // Navigate to login screen
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
+        Navigator.of(context).pushReplacementNamed('/login');
       }
     }
   }

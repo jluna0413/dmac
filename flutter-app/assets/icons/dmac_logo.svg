@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="90" fill="#3f51b5" />
+    <g fill="#ffffff">
+        <!-- Stylized "D" -->
+        <path d="M60,50 L80,50 C100,50 115,65 115,85 L115,115 C115,135 100,150 80,150 L60,150 Z M80,70 L80,130 C90,130 95,125 95,115 L95,85 C95,75 90,70 80,70 Z" />
+        <!-- Stylized "M" -->
+        <path d="M125,50 L145,50 L145,150 L125,150 L125,90 L115,110 L105,90 L105,150 L85,150 L85,50 L105,50 L115,70 L125,50 Z" />
+    </g>
+    <!-- AI nodes -->
+    <circle cx="60" cy="60" r="5" fill="#ffffff" />
+    <circle cx="140" cy="60" r="5" fill="#ffffff" />
+    <circle cx="100" cy="140" r="5" fill="#ffffff" />
+    <!-- Connection lines -->
+    <line x1="60" y1="60" x2="140" y2="60" stroke="#ffffff" stroke-width="2" />
+    <line x1="60" y1="60" x2="100" y2="140" stroke="#ffffff" stroke-width="2" />
+    <line x1="140" y1="60" x2="100" y2="140" stroke="#ffffff" stroke-width="2" />
+</svg>

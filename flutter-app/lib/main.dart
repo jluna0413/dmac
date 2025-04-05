@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:dmac_app/src/services/api_service.dart';
-import 'package:dmac_app/src/services/auth_service.dart';
+import 'package:dmac_app/src/services/mock_auth_service.dart';
 import 'package:dmac_app/src/services/storage_service.dart';
+import 'package:dmac_app/src/services/reinforcement_learning_service.dart';
+import 'package:dmac_app/src/services/deep_research_service.dart';
 import 'package:dmac_app/src/utils/app_theme.dart';
 import 'package:dmac_app/src/screens/splash_screen.dart';
+import 'package:dmac_app/src/screens/home_screen.dart';
+import 'package:dmac_app/src/screens/admin/admin_dashboard.dart';
+import 'package:dmac_app/src/screens/auth/login_screen_new.dart';
+import 'package:dmac_app/src/screens/onboarding_screen.dart';
+import 'package:dmac_app/src/screens/dashboard/dashboard_screen.dart';
+import 'package:dmac_app/src/screens/chat/chat_screen.dart';
+import 'package:dmac_app/src/screens/webarena_screen.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -22,7 +31,9 @@ void main() async {
   // Initialize services
   final storageService = await StorageService.init();
   final apiService = ApiService();
-  final authService = AuthService(apiService, storageService);
+  final authService = MockAuthService();
+  final rlService = ReinforcementLearningService();
+  final deepResearchService = DeepResearchService();
 
   // Run the app
   runApp(
@@ -30,7 +41,9 @@ void main() async {
       providers: [
         Provider<StorageService>.value(value: storageService),
         Provider<ApiService>.value(value: apiService),
-        ChangeNotifierProvider<AuthService>.value(value: authService),
+        Provider<ReinforcementLearningService>.value(value: rlService),
+        Provider<DeepResearchService>.value(value: deepResearchService),
+        ChangeNotifierProvider<MockAuthService>.value(value: authService),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: const DMacApp(),
@@ -51,7 +64,17 @@ class DMacApp extends StatelessWidget {
       darkTheme: themeProvider.darkTheme,
       themeMode: themeProvider.themeMode,
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
+        '/admin': (context) => const AdminDashboard(),
+        '/login': (context) => const LoginScreen(),
+        '/onboarding': (context) => const OnboardingScreen(),
+        '/chat': (context) => const ChatScreen(),
+        '/webarena': (context) => const WebArenaScreen(),
+      },
     );
   }
 }

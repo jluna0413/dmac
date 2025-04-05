@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -9,7 +8,7 @@ class ApiService {
   String? _baseUrl;
   String? _token;
   WebSocketChannel? _wsChannel;
-  
+
   ApiService({String? baseUrl}) {
     _baseUrl = baseUrl ?? 'http://localhost:8080';
     _dio = Dio(
@@ -23,7 +22,7 @@ class ApiService {
         },
       ),
     );
-    
+
     // Add logging interceptor in debug mode
     if (kDebugMode) {
       _dio.interceptors.add(LogInterceptor(
@@ -32,30 +31,31 @@ class ApiService {
       ));
     }
   }
-  
+
   /// Set the authentication token for API requests
   void setToken(String token) {
     _token = token;
     _dio.options.headers['Authorization'] = 'Bearer $_token';
   }
-  
+
   /// Clear the authentication token
   void clearToken() {
     _token = null;
     _dio.options.headers.remove('Authorization');
   }
-  
+
   /// Set the base URL for API requests
   void setBaseUrl(String baseUrl) {
     _baseUrl = baseUrl;
     _dio.options.baseUrl = baseUrl;
   }
-  
+
   /// Get the current base URL
   String get baseUrl => _baseUrl ?? 'http://localhost:8080';
-  
+
   /// Make a GET request to the API
-  Future<dynamic> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<dynamic> get(String path,
+      {Map<String, dynamic>? queryParameters}) async {
     try {
       final response = await _dio.get(
         path,
@@ -66,7 +66,7 @@ class ApiService {
       _handleError(e);
     }
   }
-  
+
   /// Make a POST request to the API
   Future<dynamic> post(String path, {dynamic data}) async {
     try {
@@ -79,7 +79,7 @@ class ApiService {
       _handleError(e);
     }
   }
-  
+
   /// Make a PUT request to the API
   Future<dynamic> put(String path, {dynamic data}) async {
     try {
@@ -92,7 +92,7 @@ class ApiService {
       _handleError(e);
     }
   }
-  
+
   /// Make a DELETE request to the API
   Future<dynamic> delete(String path) async {
     try {
@@ -102,27 +102,27 @@ class ApiService {
       _handleError(e);
     }
   }
-  
+
   /// Connect to a WebSocket for real-time communication
   WebSocketChannel connectWebSocket(String path) {
     final wsUrl = _baseUrl!.replaceFirst('http', 'ws') + path;
     _wsChannel = WebSocketChannel.connect(Uri.parse(wsUrl));
     return _wsChannel!;
   }
-  
+
   /// Close the WebSocket connection
   void closeWebSocket() {
     _wsChannel?.sink.close();
     _wsChannel = null;
   }
-  
+
   /// Handle API errors
   void _handleError(DioException e) {
     if (e.response != null) {
       // The server responded with an error
       final statusCode = e.response!.statusCode;
       final data = e.response!.data;
-      
+
       if (statusCode == 401) {
         throw UnauthorizedException(data['error'] ?? 'Unauthorized');
       } else if (statusCode == 403) {
@@ -149,9 +149,9 @@ class ApiService {
 class ApiException implements Exception {
   final String message;
   final int? statusCode;
-  
+
   ApiException(this.message, {this.statusCode});
-  
+
   @override
   String toString() => 'ApiException: $message (Status code: $statusCode)';
 }

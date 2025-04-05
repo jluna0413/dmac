@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:dmac_app/src/widgets/material_icon_placeholder.dart';
 import 'package:provider/provider.dart';
 import 'package:dmac_app/src/services/storage_service.dart';
 import 'package:dmac_app/src/utils/app_theme.dart';
-import 'package:dmac_app/src/screens/auth/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -63,9 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await storageService.setBool(StorageService.keyOnboardingComplete, true);
 
     if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
+      Navigator.of(context).pushReplacementNamed('/login');
     }
   }
 
@@ -155,25 +153,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Image
-            Image.asset(
-              page.image,
-              height: 240,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 240,
-                  width: 240,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(51),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.image,
-                    size: 100,
-                    color: Colors.white,
-                  ),
-                );
-              },
+            // Material Icon Placeholder
+            GradientIconPlaceholder(
+              icon: _getIconForPage(page),
+              size: 240,
+              gradientColors: [
+                Colors.white.withAlpha(204),
+                Colors.white.withAlpha(77),
+              ],
+              iconColor: Colors.white,
             ),
             const SizedBox(height: 48),
 
@@ -221,6 +209,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         borderRadius: BorderRadius.circular(4),
       ),
     );
+  }
+
+  IconData _getIconForPage(OnboardingPage page) {
+    // Return appropriate icon based on the page title or index
+    if (page.title.contains('Welcome')) {
+      return Icons.psychology;
+    } else if (page.title.contains('Meet Your Agents')) {
+      return Icons.smart_toy;
+    } else if (page.title.contains('Collaboration')) {
+      return Icons.groups;
+    } else if (page.title.contains('Get Started')) {
+      return Icons.rocket_launch;
+    }
+
+    // Default icon
+    return Icons.auto_awesome;
   }
 }
 
