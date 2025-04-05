@@ -13,6 +13,7 @@ class UnifiedInput {
         this.chatContainer = document.getElementById(chatContainerId);
         this.inputContainer = document.getElementById(inputContainerId);
         this.currentModel = 'gemma3:12b'; // Default model
+        this.currentSearchEngine = 'duckduckgo'; // Default search engine
         this.isThinking = false;
         this.isResearching = false;
         this.isListening = false;
@@ -59,9 +60,20 @@ class UnifiedInput {
                     <button id="upload-button" class="btn btn-outline-secondary" title="Upload Files">
                         <i class="fas fa-upload"></i>
                     </button>
-                    <button id="research-button" class="btn btn-outline-secondary" title="Deep Research">
-                        <i class="fas fa-search"></i>
-                    </button>
+                    <div class="btn-group">
+                        <button id="research-button" class="btn btn-outline-secondary" title="Deep Research">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button id="research-dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item search-engine" href="#" data-engine="duckduckgo"><i class="fas fa-duck"></i> DuckDuckGo (Default)</a></li>
+                            <li><a class="dropdown-item search-engine" href="#" data-engine="google"><i class="fab fa-google"></i> Google</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="clear-search-cache"><i class="fas fa-trash"></i> Clear Search Cache</a></li>
+                        </ul>
+                    </div>
                     <button id="think-button" class="btn btn-outline-secondary" title="Deep Thinking Mode">
                         <i class="fas fa-brain"></i>
                     </button>
@@ -147,6 +159,23 @@ class UnifiedInput {
         // Research button
         const researchButton = document.getElementById('research-button');
         researchButton.addEventListener('click', () => this.toggleResearchMode());
+
+        // Search engine options
+        const searchEngineOptions = document.querySelectorAll('.search-engine');
+        searchEngineOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                const engine = e.target.closest('.search-engine').getAttribute('data-engine');
+                this.setSearchEngine(engine);
+            });
+        });
+
+        // Clear search cache
+        const clearSearchCache = document.getElementById('clear-search-cache');
+        clearSearchCache.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clearSearchCache();
+        });
 
         // Think button
         const thinkButton = document.getElementById('think-button');
@@ -364,6 +393,8 @@ class UnifiedInput {
             files: this.uploadedFiles,
             deep_research: this.isResearching,
             deep_thinking: this.isThinking,
+            // Add search engine if research mode is active
+            search_engine: this.isResearching ? this.currentSearchEngine : null,
             // Add anti-hallucination instructions
             instructions: {
                 prevent_hallucinations: true,
@@ -397,7 +428,12 @@ class UnifiedInput {
                     if (data.used_web_search) {
                         const webSearchNote = document.createElement('div');
                         webSearchNote.className = 'web-search-note';
-                        webSearchNote.innerHTML = '<small><i class="fas fa-search"></i> Web search was used to provide up-to-date information</small>';
+
+                        // Show which search engine was used
+                        const engineName = data.search_engine === 'google' ? 'Google' : 'DuckDuckGo';
+                        const searchQuery = data.search_query ? `for "${data.search_query}"` : '';
+
+                        webSearchNote.innerHTML = `<small><i class="fas fa-search"></i> ${engineName} search was used ${searchQuery} to provide up-to-date information</small>`;
                         this.chatContainer.appendChild(webSearchNote);
                     }
 
@@ -701,15 +737,62 @@ class UnifiedInput {
                 this.toggleThinkingMode();
             }
 
-            // Show indicator
+            // Show indicator with current search engine
+            const engineName = this.currentSearchEngine === 'google' ? 'Google' : 'DuckDuckGo';
             document.getElementById('thinking-indicator').style.display = 'block';
-            document.getElementById('thinking-text').textContent = 'Web search mode activated - I will search the web for up-to-date information';
+            document.getElementById('thinking-text').textContent = `Web search mode activated - Using ${engineName} to find up-to-date information`;
         } else {
             researchButton.classList.remove('active');
 
             // Hide indicator
             document.getElementById('thinking-indicator').style.display = 'none';
         }
+    }
+
+    /**
+     * Set the search engine to use
+     *
+     * @param {string} engine - The search engine to use
+     */
+    setSearchEngine(engine) {
+        this.currentSearchEngine = engine;
+
+        // Update UI to show selected engine
+        const engineName = engine === 'google' ? 'Google' : 'DuckDuckGo';
+        const researchButton = document.getElementById('research-button');
+        researchButton.title = `Research using ${engineName}`;
+
+        // If research mode is active, update the indicator
+        if (this.isResearching) {
+            document.getElementById('thinking-text').textContent = `Web search mode activated - Using ${engineName} to find up-to-date information`;
+        }
+
+        // Show toast notification
+        this.showToast('Search Engine', `Set search engine to ${engineName}`);
+    }
+
+    /**
+     * Clear the search cache
+     */
+    clearSearchCache() {
+        fetch('/api/web-search/clear-cache', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.showToast('Cache Cleared', 'Search cache has been cleared successfully');
+                } else {
+                    this.showToast('Error', data.error || 'Failed to clear search cache');
+                }
+            })
+            .catch(error => {
+                console.error('Error clearing search cache:', error);
+                this.showToast('Error', 'Failed to clear search cache');
+            });
     }
 
     /**

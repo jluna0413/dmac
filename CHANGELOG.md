@@ -2,6 +2,16 @@
 
 All notable changes to the DMac project will be documented in this file.
 
+## [1.2.1] - 2025-04-05
+
+### Added
+- Enhanced web search functionality for the chat interface
+  - Multiple search engine support (DuckDuckGo and Google)
+  - Search result caching for improved performance
+  - Source attribution with direct links to original content
+  - Enhanced query detection for better automatic searching
+  - Clear cache functionality for refreshing search results
+
 ## [1.2.0] - 2025-04-05
 
 ### Added

@@ -53,9 +53,13 @@ The chat interface provides visual indicators when web search is being used:
 The web search functionality is implemented using:
 
 - Beautiful Soup for web scraping
-- DuckDuckGo as the search engine for privacy-friendly searches
+- Multiple search engines:
+  - DuckDuckGo as the default, privacy-friendly search engine
+  - Google as an alternative for more comprehensive results
+- Search result caching to improve performance and reduce API calls
 - Asynchronous HTTP requests for efficient searching
 - Natural language processing for query extraction and summarization
+- Source attribution with direct links to the original content
 
 ## Examples
 
@@ -67,14 +71,42 @@ Here are some examples of queries that benefit from web search:
 - "What is the current price of Bitcoin?"
 - "What are the latest developments in AI?"
 
+## Features
+
+### Multiple Search Engines
+
+Users can choose between different search engines:
+
+- **DuckDuckGo** (Default): A privacy-focused search engine that doesn't track users
+- **Google**: A comprehensive search engine with extensive coverage
+
+To change the search engine, click the dropdown arrow next to the Research button and select the desired engine.
+
+### Result Caching
+
+Search results are cached to improve performance and reduce the number of API calls. This means that repeated searches for the same query will be faster and won't generate additional web traffic.
+
+Users can clear the search cache by clicking the "Clear Search Cache" option in the Research dropdown menu.
+
+### Source Attribution
+
+All search results include source attribution with direct links to the original content. This allows users to verify the information and explore the sources in more detail.
+
+### Enhanced Query Detection
+
+The system automatically detects when a query might need real-time information based on a comprehensive set of patterns and keywords, including:
+
+- Questions about current events, latest versions, or recent developments
+- Queries containing time-sensitive keywords like "current", "latest", "recent", etc.
+- Questions about dates, times, or durations
+
 ## Future Enhancements
 
 Planned enhancements for the web search functionality include:
 
-- Support for more search engines
-- Better summarization of search results
-- Improved relevance ranking
-- Caching for frequently searched queries
+- Support for more search engines (Bing, Brave Search, etc.)
+- Better summarization of search results using AI
+- Improved relevance ranking and filtering
 - Support for image and video search
-- Source attribution with direct links
 - User feedback on search results
+- Domain-specific search options (academic, news, etc.)

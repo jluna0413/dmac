@@ -2,7 +2,7 @@
 
 DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of specialized agents to perform a wide range of tasks including software engineering, manufacturing automation, creative design, and more.
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
@@ -14,7 +14,7 @@ DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of speci
 - **Creative Design & Content Creation**: 3D modeling, video content production, and packaging visualization.
 - **Interactive UI & Virtual Agents**: Real-time dashboards (SwarmUI, ComfyUI), visual workflow building (LangChain OpenCanvas), and lifelike agent interaction (Unreal Engine 5 Metahumans).
 - **WebArena Integration**: Evaluate your agents in the WebArena environment, a benchmark for web agents with comprehensive open-source visualization and analysis tools.
-- **Real-time Web Search**: Chat interface with web scraping capabilities to retrieve up-to-date information from the internet using DuckDuckGo.
+- **Real-time Web Search**: Chat interface with web scraping capabilities to retrieve up-to-date information from the internet using multiple search engines (DuckDuckGo and Google) with result caching.
 - **Home Automation & IoT** (Optional): Control of smart devices and industrial machinery as part of an integrated manufacturing process.
 
 ## Architecture
@@ -92,8 +92,10 @@ The web UI provides a modern Material Design interface for interacting with the 
 
 3. **Chat**: Interact with the AI agent swarm through the chat interface
    - Use the Research button to enable web search for real-time information
+   - Choose between different search engines (DuckDuckGo or Google)
+   - Clear the search cache to get fresh results
    - Ask questions about current events, latest versions, or any topic requiring up-to-date information
-   - See visual indicators when web search is being used
+   - See visual indicators when web search is being used, including which search engine was used
 
 4. **WebArena**: Run experiments and evaluate models in the WebArena environment
 
@@ -149,6 +151,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Recent Updates
+
+### Version 1.2.1 (April 5, 2025)
+- Enhanced web search functionality with multiple search engines (DuckDuckGo and Google)
+- Added search result caching for improved performance
+- Implemented source attribution with direct links to original content
+- Enhanced query detection for better automatic searching
+- Added clear cache functionality for refreshing search results
 
 ### Version 1.2.0 (April 5, 2025)
 - Added web search functionality to the chat interface

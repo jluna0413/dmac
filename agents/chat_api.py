@@ -40,6 +40,7 @@ async def handle_chat(request: Request) -> Response:
         message = body.get('message')
         model = body.get('model', 'gemma3:12b')  # Default to Gemma 3 12B
         use_web_search = body.get('use_web_search', False)
+        search_engine = body.get('search_engine')  # Optional search engine
 
         if not message:
             return web.json_response({'error': 'Missing message parameter'}, status=400)
@@ -47,15 +48,18 @@ async def handle_chat(request: Request) -> Response:
         # Check if the message requires web search
         needs_web_search = use_web_search or _should_use_web_search(message)
 
-        # If web search is needed, perform the search
+        # Initialize variables
         web_search_results = ""
+        search_query = ""
+
+        # If web search is needed, perform the search
         if needs_web_search:
             # Extract the search query
             search_query = _extract_search_query(message)
 
             # Perform the search
-            logger.info(f"Performing web search for query: {search_query}")
-            web_search_results = await web_search.search_and_summarize(search_query)
+            logger.info(f"Performing web search for query: {search_query} using engine: {search_engine if search_engine else 'default'}")
+            web_search_results = await web_search.search_and_summarize(search_query, engine=search_engine)
 
         # Prepare the messages for the model
         messages = []
@@ -104,7 +108,9 @@ async def handle_chat(request: Request) -> Response:
         return web.json_response({
             'response': response.get('response', ''),
             'model': model,
-            'used_web_search': needs_web_search
+            'used_web_search': needs_web_search,
+            'search_engine': search_engine if needs_web_search and search_engine else None,
+            'search_query': search_query if needs_web_search else None
         })
     except Exception as e:
         logger.exception(f"Error handling chat request: {e}")
@@ -125,7 +131,10 @@ def _should_use_web_search(message: str) -> bool:
         'current', 'latest', 'recent', 'today', 'now', 'update',
         'news', 'version', 'release', 'weather', 'price',
         'stock', 'market', 'election', 'score', 'game',
-        'what is the', 'how to', 'who is', 'where is'
+        'what is the', 'how to', 'who is', 'where is',
+        'best', 'top', 'trending', 'popular', 'review',
+        'comparison', 'vs', 'versus', 'difference between',
+        'how many', 'when was', 'where can I', 'why does'
     ]
 
     # Check if any of the keywords are in the message
@@ -140,7 +149,11 @@ def _should_use_web_search(message: str) -> bool:
         r'what is the (date|time|year)',
         r'current (date|time|year)',
         r'today\'s (date|day)',
-        r'what is today'
+        r'what is today',
+        r'when (is|was|will)',
+        r'(date|time) of',
+        r'how long (ago|until)',
+        r'(yesterday|tomorrow)'
     ]
 
     for pattern in date_time_patterns:
@@ -170,7 +183,13 @@ def _extract_search_query(message: str) -> str:
         r'where is (.*?)\?',
         r'when is (.*?)\?',
         r'why is (.*?)\?',
-        r'how (to|do|does|can|could) (.*?)\?'
+        r'how (to|do|does|can|could) (.*?)\?',
+        r'which (is|are) (.*?)\?',
+        r'can (.*?)\?',
+        r'will (.*?)\?',
+        r'should (.*?)\?',
+        r'is (.*?)\?',
+        r'are (.*?)\?'
     ]
 
     for pattern in question_patterns:
