@@ -2,9 +2,9 @@
 
 DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of specialized agents to perform a wide range of tasks including software engineering, manufacturing automation, creative design, and more.
 
-![Version](https://img.shields.io/badge/version-0.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Flutter](https://img.shields.io/badge/Flutter-3.0+-blue)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
 
 ## Features
@@ -14,6 +14,7 @@ DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of speci
 - **Creative Design & Content Creation**: 3D modeling, video content production, and packaging visualization.
 - **Interactive UI & Virtual Agents**: Real-time dashboards (SwarmUI, ComfyUI), visual workflow building (LangChain OpenCanvas), and lifelike agent interaction (Unreal Engine 5 Metahumans).
 - **WebArena Integration**: Evaluate your agents in the WebArena environment, a benchmark for web agents with comprehensive open-source visualization and analysis tools.
+- **Real-time Web Search**: Chat interface with web scraping capabilities to retrieve up-to-date information from the internet using DuckDuckGo.
 - **Home Automation & IoT** (Optional): Control of smart devices and industrial machinery as part of an integrated manufacturing process.
 
 ## Architecture
@@ -60,26 +61,9 @@ For detailed installation instructions, see [docs/installation.md](docs/installa
    python main.py
    ```
 
-### Flutter App Installation
+### Web UI Installation
 
-1. Make sure you have Flutter installed. If not, follow the instructions at [flutter.dev/docs/get-started/install](https://flutter.dev/docs/get-started/install)
-
-2. Navigate to the Flutter app directory:
-   ```
-   cd flutter-app
-   ```
-
-3. Get the dependencies:
-   ```
-   flutter pub get
-   ```
-
-4. Run the app:
-   ```
-   flutter run -d chrome  # For web
-   flutter run -d android  # For Android
-   flutter run -d ios      # For iOS
-   ```
+The web UI is built into the Python backend and doesn't require separate installation. It's automatically served when you run the backend application.
 
 ## Usage
 
@@ -95,9 +79,9 @@ python main.py
 python main.py --prompt "Generate a Python function to sort a list of integers"
 ```
 
-### Flutter App Usage
+### Web UI Usage
 
-The Flutter app provides a modern UI for interacting with the DMac system:
+The web UI provides a modern Material Design interface for interacting with the DMac system:
 
 1. **Login**: Use the provided test accounts or auto-generate a login for testing
    - Admin: admin@dmac.ai (any password works for testing)
@@ -107,6 +91,9 @@ The Flutter app provides a modern UI for interacting with the DMac system:
 2. **Dashboard**: Access the main dashboard with tabs for Agents, Tasks, Models, and Analytics
 
 3. **Chat**: Interact with the AI agent swarm through the chat interface
+   - Use the Research button to enable web search for real-time information
+   - Ask questions about current events, latest versions, or any topic requiring up-to-date information
+   - See visual indicators when web search is being used
 
 4. **WebArena**: Run experiments and evaluate models in the WebArena environment
 
@@ -118,8 +105,11 @@ The WebArena integration allows you to evaluate your agents in the WebArena envi
 # Start the DMac application with the dashboard
 python run_server.py
 
+# Or use the batch script
+run_dmac_server.bat
+
 # Access the WebArena dashboard at
-http://localhost:8080/webarena/dashboard
+http://localhost:1302/webarena/dashboard
 ```
 
 From the WebArena dashboard, you can:
@@ -159,6 +149,22 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Recent Updates
+
+### Version 1.2.0 (April 5, 2025)
+- Added web search functionality to the chat interface
+- Implemented real-time information retrieval using web scraping
+- Added automatic detection of queries that need current information
+- Integrated with DuckDuckGo for privacy-friendly searches
+- Improved authentication system with auto-generated logins for development
+- Enhanced error handling in the chat interface
+
+### Version 1.1.0 (July 10, 2024)
+- Added modern UI with Google Material Design
+- Implemented consistent brand identity with DMac logo
+- Added light/dark mode toggle for better user experience
+- Enhanced task creation with file upload support
+- Integrated Streamlit for WebArena visualization
+- Replaced Zeno with open-source visualization tools
 
 ### Version 0.2.0
 - Added Flutter app for improved UI/UX

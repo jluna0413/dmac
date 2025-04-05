@@ -2,6 +2,26 @@
 
 All notable changes to the DMac project will be documented in this file.
 
+## [1.2.0] - 2025-04-05
+
+### Added
+- Web search functionality for the chat interface
+  - Real-time information retrieval using web scraping
+  - Automatic detection of queries that need current information
+  - Integration with DuckDuckGo for privacy-friendly searches
+  - Visual indicators for when web search is being used
+- Enhanced chat API with web search capabilities
+- Research button in chat interface to explicitly enable web search
+
+### Changed
+- Updated server to run on port 1302 for network accessibility
+- Improved authentication system with auto-generated logins for development
+- Enhanced error handling in the chat interface
+
+### Fixed
+- Fixed login issues with development accounts
+- Improved error handling for Ollama model integration
+
 ## [1.1.0] - 2024-07-10
 
 ### Added

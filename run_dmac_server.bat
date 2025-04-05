@@ -1,0 +1,3 @@
+@echo off
+echo Starting DMac server on port 1302...
+python run_server.py --port=1302

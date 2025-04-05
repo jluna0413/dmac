@@ -282,6 +282,12 @@ class UnifiedInput {
                 animation: thinking 1.5s infinite;
             }
 
+            .web-search-note {
+                text-align: center;
+                margin-bottom: 15px;
+                color: var(--bs-secondary);
+            }
+
             @keyframes thinking {
                 0% { content: '.'; }
                 33% { content: '..'; }
@@ -371,7 +377,7 @@ class UnifiedInput {
         this.addThinkingIndicator();
 
         // Send the request to the API
-        fetch('/api/chat/message', {
+        fetch('/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -383,9 +389,17 @@ class UnifiedInput {
                 // Remove thinking indicator
                 this.removeThinkingIndicator();
 
-                if (data.success) {
-                    // Add the response to the chat
+                // Add the response to the chat
+                if (data.response) {
                     this.addMessageToChat(data.response, 'assistant');
+
+                    // Show if web search was used
+                    if (data.used_web_search) {
+                        const webSearchNote = document.createElement('div');
+                        webSearchNote.className = 'web-search-note';
+                        webSearchNote.innerHTML = '<small><i class="fas fa-search"></i> Web search was used to provide up-to-date information</small>';
+                        this.chatContainer.appendChild(webSearchNote);
+                    }
 
                     // Clear uploaded files if any
                     if (this.uploadedFiles.length > 0) {
@@ -498,7 +512,7 @@ class UnifiedInput {
         if (this.isThinking) {
             thinkingText = 'Deep thinking';
         } else if (this.isResearching) {
-            thinkingText = 'Researching';
+            thinkingText = 'Researching the web for up-to-date information';
         }
 
         thinkingContent.innerHTML = `<p>${thinkingText}<span class="thinking-dots"></span></p>`;
@@ -689,7 +703,7 @@ class UnifiedInput {
 
             // Show indicator
             document.getElementById('thinking-indicator').style.display = 'block';
-            document.getElementById('thinking-text').textContent = 'Deep research mode activated...';
+            document.getElementById('thinking-text').textContent = 'Web search mode activated - I will search the web for up-to-date information';
         } else {
             researchButton.classList.remove('active');
 

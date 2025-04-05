@@ -21,6 +21,8 @@ from utils.secure_logging import get_logger
 from utils.error_handling import handle_async_errors
 from security.secure_api import setup_secure_api, setup_auth_routes
 from webarena.webarena_api import setup_webarena_routes
+from integrations.web_search_api import setup_web_search_routes
+from agents.chat_api import setup_chat_routes
 
 logger = get_logger('dmac.dashboard.dashboard_server')
 
@@ -75,6 +77,8 @@ class DashboardServer:
             setup_secure_api(self.app)
             setup_auth_routes(self.app)
             setup_webarena_routes(self.app)
+            setup_web_search_routes(self.app)
+            setup_chat_routes(self.app)
 
             # Set up dashboard routes
             self._setup_dashboard_routes()
@@ -126,6 +130,7 @@ class DashboardServer:
         self.app.router.add_get('/webarena/runs/{run_id}', self._handle_webarena_run_details)
         self.app.router.add_get('/webarena/visualizations', self._handle_webarena_visualizations)
         self.app.router.add_get('/settings', self._handle_settings)
+        self.app.router.add_get('/chat', self._handle_chat)
 
         logger.info("Dashboard routes set up")
 
@@ -310,6 +315,21 @@ class DashboardServer:
         return {
             'title': 'DMac - Settings',
             'page': 'settings',
+        }
+
+    @aiohttp_jinja2.template('chat.html')
+    async def _handle_chat(self, request: Request) -> Dict[str, Any]:
+        """Handle a request to the chat page.
+
+        Args:
+            request: The request to handle.
+
+        Returns:
+            A dictionary of template variables.
+        """
+        return {
+            'title': 'DMac - Chat',
+            'page': 'chat',
         }
 
 
