@@ -91,7 +91,7 @@ These words trigger both web search and deep thinking modes:
 
 Here are some examples of messages that would trigger different modes:
 
-- "Search for the latest version of Flutter" - Triggers web search mode
+- "Search for the latest version of Python" - Triggers web search mode
 - "Can you think deeply about the implications of this design?" - Triggers deep thinking mode
 - "I need you to research the history of artificial intelligence" - Triggers deep research mode
 

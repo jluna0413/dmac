@@ -3,7 +3,7 @@
 ## Accomplishments
 
 1. **Restored Web-Based Implementation**
-   - Successfully switched from Flutter to Python/JavaScript/HTML5/CSS
+   - Successfully implemented with Python/JavaScript/HTML5/CSS
    - Verified the existing codebase structure and functionality
    - Updated the server to run on port 1302 for network accessibility
 
@@ -68,4 +68,4 @@
 
 ## Conclusion
 
-The DMac project is now back on track with a solid web-based implementation. The core functionality is working, and we have a clear plan for implementing the remaining features. The switch from Flutter to Python/JavaScript/HTML5/CSS has simplified the development process and will make it easier to implement the remaining features.
+The DMac project is now back on track with a solid web-based implementation. The core functionality is working, and we have a clear plan for implementing the remaining features. The Python/JavaScript/HTML5/CSS stack has simplified the development process and will make it easier to implement the remaining features.

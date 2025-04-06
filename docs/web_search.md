@@ -65,7 +65,7 @@ The web search functionality is implemented using:
 
 Here are some examples of queries that benefit from web search:
 
-- "What is the current version of Flutter?"
+- "What is the current version of React?"
 - "What is the latest version of Python?"
 - "Who is the current CEO of Microsoft?"
 - "What is the current price of Bitcoin?"

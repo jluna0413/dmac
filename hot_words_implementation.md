@@ -45,7 +45,7 @@ The implementation involved several key components:
 
 From the user's perspective, the experience is now more natural and conversational:
 
-1. User types a message containing hot words (e.g., "Can you search for the latest Flutter version?")
+1. User types a message containing hot words (e.g., "Can you search for the latest React version?")
 2. System automatically detects "search" as a hot word
 3. Web search mode is activated
 4. A toast notification appears indicating "Web search mode activated based on your message"
