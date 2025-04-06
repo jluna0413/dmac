@@ -50,67 +50,49 @@ class UnifiedInput {
      * Initialize the unified input UI
      */
     initializeUI() {
-        // Create the input container if it doesn't exist
-        if (!this.inputContainer) {
-            this.inputContainer = document.createElement('div');
-            this.inputContainer.id = 'input-container';
-            this.inputContainer.className = 'unified-input-container';
-            document.body.appendChild(this.inputContainer);
-        }
+        // Find the input container that's already in the DOM
+        this.inputContainer = document.getElementById('input-container');
 
-        // Create the chat container if it doesn't exist
-        if (!this.chatContainer) {
-            this.chatContainer = document.createElement('div');
-            this.chatContainer.id = 'chat-container';
-            this.chatContainer.className = 'chat-container';
-            document.body.insertBefore(this.chatContainer, this.inputContainer);
-        }
+        // Find the chat container that's already in the DOM
+        this.chatContainer = document.getElementById('chat-container');
+
+        // Find the model selector container in the sidebar
+        this.modelSelectorContainer = document.getElementById('model-selector-container');
+
+        // Set up sidebar button handlers
+        this.setupSidebarButtons();
 
         // Set up the input container HTML
         this.inputContainer.innerHTML = `
-            <div class="input-group mb-2">
-                <button id="voice-button" class="btn btn-outline-secondary input-group-prepend" title="Voice Input">
+            <div class="tools-container">
+                <div class="tools-row">
+                    <button id="sidebar-research-button" class="tool-button">
+                        <i class="fas fa-search"></i> Web Search
+                    </button>
+                    <button id="sidebar-think-button" class="tool-button">
+                        <i class="fas fa-brain"></i> Deep Thinking
+                    </button>
+                    <button id="sidebar-opencanvas-button" class="tool-button">
+                        <i class="fas fa-project-diagram"></i> Open Canvas
+                    </button>
+                </div>
+            </div>
+            <div class="input-group">
+                <button id="voice-button" class="btn input-group-prepend" title="Voice Input">
                     <i class="fas fa-microphone"></i>
                 </button>
-                <textarea id="user-input" class="form-control" placeholder="Type your message here..." rows="2"></textarea>
+                <textarea id="user-input" class="form-control" placeholder="Message DMac..." rows="1"></textarea>
                 <div class="input-group-append d-flex">
-                    <button id="upload-button" class="btn btn-outline-secondary" title="Upload Files">
-                        <i class="fas fa-upload"></i>
+                    <button id="upload-button" class="tool-pill" title="Upload Files">
+                        <i class="fas fa-upload"></i> Files
                     </button>
-                    <div class="btn-group">
-                        <button id="research-button" class="btn btn-outline-secondary" title="Deep Research">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <button id="research-dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="visually-hidden">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item search-engine" href="#" data-engine="duckduckgo"><i class="fas fa-duck"></i> DuckDuckGo (Default)</a></li>
-                            <li><a class="dropdown-item search-engine" href="#" data-engine="google"><i class="fab fa-google"></i> Google</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="clear-search-cache"><i class="fas fa-trash"></i> Clear Search Cache</a></li>
-                        </ul>
-                    </div>
-                    <button id="think-button" class="btn btn-outline-secondary" title="Deep Thinking Mode">
-                        <i class="fas fa-brain"></i>
-                    </button>
-                    <button id="opencanvas-button" class="btn btn-outline-secondary" title="Open Canvas">
-                        <i class="fas fa-project-diagram"></i>
-                    </button>
-                    <button id="send-button" class="btn btn-primary">
+                    <button id="send-button" class="btn">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
                 <input type="file" id="file-upload" multiple style="display: none;">
             </div>
-            <div class="input-tools d-flex justify-content-center align-items-center">
-                <div class="model-selector">
-                    <select id="model-selector" class="form-select form-select-sm">
-                        <option value="" disabled>Select a model</option>
-                    </select>
-                </div>
-            </div>
-            <div id="uploaded-files-container" class="uploaded-files-container mt-2" style="display: none;">
+            <div id="uploaded-files-container" class="uploaded-files-container" style="display: none;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <h6 class="mb-0">Uploaded Files</h6>
                     <button id="clear-files-button" class="btn btn-sm btn-outline-danger">
@@ -119,7 +101,7 @@ class UnifiedInput {
                 </div>
                 <div id="uploaded-files-list" class="uploaded-files-list"></div>
             </div>
-            <div id="thinking-indicator" class="thinking-indicator mt-2" style="display: none;">
+            <div id="thinking-indicator" class="thinking-indicator" style="display: none;">
                 <div class="d-flex align-items-center">
                     <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
                         <span class="visually-hidden">Thinking...</span>
@@ -134,6 +116,461 @@ class UnifiedInput {
 
         // Add styles
         this.addStyles();
+    }
+
+    /**
+     * Set up sidebar buttons and tool buttons
+     */
+    setupSidebarButtons() {
+        // Set up model selection from the dropdown menu
+        this.setupModelSelectors();
+
+        // Set up Ollama models list
+        this.loadOllamaModels();
+
+        // Set up model item click handlers
+        this.setupModelItemClickHandlers();
+
+        // Set up tool buttons
+        this.setupToolButtons();
+    }
+
+    /**
+     * Set up model selectors
+     */
+    setupModelSelectors() {
+        // Create model selector in the sidebar (legacy - will be hidden but kept for compatibility)
+        if (this.modelSelectorContainer) {
+            this.modelSelectorContainer.innerHTML = `
+                <select id="model-selector" class="form-select form-select-sm w-100" style="display: none;">
+                    <option value="" disabled>Select a model</option>
+                </select>
+            `;
+        }
+
+        // Set up dropdown handlers after a short delay to ensure DOM is ready
+        setTimeout(() => {
+            this.setupDropdownHandlers();
+        }, 500);
+    }
+
+    /**
+     * Set up dropdown handlers
+     */
+    setupDropdownHandlers() {
+        console.log('Setting up dropdown handlers');
+
+        // Set up provider dropdown click handlers
+        document.querySelectorAll('.provider-item').forEach(item => {
+            console.log('Found provider item:', item.dataset.provider);
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const provider = item.dataset.provider;
+                console.log('Provider clicked:', provider);
+                this.selectProvider(provider, item.textContent.trim());
+            });
+        });
+
+        // Set up model dropdown click handlers
+        document.querySelectorAll('.dropdown-item.model-item').forEach(item => {
+            if (item.dataset.model && !item.classList.contains('loading')) {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const modelId = item.dataset.model;
+                    const modelName = item.textContent.trim();
+                    this.selectModel(modelId, modelName);
+                });
+            }
+        });
+    }
+
+    /**
+     * Select a provider
+     */
+    selectProvider(provider, providerName) {
+        // Update the selected provider display
+        const selectedProvider = document.getElementById('selected-provider');
+        if (selectedProvider) {
+            selectedProvider.textContent = providerName;
+        }
+
+        // Hide all model lists
+        document.querySelectorAll('.model-list').forEach(list => {
+            list.style.display = 'none';
+        });
+
+        // Show the selected provider's models
+        const modelList = document.getElementById(`${provider}-models`);
+        if (modelList) {
+            modelList.style.display = 'block';
+
+            // If it's Ollama, load the models
+            if (provider === 'ollama') {
+                this.loadOllamaModels();
+            }
+        }
+
+        // Update the model dropdown text
+        const selectedModel = document.getElementById('selected-model');
+        if (selectedModel) {
+            selectedModel.textContent = `Select ${providerName} Model`;
+        }
+    }
+
+    /**
+     * Load Ollama models
+     */
+    loadOllamaModels() {
+        const ollamaModelsList = document.getElementById('ollama-models-list');
+        if (!ollamaModelsList) return;
+
+        // Show loading indicator
+        ollamaModelsList.innerHTML = `<a class="dropdown-item model-item loading" href="#">Loading models...</a>`;
+
+        // Fetch Ollama models
+        fetch('/api/ollama/models')
+            .then(response => response.json())
+            .then(data => {
+                if (data.models && data.models.length > 0) {
+                    // Clear loading indicator
+                    ollamaModelsList.innerHTML = '';
+
+                    // Add models to the list
+                    data.models.forEach(model => {
+                        const li = document.createElement('li');
+                        const modelItem = document.createElement('a');
+                        modelItem.className = 'dropdown-item model-item';
+                        modelItem.href = '#';
+                        modelItem.dataset.model = model.id || model.name;
+                        modelItem.textContent = model.name;
+
+                        // Add click handler
+                        modelItem.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            this.selectModel(model.id || model.name, model.name);
+                        });
+
+                        li.appendChild(modelItem);
+                        ollamaModelsList.appendChild(li);
+                    });
+                } else {
+                    ollamaModelsList.innerHTML = `<li><a class="dropdown-item model-item disabled" href="#">No models found</a></li>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading Ollama models:', error);
+                ollamaModelsList.innerHTML = `<li><a class="dropdown-item model-item disabled" href="#">Error loading models</a></li>`;
+            });
+    }
+
+    /**
+     * Set up model item click handlers
+     */
+    setupModelItemClickHandlers() {
+        // This is now handled in setupModelSelectors
+    }
+
+    /**
+     * Select a model
+     */
+    selectModel(modelId, modelName) {
+        // Update the current model display
+        const currentModelDisplay = document.getElementById('current-model-display');
+        if (currentModelDisplay) {
+            currentModelDisplay.textContent = modelName;
+        }
+
+        // Update the selected model dropdown text
+        const selectedModel = document.getElementById('selected-model');
+        if (selectedModel) {
+            selectedModel.textContent = modelName;
+        }
+
+        // Update the model selector (legacy)
+        const modelSelector = document.getElementById('model-selector');
+        if (modelSelector) {
+            // Check if the option exists, if not add it
+            let option = Array.from(modelSelector.options).find(opt => opt.value === modelId);
+            if (!option) {
+                option = new Option(modelName, modelId);
+                modelSelector.add(option);
+            }
+            modelSelector.value = modelId;
+        }
+
+        // Remove active class from all model items
+        document.querySelectorAll('.dropdown-item.model-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Add active class to the clicked model item
+        const selectedItem = document.querySelector(`.dropdown-item.model-item[data-model="${modelId}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('active');
+        }
+
+        // Show toast notification
+        this.showToast('Model Selected', `Selected model: ${modelName}`);
+
+        // Show model info content and hide placeholder
+        const modelInfoPlaceholder = document.getElementById('model-info-placeholder');
+        const modelInfoContent = document.getElementById('model-info-content');
+        if (modelInfoPlaceholder && modelInfoContent) {
+            modelInfoPlaceholder.style.display = 'none';
+            modelInfoContent.style.display = 'block';
+        }
+
+        // Update capabilities based on the selected model
+        this.updateModelCapabilities(modelId);
+    }
+
+    /**
+     * Update model capabilities based on the selected model
+     */
+    updateModelCapabilities(modelId) {
+        // This is a placeholder - in a real implementation, you would fetch the model's capabilities
+        // and update the UI accordingly
+
+        // For now, we'll just simulate different capabilities for different providers
+        const isGemini = modelId.startsWith('gemini');
+        const isGPT4 = modelId.includes('gpt-4');
+        const isOllama = !modelId.includes('-') || modelId.includes('ollama');
+        const isDeepSeek = modelId.includes('deepseek');
+
+        // Update vision capability
+        const visionCapability = document.querySelector('.model-capability-item:nth-child(3) .capability-badge');
+        if (visionCapability) {
+            if (isGemini || isGPT4) {
+                visionCapability.className = 'capability-badge available';
+                visionCapability.innerHTML = '<i class="fas fa-check"></i>';
+            } else {
+                visionCapability.className = 'capability-badge unavailable';
+                visionCapability.innerHTML = '<i class="fas fa-times"></i>';
+            }
+        }
+
+        // Update model details
+        const typeValue = document.querySelector('.model-detail-item:nth-child(1) .detail-value');
+        const paramsValue = document.querySelector('.model-detail-item:nth-child(2) .detail-value');
+        const contextValue = document.querySelector('.model-detail-item:nth-child(3) .detail-value');
+        const providerValue = document.querySelector('.model-detail-item:nth-child(4) .detail-value');
+
+        if (typeValue) {
+            if (isDeepSeek && modelId.includes('coder')) {
+                typeValue.textContent = 'Code Generation Model';
+            } else if (modelId.includes('gemma') || modelId.includes('llama')) {
+                typeValue.textContent = 'Open Source LLM';
+            } else {
+                typeValue.textContent = 'Large Language Model';
+            }
+        }
+
+        if (paramsValue) {
+            if (isGPT4 && modelId.includes('o')) {
+                paramsValue.textContent = '1.8 trillion';
+            } else if (isGPT4) {
+                paramsValue.textContent = '1.5 trillion';
+            } else if (isGemini && modelId.includes('pro')) {
+                paramsValue.textContent = '1 trillion';
+            } else if (modelId.includes('gemma3:12b')) {
+                paramsValue.textContent = '12 billion';
+            } else if (modelId.includes('gemma3:8b') || modelId.includes('gemma:7b')) {
+                paramsValue.textContent = '8 billion';
+            } else if (modelId.includes('llama3:8b')) {
+                paramsValue.textContent = '8 billion';
+            } else if (modelId.includes('mistral')) {
+                paramsValue.textContent = '7 billion';
+            } else if (isOllama && !modelId.includes('gemma') && !modelId.includes('llama')) {
+                paramsValue.textContent = 'Varies';
+            } else {
+                paramsValue.textContent = 'Unknown';
+            }
+        }
+
+        if (contextValue) {
+            if (isGPT4 || (isGemini && modelId.includes('pro'))) {
+                contextValue.textContent = '128K tokens';
+            } else if (modelId.includes('gemma3:12b')) {
+                contextValue.textContent = '32K tokens';
+            } else if (modelId.includes('llama3')) {
+                contextValue.textContent = '16K tokens';
+            } else if (isOllama) {
+                contextValue.textContent = '8K tokens';
+            } else {
+                contextValue.textContent = '4K tokens';
+            }
+        }
+
+        if (providerValue) {
+            if (isGemini) {
+                providerValue.textContent = 'Google';
+            } else if (isGPT4 || modelId.includes('gpt')) {
+                providerValue.textContent = 'OpenAI';
+            } else if (isDeepSeek) {
+                providerValue.textContent = 'DeepSeek';
+            } else if (modelId.includes('hf-')) {
+                providerValue.textContent = 'HuggingFace';
+            } else if (modelId.includes('openrouter')) {
+                providerValue.textContent = 'OpenRouter';
+            } else if (isOllama) {
+                providerValue.textContent = 'Ollama';
+            } else if (modelId.includes('lmstudio')) {
+                providerValue.textContent = 'LM Studio';
+            } else {
+                providerValue.textContent = 'Unknown';
+            }
+        }
+    }
+
+    /**
+     * Set up tool buttons
+     */
+    setupToolButtons() {
+        // Set up tool buttons above input
+        const sidebarResearchButton = document.getElementById('sidebar-research-button');
+        if (sidebarResearchButton) {
+            sidebarResearchButton.addEventListener('click', () => {
+                this.toggleResearchMode(true);
+                this.updateToolButtonState(sidebarResearchButton, this.isResearching);
+            });
+        }
+
+        const sidebarThinkButton = document.getElementById('sidebar-think-button');
+        if (sidebarThinkButton) {
+            sidebarThinkButton.addEventListener('click', () => {
+                this.toggleThinkingMode(true);
+                this.updateToolButtonState(sidebarThinkButton, this.isThinking);
+            });
+        }
+
+        const sidebarOpenCanvasButton = document.getElementById('sidebar-opencanvas-button');
+        if (sidebarOpenCanvasButton) {
+            sidebarOpenCanvasButton.addEventListener('click', () => this.openCanvas());
+        }
+
+        // Set up research button in input area
+        const researchButton = document.getElementById('research-button');
+        if (researchButton) {
+            researchButton.addEventListener('click', () => {
+                this.toggleResearchMode(true);
+                this.updateToolButtonState(sidebarResearchButton, this.isResearching);
+            });
+        }
+
+        // Set up think button in input area
+        const thinkButton = document.getElementById('think-button');
+        if (thinkButton) {
+            thinkButton.addEventListener('click', () => {
+                this.toggleThinkingMode(true);
+                this.updateToolButtonState(sidebarThinkButton, this.isThinking);
+            });
+        }
+
+        // Set up new chat button
+        const newChatButton = document.getElementById('new-chat-button');
+        if (newChatButton) {
+            newChatButton.addEventListener('click', () => this.startNewChat());
+        }
+
+        // Set up clear history button
+        const clearHistoryButton = document.getElementById('clear-history-button');
+        if (clearHistoryButton) {
+            clearHistoryButton.addEventListener('click', () => this.clearChatHistory());
+        }
+    }
+
+    /**
+     * Update tool button state
+     */
+    updateToolButtonState(button, isActive) {
+        if (button) {
+            if (isActive) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        }
+    }
+
+    /**
+     * Start a new chat
+     */
+    startNewChat() {
+        // Clear the chat container
+        this.chatContainer.innerHTML = `
+            <div class="message assistant-message">
+                <div class="message-content">
+                    <h4>Welcome to DMac AI Assistant</h4>
+                    <p>I'm here to help you with your tasks. How can I assist you today?</p>
+                </div>
+            </div>
+        `;
+
+        // Clear uploaded files
+        this.clearUploadedFiles();
+
+        // Reset modes
+        this.isThinking = false;
+        this.isResearching = false;
+
+        // Update chat history
+        this.updateChatHistory('New Chat', 'Welcome to DMac AI Assistant...', true);
+    }
+
+    /**
+     * Clear chat history
+     */
+    clearChatHistory() {
+        // Clear the chat history list
+        const chatHistoryList = document.getElementById('chat-history-list');
+        if (chatHistoryList) {
+            chatHistoryList.innerHTML = `
+                <div class="chat-history-item active">
+                    <div class="chat-title">Current Chat</div>
+                    <div class="chat-preview">Welcome to DMac AI Assistant...</div>
+                </div>
+            `;
+        }
+
+        // Start a new chat
+        this.startNewChat();
+    }
+
+    /**
+     * Update chat history
+     */
+    updateChatHistory(title, preview, isActive = false) {
+        const chatHistoryList = document.getElementById('chat-history-list');
+        if (!chatHistoryList) return;
+
+        // Remove active class from all items
+        if (isActive) {
+            const activeItems = chatHistoryList.querySelectorAll('.chat-history-item.active');
+            activeItems.forEach(item => item.classList.remove('active'));
+        }
+
+        // Create new history item
+        const historyItem = document.createElement('div');
+        historyItem.className = `chat-history-item${isActive ? ' active' : ''}`;
+        historyItem.innerHTML = `
+            <div class="chat-title">${title}</div>
+            <div class="chat-preview">${preview}</div>
+        `;
+
+        // Add click event to load this chat
+        historyItem.addEventListener('click', () => {
+            // In a real app, this would load the chat from storage
+            const activeItems = chatHistoryList.querySelectorAll('.chat-history-item.active');
+            activeItems.forEach(item => item.classList.remove('active'));
+            historyItem.classList.add('active');
+        });
+
+        // Add to the list
+        if (isActive) {
+            chatHistoryList.prepend(historyItem);
+        } else {
+            chatHistoryList.appendChild(historyItem);
+        }
     }
 
     /**
@@ -229,17 +666,23 @@ class UnifiedInput {
                 bottom: 0;
                 left: 0;
                 right: 0;
-                background-color: var(--bs-body-bg);
-                padding: 15px;
-                border-top: 1px solid var(--bs-border-color);
-                z-index: 1000;
+                background-color: var(--gemini-surface);
+                padding: 16px 24px;
+                border-top: 1px solid var(--gemini-gray-200);
+                z-index: 100;
+                max-height: 160px;
+                overflow-y: auto;
+                font-family: var(--gemini-font);
             }
 
             .chat-container {
-                margin-bottom: 150px;
-                padding: 15px;
+                margin-bottom: 160px;
+                padding: 16px 24px;
                 overflow-y: auto;
-                height: calc(100vh - 150px);
+                height: calc(100vh - 160px);
+                scroll-behavior: smooth;
+                background-color: var(--gemini-background);
+                font-family: var(--gemini-font);
             }
 
             .tool-button {
@@ -384,6 +827,12 @@ class UnifiedInput {
                 }
             })
             .catch(error => console.error('Error loading models:', error));
+
+        // Add a global function to manually select a provider (for testing)
+        window.selectProvider = (provider) => {
+            console.log('Manual provider selection:', provider);
+            this.selectProvider(provider, provider.charAt(0).toUpperCase() + provider.slice(1));
+        };
     }
 
     /**
@@ -405,6 +854,10 @@ class UnifiedInput {
 
         // Add the message to the chat
         this.addMessageToChat(message, 'user');
+
+        // Update chat history with the first few words of the message
+        const previewText = message.length > 30 ? message.substring(0, 30) + '...' : message;
+        this.updateChatHistory(previewText, 'You: ' + previewText, true);
 
         // Prepare the request data
         const requestData = {
@@ -748,11 +1201,14 @@ class UnifiedInput {
      */
     toggleResearchMode(showToast = false) {
         const researchButton = document.getElementById('research-button');
+        const sidebarResearchButton = document.getElementById('sidebar-research-button');
 
         this.isResearching = !this.isResearching;
 
         if (this.isResearching) {
-            researchButton.classList.add('active');
+            // Update button states
+            if (researchButton) researchButton.classList.add('active');
+            if (sidebarResearchButton) sidebarResearchButton.classList.add('active');
 
             // If thinking mode is on, turn it off
             if (this.isThinking) {
@@ -769,7 +1225,9 @@ class UnifiedInput {
                 this.showToast('Web Search', `Web search mode activated using ${engineName}`);
             }
         } else {
-            researchButton.classList.remove('active');
+            // Update button states
+            if (researchButton) researchButton.classList.remove('active');
+            if (sidebarResearchButton) sidebarResearchButton.classList.remove('active');
 
             // Hide indicator
             document.getElementById('thinking-indicator').style.display = 'none';
@@ -890,11 +1348,14 @@ class UnifiedInput {
      */
     toggleThinkingMode(showToast = false) {
         const thinkButton = document.getElementById('think-button');
+        const sidebarThinkButton = document.getElementById('sidebar-think-button');
 
         this.isThinking = !this.isThinking;
 
         if (this.isThinking) {
-            thinkButton.classList.add('active');
+            // Update button states
+            if (thinkButton) thinkButton.classList.add('active');
+            if (sidebarThinkButton) sidebarThinkButton.classList.add('active');
 
             // If research mode is on, turn it off
             if (this.isResearching) {
@@ -910,7 +1371,9 @@ class UnifiedInput {
                 this.showToast('Deep Thinking', 'Deep thinking mode activated');
             }
         } else {
-            thinkButton.classList.remove('active');
+            // Update button states
+            if (thinkButton) thinkButton.classList.remove('active');
+            if (sidebarThinkButton) sidebarThinkButton.classList.remove('active');
 
             // Hide indicator
             document.getElementById('thinking-indicator').style.display = 'none';

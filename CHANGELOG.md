@@ -2,6 +2,31 @@
 
 All notable changes to the DMac project will be documented in this file.
 
+## [1.2.3] - 2025-04-06
+
+### Added
+- Comprehensive project documentation
+- Detailed developer roadmap
+- Model provider dropdown menu in chat interface
+- Model capabilities display in right sidebar
+- Tool buttons above chat input
+- Labeled pills for tools instead of icon buttons
+- Current model display in sidebar
+
+### Changed
+- Redesigned chat interface with three-column layout
+- Improved chat input area to be more compact and streamlined
+- Moved tools from right sidebar to above chat input
+- Repurposed right sidebar to display model information
+- Enhanced model details display with more accurate information
+- Updated styling to match Google's Material Design
+
+### Fixed
+- Chat input no longer floats over content
+- Input container properly positioned at bottom of chat area
+- Improved responsive design for different screen sizes
+- Added proper dark mode support
+
 ## [1.2.2] - 2025-04-05
 
 ### Added

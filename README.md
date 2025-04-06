@@ -2,7 +2,7 @@
 
 DMac is a modular, locally hosted AI ecosystem that coordinates a swarm of specialized agents to perform a wide range of tasks including software engineering, manufacturing automation, creative design, and more.
 
-![Version](https://img.shields.io/badge/version-1.2.2-blue)
+![Version](https://img.shields.io/badge/version-1.2.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
@@ -156,6 +156,15 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Recent Updates
 
+### Version 1.2.3 (April 6, 2025)
+- Redesigned chat interface with three-column layout
+- Added model provider dropdown menu in chat interface
+- Added model capabilities display in right sidebar
+- Moved tools from right sidebar to above chat input
+- Improved chat input area to be more compact and streamlined
+- Added comprehensive project documentation
+- Created detailed developer roadmap
+
 ### Version 1.2.2 (April 5, 2025)
 - Added hot word detection for automatic mode activation
 - Implemented trigger words for web search, deep thinking, and deep research modes
@@ -186,7 +195,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Replaced Zeno with open-source visualization tools
 
 ### Version 0.2.0
-- Added Flutter app for improved UI/UX
 - Implemented user authentication system
 - Added dashboard with Agents, Tasks, Models, and Analytics views
 - Integrated WebArena experiments and visualization
