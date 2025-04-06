@@ -1,0 +1,36 @@
+/* Footer Styles */
+.footer {
+    background-color: var(--footer-bg, #f8f9fa);
+    color: var(--footer-text, #212529);
+    border-top: 1px solid var(--border-color, #dee2e6);
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+}
+
+.footer img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+    max-width: 100px;
+}
+
+.footer .brand-name {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-left: 0.5rem;
+}
+
+.footer p {
+    margin-bottom: 0.5rem;
+}
+
+.footer .text-muted {
+    color: var(--text-secondary, rgba(0, 0, 0, 0.6)) !important;
+}
+
+@media (max-width: 768px) {
+    .footer .text-md-end {
+        text-align: left !important;
+        margin-top: 1rem;
+    }
+}
