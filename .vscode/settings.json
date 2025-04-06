@@ -25,7 +25,13 @@
         "**/webarena-zeno.ipynb": true,
         "**/webarena-zeno-fixed.ipynb": true,
         "**/zeno_client.pyi": true,
-        "**/zeno_client_wrapper.py": true
+        "**/zeno_client_wrapper.py": true,
+        "**/*.dart": true,
+        "**/flutter-app": true,
+        "**/pubspec.yaml": true,
+        "**/pubspec.lock": true,
+        "**/.flutter-plugins": true,
+        "**/.flutter-plugins-dependencies": true
     },
     "search.exclude": {
         "**/node_modules": true,
@@ -35,6 +41,12 @@
         "**/webarena-zeno.ipynb": true,
         "**/webarena-zeno-fixed.ipynb": true,
         "**/zeno_client.pyi": true,
-        "**/zeno_client_wrapper.py": true
+        "**/zeno_client_wrapper.py": true,
+        "**/*.dart": true,
+        "**/flutter-app": true,
+        "**/pubspec.yaml": true,
+        "**/pubspec.lock": true,
+        "**/.flutter-plugins": true,
+        "**/.flutter-plugins-dependencies": true
     }
 }
