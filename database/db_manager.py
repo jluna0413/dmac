@@ -9,6 +9,7 @@ import logging
 import os
 import time
 import uuid
+import aiosqlite
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 
