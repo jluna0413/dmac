@@ -222,21 +222,30 @@ class UnifiedInput {
      */
     loadOllamaModels() {
         const ollamaModelsList = document.getElementById('ollama-models-list');
-        if (!ollamaModelsList) return;
+        if (!ollamaModelsList) {
+            console.error('Ollama models list element not found');
+            return;
+        }
+
+        console.log('Loading Ollama models...');
 
         // Show loading indicator
-        ollamaModelsList.innerHTML = `<a class="dropdown-item model-item loading" href="#">Loading models...</a>`;
+        ollamaModelsList.innerHTML = `<li><a class="dropdown-item model-item loading" href="#">Loading models...</a></li>`;
 
         // Fetch Ollama models
         fetch('/api/ollama/models')
             .then(response => response.json())
             .then(data => {
+                console.log('Ollama models response:', data);
+
                 if (data.models && data.models.length > 0) {
                     // Clear loading indicator
                     ollamaModelsList.innerHTML = '';
 
                     // Add models to the list
                     data.models.forEach(model => {
+                        if (!model.name) return; // Skip models without names
+
                         const li = document.createElement('li');
                         const modelItem = document.createElement('a');
                         modelItem.className = 'dropdown-item model-item';
@@ -244,17 +253,32 @@ class UnifiedInput {
                         modelItem.dataset.model = model.id || model.name;
                         modelItem.textContent = model.name;
 
-                        // Add click handler
-                        modelItem.addEventListener('click', (e) => {
+                        // Add click handler using bind to preserve 'this' context
+                        const self = this;
+                        modelItem.onclick = function (e) {
                             e.preventDefault();
-                            this.selectModel(model.id || model.name, model.name);
-                        });
+                            e.stopPropagation();
+                            console.log('Model clicked:', model.name);
+                            self.selectModel(model.id || model.name, model.name);
+
+                            // Close the dropdown manually
+                            const dropdown = document.getElementById('modelSelectionDropdown');
+                            if (dropdown) {
+                                const bsDropdown = bootstrap.Dropdown.getInstance(dropdown);
+                                if (bsDropdown) {
+                                    bsDropdown.hide();
+                                }
+                            }
+                        };
 
                         li.appendChild(modelItem);
                         ollamaModelsList.appendChild(li);
+
+                        console.log('Added model to list:', model.name);
                     });
                 } else {
                     ollamaModelsList.innerHTML = `<li><a class="dropdown-item model-item disabled" href="#">No models found</a></li>`;
+                    console.warn('No Ollama models found');
                 }
             })
             .catch(error => {
