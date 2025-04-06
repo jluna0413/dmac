@@ -1071,29 +1071,55 @@ class UnifiedInput {
      * Toggle voice input mode
      */
     toggleVoiceInput() {
+        console.log('Toggling voice input mode...');
         const voiceButton = document.getElementById('voice-button');
 
+        if (!voiceButton) {
+            console.error('Voice button not found in the DOM');
+            return;
+        }
+
         if (this.isListening) {
+            console.log('Currently listening, stopping...');
             // Stop listening
             this.voiceInteraction.stopListening();
             this.isListening = false;
             voiceButton.classList.remove('active');
+            console.log('Voice input stopped');
         } else {
+            console.log('Not currently listening, starting...');
             // Start listening
-            this.voiceInteraction.startListening(text => {
-                const userInput = document.getElementById('user-input');
-                userInput.value = text;
-                this.isListening = false;
-                voiceButton.classList.remove('active');
+            try {
+                this.voiceInteraction.startListening(text => {
+                    console.log('Voice input received:', text);
+                    const userInput = document.getElementById('user-input');
+                    if (userInput) {
+                        userInput.value = text;
+                        console.log('Updated input field with recognized text');
 
-                // Auto-send if in research or thinking mode
-                if (this.isResearching || this.isThinking) {
-                    this.sendMessage();
-                }
-            });
+                        // Auto-send if in research or thinking mode
+                        if (this.isResearching || this.isThinking) {
+                            console.log('Auto-sending message due to active mode');
+                            this.sendMessage();
+                        }
+                    } else {
+                        console.error('User input field not found');
+                    }
 
-            this.isListening = true;
-            voiceButton.classList.add('active');
+                    this.isListening = false;
+                    voiceButton.classList.remove('active');
+                });
+
+                this.isListening = true;
+                voiceButton.classList.add('active');
+                console.log('Voice input started, button activated');
+
+                // Show toast notification
+                this.showToast('Voice Input', 'Listening for voice input...');
+            } catch (error) {
+                console.error('Error starting voice input:', error);
+                this.showToast('Error', 'Failed to start voice input: ' + error.message);
+            }
         }
     }
 

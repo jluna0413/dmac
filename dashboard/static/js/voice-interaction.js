@@ -19,34 +19,53 @@ class VoiceInteraction {
      * Initialize the speech recognition functionality
      */
     initializeSpeechRecognition() {
+        console.log('Initializing speech recognition...');
+
+        // Check for different speech recognition APIs
         if ('webkitSpeechRecognition' in window) {
+            console.log('Using webkitSpeechRecognition');
             this.recognition = new webkitSpeechRecognition();
-            this.recognition.continuous = false;
-            this.recognition.interimResults = false;
-            this.recognition.lang = 'en-US';
-
-            this.recognition.onstart = () => {
-                this.isListening = true;
-                this.updateMicrophoneUI(true);
-                console.log('Voice recognition started');
-            };
-
-            this.recognition.onend = () => {
-                this.isListening = false;
-                this.updateMicrophoneUI(false);
-                console.log('Voice recognition ended');
-            };
-
-            this.recognition.onerror = (event) => {
-                console.error('Voice recognition error:', event.error);
-                this.isListening = false;
-                this.updateMicrophoneUI(false);
-            };
-
-            console.log('Speech recognition initialized');
+        } else if ('SpeechRecognition' in window) {
+            console.log('Using standard SpeechRecognition');
+            this.recognition = new SpeechRecognition();
         } else {
             console.warn('Speech recognition not supported in this browser');
+            return;
         }
+
+        // Configure the recognition object
+        this.recognition.continuous = false;
+        this.recognition.interimResults = false;
+        this.recognition.lang = 'en-US';
+
+        this.recognition.onstart = () => {
+            this.isListening = true;
+            this.updateMicrophoneUI(true);
+            console.log('Voice recognition started');
+        };
+
+        this.recognition.onend = () => {
+            this.isListening = false;
+            this.updateMicrophoneUI(false);
+            console.log('Voice recognition ended');
+        };
+
+        this.recognition.onerror = (event) => {
+            console.error('Voice recognition error:', event.error);
+            this.isListening = false;
+            this.updateMicrophoneUI(false);
+
+            // Show error message to user
+            if (event.error === 'not-allowed') {
+                alert('Microphone access denied. Please allow microphone access in your browser settings.');
+            } else if (event.error === 'no-speech') {
+                console.log('No speech detected');
+            } else {
+                console.error('Speech recognition error:', event.error);
+            }
+        };
+
+        console.log('Speech recognition initialized successfully');
     }
 
     /**
@@ -103,15 +122,20 @@ class VoiceInteraction {
      * @param {boolean} isListening - Whether the system is currently listening
      */
     updateMicrophoneUI(isListening) {
-        const micButtons = document.querySelectorAll('.voice-input-btn');
+        // Look for both voice-input-btn class and voice-button id
+        const micButtons = document.querySelectorAll('.voice-input-btn, #voice-button');
+
+        console.log('Updating microphone UI, found buttons:', micButtons.length);
 
         micButtons.forEach(button => {
             if (isListening) {
-                button.classList.add('listening');
+                button.classList.add('active');
                 button.innerHTML = '<i class="fas fa-microphone-alt"></i>';
+                console.log('Set button to listening state:', button.id || button.className);
             } else {
-                button.classList.remove('listening');
+                button.classList.remove('active');
                 button.innerHTML = '<i class="fas fa-microphone"></i>';
+                console.log('Set button to not listening state:', button.id || button.className);
             }
         });
     }
@@ -121,17 +145,27 @@ class VoiceInteraction {
      * @param {Function} callback - Function to call with the recognized text
      */
     startListening(callback) {
+        console.log('Starting voice recognition...');
+
         if (!this.recognition) {
             console.error('Speech recognition not supported or not initialized');
-            return;
+            // Try to initialize again
+            this.initializeSpeechRecognition();
+
+            if (!this.recognition) {
+                alert('Speech recognition is not supported in your browser');
+                return;
+            }
         }
 
         if (this.isListening) {
+            console.log('Already listening, stopping first...');
             this.stopListening();
             return;
         }
 
         this.recognition.onresult = (event) => {
+            console.log('Got speech recognition result:', event);
             const transcript = event.results[0][0].transcript;
             console.log('Voice recognized:', transcript);
 
@@ -141,9 +175,14 @@ class VoiceInteraction {
         };
 
         try {
+            console.log('Starting speech recognition...');
             this.recognition.start();
+            console.log('Speech recognition started');
+            this.updateMicrophoneUI(true);
         } catch (error) {
             console.error('Error starting speech recognition:', error);
+            this.updateMicrophoneUI(false);
+            alert('Error starting speech recognition: ' + error.message);
         }
     }
 
@@ -151,12 +190,23 @@ class VoiceInteraction {
      * Stop listening for voice input
      */
     stopListening() {
-        if (this.recognition && this.isListening) {
-            try {
+        console.log('Stopping voice recognition...');
+
+        if (!this.recognition) {
+            console.error('Speech recognition not available');
+            return;
+        }
+
+        try {
+            if (this.isListening) {
                 this.recognition.stop();
-            } catch (error) {
-                console.error('Error stopping speech recognition:', error);
+                console.log('Speech recognition stopped');
+            } else {
+                console.log('Not currently listening, nothing to stop');
             }
+            this.updateMicrophoneUI(false);
+        } catch (error) {
+            console.error('Error stopping speech recognition:', error);
         }
     }
 
