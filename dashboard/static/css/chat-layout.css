@@ -3,8 +3,8 @@
 /* Main wrapper */
 .chat-interface-wrapper {
     display: flex;
-    height: calc(100vh - 56px);
-    /* Adjust for navbar height */
+    height: calc(100vh - 56px - 120px);
+    /* Adjust for navbar height and footer height */
     width: 100%;
     overflow: hidden;
     background-color: var(--gemini-background);

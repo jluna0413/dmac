@@ -41,13 +41,14 @@
     --gemini-font: 'Google Sans', 'Roboto', sans-serif;
 }
 
-/* Main containers - Now managed by chat-layout.css */
+/* Main containers - Now managed by chat-layout.css and footer.css */
 .unified-input-container {
     max-height: 160px;
     overflow-y: auto;
     font-family: var(--gemini-font);
     box-shadow: var(--gemini-elevation-2);
     transition: all var(--gemini-transition);
+    width: 100%;
 }
 
 .chat-container {

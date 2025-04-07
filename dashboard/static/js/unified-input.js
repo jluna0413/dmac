@@ -9,7 +9,7 @@
  */
 
 class UnifiedInput {
-    constructor(chatContainerId = 'chat-container', inputContainerId = 'input-container') {
+    constructor(chatContainerId = 'chat-container', inputContainerId = 'footer-input-container') {
         this.chatContainer = document.getElementById(chatContainerId);
         this.inputContainer = document.getElementById(inputContainerId);
         this.currentModel = 'gemma3:12b'; // Default model
@@ -50,14 +50,17 @@ class UnifiedInput {
      * Initialize the unified input UI
      */
     initializeUI() {
-        // Find the input container that's already in the DOM
-        this.inputContainer = document.getElementById('input-container');
+        // Find the input container that's already in the DOM (first try footer, then fallback to original)
+        this.inputContainer = document.getElementById('footer-input-container') || document.getElementById('input-container');
 
         // Find the chat container that's already in the DOM
         this.chatContainer = document.getElementById('chat-container');
 
         // Find the model selector container in the sidebar
         this.modelSelectorContainer = document.getElementById('model-selector-container');
+
+        // Log which container we're using
+        console.log('Using input container:', this.inputContainer ? this.inputContainer.id : 'none found');
 
         // Set up sidebar button handlers
         this.setupSidebarButtons();

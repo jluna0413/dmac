@@ -3,8 +3,12 @@
     background-color: var(--footer-bg, #f8f9fa);
     color: var(--footer-text, #212529);
     border-top: 1px solid var(--border-color, #dee2e6);
-    padding: 1.5rem 0;
-    margin-top: 2rem;
+    padding: 1rem 0;
+    margin-top: 0;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 .footer img {
@@ -28,9 +32,63 @@
     color: var(--text-secondary, rgba(0, 0, 0, 0.6)) !important;
 }
 
+/* Footer input container */
+.footer-input-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Footer info section */
+.footer-info {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    font-size: 0.85rem;
+}
+
+/* Adjust the unified input container when in footer */
+.footer .unified-input-container {
+    position: relative;
+    box-shadow: none;
+    padding: 0;
+    max-height: none;
+    background-color: transparent;
+}
+
+.footer .tools-container {
+    margin-bottom: 8px;
+}
+
+.footer .input-group {
+    background-color: var(--gemini-surface);
+    border-radius: var(--gemini-border-radius);
+    box-shadow: var(--gemini-elevation-1);
+    overflow: hidden;
+}
+
+.footer .input-group textarea {
+    border: none;
+    box-shadow: none;
+}
+
+.footer .input-group-append {
+    background-color: var(--gemini-surface);
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .footer .text-md-end {
         text-align: left !important;
         margin-top: 1rem;
+    }
+
+    .footer-info {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .footer-info .text-muted {
+        margin-top: 0.5rem;
     }
 }
