@@ -22,13 +22,7 @@
                 <h1>Sign In</h1>
                 <p>Welcome back! Please sign in to continue.</p>
                 <div class="alert alert-info">
-                    <p><strong>Test Accounts:</strong></p>
-                    <ul>
-                        <li><strong>Admin:</strong> admin@dmac.ai (any password)</li>
-                        <li><strong>User:</strong> user@dmac.ai (any password)</li>
-                        <li><strong>Developer:</strong> dev@dmac.ai (any password)</li>
-                    </ul>
-                    <p class="mb-0"><small>You can also use any email/password combination for auto-generated login.</small></p>
+                    <p class="mb-0"><small>Use any email/password combination for demo login.</small></p>
                 </div>
             </div>
 
@@ -130,66 +124,11 @@
         </div>
     </div>
 
-    <!-- Device Simulator Toggle -->
-    <div class="device-simulator-toggle">
-        <button class="btn btn-primary" id="deviceToggleBtn">
-            <i class="fas fa-mobile-alt"></i>
-        </button>
-    </div>
-
-    <!-- Device Simulator Panel -->
-    <div class="device-simulator-panel">
-        <div class="device-simulator-header">
-            <h5>Device Simulator</h5>
-            <button class="btn-close" id="closeDeviceSimulator"></button>
-        </div>
-        <div class="device-simulator-body">
-            <div class="device-selector">
-                <label for="deviceSelect" class="form-label">Select Device</label>
-                <select class="form-select" id="deviceSelect">
-                    <option value="default">Current View</option>
-                    <optgroup label="Mobile Phones">
-                        <option value="iphone-5">iPhone 5/SE (320×568)</option>
-                        <option value="iphone-x">iPhone X/11/12 (375×812)</option>
-                        <option value="pixel">Google Pixel (411×731)</option>
-                        <option value="galaxy-s8">Samsung Galaxy S8/S9 (360×740)</option>
-                    </optgroup>
-                    <optgroup label="Tablets">
-                        <option value="ipad">iPad (768×1024)</option>
-                        <option value="ipad-pro">iPad Pro (1024×1366)</option>
-                        <option value="galaxy-tab">Galaxy Tab (800×1280)</option>
-                    </optgroup>
-                    <optgroup label="Laptops">
-                        <option value="laptop">Laptop (1366×768)</option>
-                        <option value="laptop-hd">Laptop HD (1920×1080)</option>
-                    </optgroup>
-                </select>
-            </div>
-            <div class="device-orientation mt-3">
-                <label class="form-label">Orientation</label>
-                <div class="btn-group" role="group">
-                    <input type="radio" class="btn-check" name="orientation" id="portrait" checked>
-                    <label class="btn btn-outline-primary" for="portrait">
-                        <i class="fas fa-mobile-alt"></i> Portrait
-                    </label>
-                    <input type="radio" class="btn-check" name="orientation" id="landscape">
-                    <label class="btn btn-outline-primary" for="landscape">
-                        <i class="fas fa-mobile-alt fa-rotate-90"></i> Landscape
-                    </label>
-                </div>
-            </div>
-            <div class="device-frame mt-4">
-                <div class="device-screen">
-                    <iframe id="deviceFrame" src="/login"></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Device simulator removed to simplify the interface -->
 
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/theme-switcher.js"></script>
-    <script src="/static/js/auth.js"></script>
-    <script src="/static/js/device-simulator.js"></script>
+    <script src="/static/js/auth.simplified.js"></script>
 </body>
 </html>
