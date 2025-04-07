@@ -270,10 +270,36 @@
 
     <footer class="footer py-3">
         <div class="container-fluid">
-            <div id="footer-input-container" class="footer-input-container">
-                <!-- Chat input will be loaded here by JavaScript -->
+            <div id="footer-input-container" class="footer-input-container unified-input-container">
+                <!-- Direct implementation of chat input UI -->
+                <div class="tools-container">
+                    <div class="tools-row">
+                        <button id="sidebar-research-button" class="tool-button">
+                            <i class="fas fa-search"></i> Web Search
+                        </button>
+                        <button id="sidebar-think-button" class="tool-button">
+                            <i class="fas fa-brain"></i> Deep Thinking
+                        </button>
+                        <button id="sidebar-opencanvas-button" class="tool-button">
+                            <i class="fas fa-project-diagram"></i> Open Canvas
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <button id="voice-button" class="btn input-group-prepend" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <textarea id="user-input" class="form-control" placeholder="Message DMac..." rows="1"></textarea>
+                    <div class="input-group-append d-flex">
+                        <button id="upload-button" class="tool-pill" title="Upload Files">
+                            <i class="fas fa-upload"></i> Files
+                        </button>
+                        <button id="send-button" class="btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <!-- Footer info removed as requested -->
         </div>
     </footer>
 
