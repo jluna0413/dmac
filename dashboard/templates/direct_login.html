@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/css/material-theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono&display=swap">
-    <link rel="icon" href="/static/img/dmac-logo.svg">
+    <link rel="icon" href="/static/img/Dmac_Logo.png">
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/theme-switcher.js"></script>
@@ -20,7 +20,7 @@
             <div class="col-md-6 login-container">
                 <div class="card">
                     <div class="card-header text-center">
-                        <h3>DMac Direct Login</h3>
+                        <h3><img src="/static/img/Dmac_Logo.png" alt="DMac Logo" height="36"> Direct Login</h3>
                     </div>
                     <div class="card-body">
                         <div class="alert alert-info">
@@ -37,10 +37,10 @@
         document.getElementById('directLoginBtn').addEventListener('click', function() {
             // Create a demo token
             const demoToken = 'demo_token_' + Math.random().toString(36).substring(2, 15);
-            
+
             // Store the token in localStorage
             localStorage.setItem('dmac_token', demoToken);
-            
+
             // Redirect to the dashboard
             window.location.href = '/dashboard';
         });

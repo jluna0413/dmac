@@ -122,8 +122,12 @@ class VoiceInteraction {
      * @param {boolean} isListening - Whether the system is currently listening
      */
     updateMicrophoneUI(isListening) {
-        // Look for both voice-input-btn class and voice-button id
-        const micButtons = document.querySelectorAll('.voice-input-btn, #voice-button');
+        // Only update the main voice button in the footer
+        const mainVoiceButton = document.querySelector('#voice-button');
+        // And any voice input buttons that are not in the footer
+        const otherMicButtons = Array.from(document.querySelectorAll('.voice-input-btn')).filter(btn => !btn.closest('.footer'));
+
+        const micButtons = mainVoiceButton ? [mainVoiceButton, ...otherMicButtons] : otherMicButtons;
 
         console.log('Updating microphone UI, found buttons:', micButtons.length);
 
@@ -325,6 +329,11 @@ function addVoiceInteractionButtons() {
 
         // Skip the chat input area which already has a voice button
         if (input.id === 'user-input') {
+            return;
+        }
+
+        // Skip inputs in the footer
+        if (input.closest('.footer')) {
             return;
         }
 

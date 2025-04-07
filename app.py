@@ -15,7 +15,7 @@ from config.config import config
 from utils.secure_logging import setup_logging, get_logger
 from utils.error_handling import install_global_exception_handler
 from security.security_manager import security_manager
-from models.model_manager import model_manager
+from models.model_manager import ModelManager
 from models.ollama_manager import ollama_manager
 from webarena.webarena_manager import webarena_manager
 from webarena.ollama_integration import webarena_ollama_integration
@@ -42,7 +42,7 @@ class DMacApplication:
         # Initialize components
         self.components = {
             'security_manager': security_manager,
-            'model_manager': model_manager,
+            'model_manager': ModelManager(),
             'ollama_manager': ollama_manager,
             'webarena_manager': webarena_manager,
             'webarena_ollama_integration': webarena_ollama_integration,
@@ -69,39 +69,39 @@ class DMacApplication:
 
             # Start model manager
             logger.info("Starting model manager")
-            await model_manager.initialize()
+            await self.components['model_manager'].initialize()
 
             # Start Ollama manager
             logger.info("Starting Ollama manager")
-            await ollama_manager.initialize()
+            await self.components['ollama_manager'].initialize()
 
             # Start WebArena manager
             logger.info("Starting WebArena manager")
-            await webarena_manager.initialize()
+            await self.components['webarena_manager'].initialize()
 
             # Start WebArena Ollama integration
             logger.info("Starting WebArena Ollama integration")
-            await webarena_ollama_integration.initialize()
+            await self.components['webarena_ollama_integration'].initialize()
 
             # Start agent manager
             logger.info("Starting agent manager")
-            await agent_manager.initialize()
+            await self.components['agent_manager'].initialize()
 
             # Start task manager
             logger.info("Starting task manager")
-            await task_manager.initialize()
+            await self.components['task_manager'].initialize()
 
             # Start learning manager
             logger.info("Starting learning manager")
-            await learning_manager.initialize()
+            await self.components['learning_manager'].initialize()
 
             # Start web search
             logger.info("Starting web search")
-            await web_search.initialize()
+            await self.components['web_search'].initialize()
 
             # Start dashboard server
             logger.info("Starting dashboard server")
-            await dashboard_server.start()
+            await self.components['dashboard_server'].start()
 
             logger.info("DMac application started")
 

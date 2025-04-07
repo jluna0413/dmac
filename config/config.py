@@ -3,6 +3,7 @@ Configuration module for DMac.
 """
 
 import os
+import json
 import yaml
 
 # Import security utilities
@@ -30,7 +31,15 @@ class Config:
             config_path: Path to the configuration file.
         """
         self.config_path = config_path or os.path.join(os.path.dirname(__file__), 'config.yaml')
+        self.agent_config_path = os.path.join(os.path.dirname(__file__), 'agent_config.json')
+        self.model_config_path = os.path.join(os.path.dirname(__file__), 'model_config.json')
+
+        # Load the main configuration
         self.config = self._load_config()
+
+        # Load additional configurations
+        self._load_agent_config()
+        self._load_model_config()
 
     def _load_config(self):
         """Load the configuration from the YAML file."""
@@ -57,6 +66,78 @@ class Config:
         except Exception as e:
             logger.error(f"Error loading configuration: {e}")
             return self._create_default_config()
+
+    def _load_agent_config(self):
+        """Load the agent configuration from the JSON file."""
+        if not os.path.exists(self.agent_config_path):
+            logger.warning(f"Agent configuration file not found: {self.agent_config_path}")
+            return
+
+        try:
+            with open(self.agent_config_path, 'r') as f:
+                agent_config = json.load(f)
+
+            # Merge with main config
+            if 'agents' not in self.config:
+                self.config['agents'] = {}
+
+            self.config['agents'].update(agent_config.get('agents', {}))
+
+            # Add benchmarking config
+            if 'benchmarking' not in self.config:
+                self.config['benchmarking'] = {}
+
+            self.config['benchmarking'].update(agent_config.get('benchmarking', {}))
+
+            # Add task routing config
+            if 'task_routing' not in self.config:
+                self.config['task_routing'] = {}
+
+            self.config['task_routing'].update(agent_config.get('task_routing', {}))
+
+            # Add reinforcement learning config
+            if 'reinforcement_learning' not in self.config:
+                self.config['reinforcement_learning'] = {}
+
+            self.config['reinforcement_learning'].update(agent_config.get('reinforcement_learning', {}))
+
+            logger.info(f"Loaded agent configuration from {self.agent_config_path}")
+        except Exception as e:
+            logger.error(f"Error loading agent configuration: {e}")
+
+    def _load_model_config(self):
+        """Load the model configuration from the JSON file."""
+        if not os.path.exists(self.model_config_path):
+            logger.warning(f"Model configuration file not found: {self.model_config_path}")
+            return
+
+        try:
+            with open(self.model_config_path, 'r') as f:
+                model_config = json.load(f)
+
+            # Merge with main config
+            if 'models' not in self.config:
+                self.config['models'] = {}
+
+            # Add default provider and model
+            self.config['models']['default_provider'] = model_config.get('default_provider', 'ollama')
+            self.config['models']['default_model'] = model_config.get('default_model', 'gemma:7b')
+
+            # Add Ollama config
+            if 'ollama' not in self.config['models']:
+                self.config['models']['ollama'] = {}
+
+            self.config['models']['ollama'].update(model_config.get('ollama', {}))
+
+            # Add DeepSeek config
+            if 'deepseek' not in self.config['models']:
+                self.config['models']['deepseek'] = {}
+
+            self.config['models']['deepseek'].update(model_config.get('deepseek', {}))
+
+            logger.info(f"Loaded model configuration from {self.model_config_path}")
+        except Exception as e:
+            logger.error(f"Error loading model configuration: {e}")
 
     def _create_default_config(self):
         """Create a default configuration."""
