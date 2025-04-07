@@ -1,0 +1,145 @@
+/* OpenCanvas Layout Styles */
+
+/* Canvas container */
+.opencanvas-container {
+    display: none;
+    width: 0;
+    transition: width 0.3s ease;
+    background-color: var(--gemini-surface);
+    border-left: 1px solid var(--gemini-gray-200);
+    overflow: hidden;
+    height: 100%;
+}
+
+.opencanvas-container.active {
+    display: block;
+    width: 50%;
+    min-width: 400px;
+}
+
+/* Flexible layout for chat and canvas */
+.chat-main-area.with-canvas {
+    flex: 0.5;
+    min-width: 400px;
+}
+
+/* Canvas header */
+.opencanvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gemini-gray-200);
+}
+
+.opencanvas-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--gemini-gray-900);
+    font-family: var(--gemini-font);
+}
+
+.opencanvas-close {
+    background: none;
+    border: none;
+    color: var(--gemini-gray-700);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.opencanvas-close:hover {
+    background-color: var(--gemini-gray-100);
+    color: var(--gemini-gray-900);
+}
+
+/* Canvas content */
+.opencanvas-content {
+    height: calc(100% - 50px);
+    overflow: auto;
+    padding: 16px;
+}
+
+.opencanvas-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Canvas tools */
+.opencanvas-tools {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.opencanvas-tool-button {
+    background-color: var(--gemini-surface);
+    border: 1px solid var(--gemini-gray-300);
+    color: var(--gemini-gray-800);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.opencanvas-tool-button:hover {
+    background-color: var(--gemini-gray-100);
+    border-color: var(--gemini-gray-400);
+}
+
+.opencanvas-tool-button.active {
+    background-color: var(--gemini-secondary-light);
+    color: var(--gemini-on-secondary);
+    border-color: var(--gemini-secondary);
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .opencanvas-container {
+    background-color: var(--gemini-gray-900);
+    border-color: var(--gemini-gray-800);
+}
+
+[data-theme="dark"] .opencanvas-header {
+    border-color: var(--gemini-gray-800);
+}
+
+[data-theme="dark"] .opencanvas-close:hover {
+    background-color: var(--gemini-gray-800);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .opencanvas-container.active {
+        width: 45%;
+        min-width: 350px;
+    }
+    
+    .chat-main-area.with-canvas {
+        flex: 0.55;
+        min-width: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chat-interface-wrapper.with-canvas {
+        flex-direction: column;
+    }
+    
+    .opencanvas-container.active {
+        width: 100%;
+        height: 50%;
+        min-width: unset;
+        border-left: none;
+        border-top: 1px solid var(--gemini-gray-200);
+    }
+    
+    .chat-main-area.with-canvas {
+        flex: unset;
+        height: 50%;
+        min-width: unset;
+    }
+}

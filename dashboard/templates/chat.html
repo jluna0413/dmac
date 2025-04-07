@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/unified-input.css">
     <link rel="stylesheet" href="/static/css/voice-interaction.css">
     <link rel="stylesheet" href="/static/css/chat-layout.css">
+    <link rel="stylesheet" href="/static/css/opencanvas.css">
 {% endblock %}
 
 {% block content %}
@@ -51,6 +52,7 @@
                         <li>Use voice input by clicking the microphone button</li>
                         <li>Activate deep research mode for more thorough answers</li>
                         <li>Enable deep thinking mode for complex problems</li>
+                        <li>Open Langchain OpenCanvas for visual workflows</li>
                     </ul>
                     <p>How can I assist you today?</p>
                 </div>
@@ -59,6 +61,32 @@
 
         <!-- The unified input container will be added by JavaScript -->
         <div id="input-container" class="unified-input-container"></div>
+    </div>
+
+    <!-- OpenCanvas Container -->
+    <div id="opencanvas-container" class="opencanvas-container">
+        <div class="opencanvas-header">
+            <h3>Langchain OpenCanvas</h3>
+            <button id="opencanvas-close" class="opencanvas-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="opencanvas-content">
+            <div class="opencanvas-tools">
+                <button class="opencanvas-tool-button" id="opencanvas-new">
+                    <i class="fas fa-plus"></i> New
+                </button>
+                <button class="opencanvas-tool-button" id="opencanvas-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button class="opencanvas-tool-button" id="opencanvas-run">
+                    <i class="fas fa-play"></i> Run
+                </button>
+            </div>
+            <div id="opencanvas-frame-container" style="height: calc(100% - 40px);">
+                <!-- OpenCanvas iframe will be loaded here -->
+            </div>
+        </div>
     </div>
 
     <!-- Right Sidebar - Model Information -->

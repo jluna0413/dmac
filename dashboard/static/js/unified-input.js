@@ -1436,44 +1436,164 @@ class UnifiedInput {
     }
 
     /**
-     * Open the Langchain OpenCanvas interface
+     * Open the Langchain OpenCanvas interface in a flexible container beside the chat
      */
     openCanvas() {
         const openCanvasButton = document.getElementById('opencanvas-button');
+        const sidebarOpenCanvasButton = document.getElementById('sidebar-opencanvas-button');
+        const openCanvasContainer = document.getElementById('opencanvas-container');
+        const chatMainArea = document.querySelector('.chat-main-area');
+        const chatInterfaceWrapper = document.querySelector('.chat-interface-wrapper');
+        const frameContainer = document.getElementById('opencanvas-frame-container');
 
         // Toggle active state for visual feedback
-        openCanvasButton.classList.add('active');
-        setTimeout(() => {
-            openCanvasButton.classList.remove('active');
-        }, 300);
+        if (openCanvasButton) {
+            openCanvasButton.classList.add('active');
+            setTimeout(() => {
+                openCanvasButton.classList.remove('active');
+            }, 300);
+        }
+
+        if (sidebarOpenCanvasButton) {
+            sidebarOpenCanvasButton.classList.add('active');
+        }
 
         // Show a message in the chat
         this.addMessageToChat('Opening Langchain OpenCanvas interface...', 'system');
 
-        // Make an API call to open the OpenCanvas interface
+        // Toggle the canvas container
+        if (openCanvasContainer && chatMainArea && chatInterfaceWrapper) {
+            // Add classes to enable the flexible layout
+            openCanvasContainer.classList.add('active');
+            chatMainArea.classList.add('with-canvas');
+            chatInterfaceWrapper.classList.add('with-canvas');
+
+            // Set up close button event handler
+            const closeButton = document.getElementById('opencanvas-close');
+            if (closeButton) {
+                closeButton.onclick = () => this.closeCanvas();
+            }
+
+            // Set up tool buttons
+            const newButton = document.getElementById('opencanvas-new');
+            const saveButton = document.getElementById('opencanvas-save');
+            const runButton = document.getElementById('opencanvas-run');
+
+            if (newButton) {
+                newButton.onclick = () => {
+                    // Handle new canvas action
+                    this.addMessageToChat('Creating new OpenCanvas workflow...', 'system');
+                    // Reload the iframe with a new canvas
+                    this.loadOpenCanvasFrame(true);
+                };
+            }
+
+            if (saveButton) {
+                saveButton.onclick = () => {
+                    // Handle save canvas action
+                    this.addMessageToChat('Saving OpenCanvas workflow...', 'system');
+                    // Send message to iframe to save
+                    const iframe = document.querySelector('#opencanvas-frame-container iframe');
+                    if (iframe && iframe.contentWindow) {
+                        iframe.contentWindow.postMessage({ action: 'save' }, '*');
+                    }
+                };
+            }
+
+            if (runButton) {
+                runButton.onclick = () => {
+                    // Handle run canvas action
+                    this.addMessageToChat('Running OpenCanvas workflow...', 'system');
+                    // Send message to iframe to run
+                    const iframe = document.querySelector('#opencanvas-frame-container iframe');
+                    if (iframe && iframe.contentWindow) {
+                        iframe.contentWindow.postMessage({ action: 'run' }, '*');
+                    }
+                };
+            }
+
+            // Load the OpenCanvas in an iframe
+            this.loadOpenCanvasFrame();
+        }
+    },
+
+    /**
+     * Close the OpenCanvas interface
+     */
+    closeCanvas() {
+        const openCanvasContainer = document.getElementById('opencanvas-container');
+        const chatMainArea = document.querySelector('.chat-main-area');
+        const chatInterfaceWrapper = document.querySelector('.chat-interface-wrapper');
+        const sidebarOpenCanvasButton = document.getElementById('sidebar-opencanvas-button');
+
+        if (openCanvasContainer && chatMainArea && chatInterfaceWrapper) {
+            // Remove classes to disable the flexible layout
+            openCanvasContainer.classList.remove('active');
+            chatMainArea.classList.remove('with-canvas');
+            chatInterfaceWrapper.classList.remove('with-canvas');
+
+            // Remove active state from button
+            if (sidebarOpenCanvasButton) {
+                sidebarOpenCanvasButton.classList.remove('active');
+            }
+
+            // Clear the iframe container
+            const frameContainer = document.getElementById('opencanvas-frame-container');
+            if (frameContainer) {
+                frameContainer.innerHTML = '';
+            }
+        }
+    },
+
+    /**
+     * Load the OpenCanvas iframe
+     * @param {boolean} isNew - Whether to create a new canvas
+     */
+    loadOpenCanvasFrame(isNew = false) {
+        const frameContainer = document.getElementById('opencanvas-frame-container');
+        if (!frameContainer) return;
+
+        // Clear existing content
+        frameContainer.innerHTML = '';
+
+        // Show loading indicator
+        frameContainer.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x mb-3"></i><p>Loading OpenCanvas...</p></div>';
+
+        // Make an API call to get the OpenCanvas URL
         fetch('/api/opencanvas/open', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                current_conversation: this.getConversationHistory()
+                current_conversation: this.getConversationHistory(),
+                new_canvas: isNew
             })
         })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    // If successful, open the URL in a new tab/window
-                    if (data.url) {
-                        window.open(data.url, '_blank');
-                    }
+                if (data.success && data.url) {
+                    // Create iframe and load the URL
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'opencanvas-iframe';
+                    iframe.src = data.url;
+                    iframe.title = 'Langchain OpenCanvas';
+                    iframe.onload = () => {
+                        console.log('OpenCanvas iframe loaded');
+                    };
+
+                    // Clear container and add iframe
+                    frameContainer.innerHTML = '';
+                    frameContainer.appendChild(iframe);
                 } else {
                     // Show error message
+                    frameContainer.innerHTML = `<div class="text-center py-4 text-danger"><i class="fas fa-exclamation-circle fa-2x mb-3"></i><p>Error loading OpenCanvas: ${data.error || 'Unknown error'}</p></div>`;
                     this.addMessageToChat('Error opening OpenCanvas: ' + (data.error || 'Unknown error'), 'system');
                 }
             })
             .catch(error => {
                 console.error('Error opening OpenCanvas:', error);
+                frameContainer.innerHTML = `<div class="text-center py-4 text-danger"><i class="fas fa-exclamation-circle fa-2x mb-3"></i><p>Error loading OpenCanvas. Please try again later.</p></div>`;
                 this.addMessageToChat('Error opening OpenCanvas. Please try again later.', 'system');
             });
     }
