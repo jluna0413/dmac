@@ -3,8 +3,8 @@
 /* Main wrapper */
 .chat-interface-wrapper {
     display: flex;
-    height: calc(100vh - 56px - 120px);
-    /* Adjust for navbar height and footer height */
+    height: calc(100vh - 56px - 100px);
+    /* Adjust for navbar height (56px) and footer height (100px) */
     width: 100%;
     overflow: hidden;
     background-color: var(--gemini-background);
@@ -280,6 +280,8 @@
     padding: 16px 24px;
     margin-bottom: 0;
     height: auto;
+    padding-bottom: 2rem;
+    /* Add extra padding at the bottom */
 }
 
 .unified-input-container {

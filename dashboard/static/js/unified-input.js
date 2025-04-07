@@ -62,6 +62,11 @@ class UnifiedInput {
         // Log which container we're using
         console.log('Using input container:', this.inputContainer ? this.inputContainer.id : 'none found');
 
+        // Add class to the input container for styling
+        if (this.inputContainer) {
+            this.inputContainer.classList.add('unified-input-container');
+        }
+
         // Set up sidebar button handlers
         this.setupSidebarButtons();
 
