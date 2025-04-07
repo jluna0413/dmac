@@ -1,0 +1,61 @@
+{
+  "benchmark_id": "frontend_development_frontend_basics_1685432792",
+  "entries": [
+    {
+      "agent_id": "perry",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.109174",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "frontend_development_frontend_basics_1685432792"
+    },
+    {
+      "agent_id": "shelly",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.960209",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "frontend_development_frontend_basics_1685432792"
+    },
+    {
+      "agent_id": "flora",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:42.078927",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 1.064218282699585,
+        "average_latency": 0.26605457067489624,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "frontend_development_frontend_basics_1685432792"
+    },
+    {
+      "agent_id": "perry",
+      "model_name": "gemma3:12b",
+      "timestamp": "2025-04-05T00:20:16.338678",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0010366439819335938,
+        "average_latency": 0.00025916099548339844,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "frontend_development_frontend_basics_1685432792"
+    }
+  ]
+}

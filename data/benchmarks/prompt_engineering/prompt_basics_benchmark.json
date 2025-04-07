@@ -1,0 +1,41 @@
+{
+  "id": "prompt_engineering_prompt_basics_1685432790",
+  "name": "Prompt Engineering Basics Benchmark",
+  "category": "prompt_engineering",
+  "description": "Basic benchmark for testing prompt engineering capabilities",
+  "tasks": [
+    {
+      "type": "create_prompt",
+      "data": {
+        "description": "Create a prompt that will generate a detailed product description for an e-commerce website selling eco-friendly water bottles.",
+        "target_model": "general",
+        "use_case": "content_generation"
+      },
+      "expected_result": "Write a detailed and compelling product description for an eco-friendly water bottle to be featured on an e-commerce website. The description should:\n\n1. Highlight the sustainable materials used in the bottle's construction\n2. Emphasize the environmental benefits of using this reusable bottle\n3. Describe the bottle's key features (capacity, insulation, design, etc.)\n4. Include practical information about usage and care\n5. Use persuasive language that appeals to environmentally-conscious consumers\n\nThe tone should be professional yet approachable, and the description should be between 150-200 words."
+    },
+    {
+      "type": "optimize_prompt",
+      "data": {
+        "prompt": "Tell me about climate change",
+        "target_model": "general",
+        "optimization_goal": "specificity"
+      }
+    },
+    {
+      "type": "analyze_prompt",
+      "data": {
+        "prompt": "You are an expert chef specializing in Italian cuisine. Create a detailed recipe for an authentic pasta dish that includes the following ingredients: tomatoes, basil, garlic, and olive oil. Include precise measurements, step-by-step instructions, cooking times, and serving suggestions. Also provide information about the regional origin of the dish and any historical context."
+      }
+    }
+  ],
+  "evaluation_criteria": {
+    "evaluation_type": "contains_keywords",
+    "keywords": ["specific", "clear", "structured", "detailed", "constraints", "format", "context", "instructions"],
+    "weight": 1.0
+  },
+  "created_at": "2023-05-30T12:33:10.123456",
+  "metadata": {
+    "difficulty": "intermediate",
+    "tags": ["prompt-engineering", "content-generation", "prompt-optimization", "prompt-analysis"]
+  }
+}

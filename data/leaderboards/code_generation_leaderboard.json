@@ -1,0 +1,95 @@
+{
+  "category": "code_generation",
+  "entries": [
+    {
+      "benchmark_id": "code_generation_coding_basics_1685432789",
+      "agent_id": "perry",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:39.250952",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0009992122650146484,
+        "average_latency": 0.0003330707550048828,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "code_generation_coding_basics_1685432789"
+    },
+    {
+      "benchmark_id": "code_generation_coding_basics_1685432789",
+      "agent_id": "shelly",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.118694",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "code_generation_coding_basics_1685432789"
+    },
+    {
+      "benchmark_id": "code_generation_coding_basics_1685432789",
+      "agent_id": "flora",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.971719",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0009975433349609375,
+        "average_latency": 0.0003325144449869792,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "code_generation_coding_basics_1685432789"
+    },
+    {
+      "benchmark_id": "code_generation_coding_basics_1685432789",
+      "agent_id": "perry",
+      "model_name": "gemma3:12b",
+      "timestamp": "2025-04-05T00:16:57.820728",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "code_generation_coding_basics_1685432789"
+    },
+    {
+      "benchmark_id": "code_generation_coding_basics_1685432789",
+      "agent_id": "perry",
+      "model_name": "gemma3:12b",
+      "timestamp": "2025-04-05T00:19:09.123021",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "code_generation_coding_basics_1685432789"
+    },
+    {
+      "benchmark_id": "code_generation_coding_basics_1685432789",
+      "agent_id": "shelly",
+      "model_name": "gemma3:12b",
+      "timestamp": "2025-04-05T00:20:16.349693",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "code_generation_coding_basics_1685432789"
+    }
+  ]
+}
