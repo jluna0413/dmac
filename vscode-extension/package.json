@@ -4,22 +4,12 @@
   "description": "VS Code extension for DMac AI Agent Swarm",
   "version": "0.1.0",
   "engines": {
-    "vscode": "^1.60.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other",
     "Machine Learning",
     "Programming Languages"
-  ],
-  "activationEvents": [
-    "onCommand:dmac.startAgent",
-    "onCommand:dmac.chat",
-    "onCommand:dmac.generateCode",
-    "onCommand:dmac.explainCode",
-    "onCommand:dmac.optimizeCode",
-    "onCommand:dmac.debugCode",
-    "onView:dmacAgents",
-    "onView:dmacChat"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -62,15 +52,18 @@
       "dmac-sidebar": [
         {
           "id": "dmacAgents",
-          "name": "AI Agents"
+          "name": "AI Agents",
+          "icon": "resources/dmac-icon.svg"
         },
         {
           "id": "dmacChat",
-          "name": "Chat"
+          "name": "Chat",
+          "icon": "resources/dmac-icon.svg"
         },
         {
           "id": "dmacTasks",
-          "name": "Tasks"
+          "name": "Tasks",
+          "icon": "resources/dmac-icon.svg"
         }
       ]
     },
