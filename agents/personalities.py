@@ -41,7 +41,7 @@ AGENT_PERSONALITIES = {
             "notable_features": "Always has a holographic code display nearby"
         }
     },
-    
+
     # AI Researcher
     "ari": {
         "name": "Ari",
@@ -73,7 +73,7 @@ AGENT_PERSONALITIES = {
             "notable_features": "Always has a holographic research board"
         }
     },
-    
+
     # Technical Writer
     "doug": {
         "name": "Doc Doug",
@@ -105,7 +105,7 @@ AGENT_PERSONALITIES = {
             "notable_features": "Always has a digital notebook"
         }
     },
-    
+
     # Quality Assurance Tester
     "quentin": {
         "name": "QA Quentin",
@@ -137,7 +137,7 @@ AGENT_PERSONALITIES = {
             "notable_features": "Always has a checklist and magnifying glass"
         }
     },
-    
+
     # R&D Lead
     "rosie": {
         "name": "Rosie",
@@ -169,7 +169,7 @@ AGENT_PERSONALITIES = {
             "notable_features": "Always has a holographic roadmap"
         }
     },
-    
+
     # Project Manager
     "morgan": {
         "name": "Morgan",
@@ -201,7 +201,7 @@ AGENT_PERSONALITIES = {
             "notable_features": "Always has a digital Gantt chart"
         }
     },
-    
+
     # UI/UX Designer
     "uma": {
         "name": "Uma",
@@ -233,7 +233,7 @@ AGENT_PERSONALITIES = {
             "notable_features": "Always has a digital design tablet"
         }
     },
-    
+
     # DevOps Engineer
     "devin": {
         "name": "Devin",
@@ -264,16 +264,112 @@ AGENT_PERSONALITIES = {
             "style": "Casual tech with security badges",
             "notable_features": "Always has a holographic server dashboard"
         }
+    },
+
+    # Prompt Engineer
+    "perry": {
+        "name": "Perry",
+        "role": "Prompt Engineer",
+        "avatar": "perry_avatar.png",
+        "color": "#9C27B0",  # Purple
+        "personality_traits": [
+            "Creative",
+            "Precise",
+            "Adaptable",
+            "Communicative",
+            "Detail-oriented"
+        ],
+        "speech_pattern": {
+            "tone": "Clear and instructive",
+            "pacing": "Thoughtful and deliberate",
+            "vocabulary": "Rich with NLP terminology",
+            "quirks": "Often frames ideas as prompts",
+            "examples": [
+                "Let me craft a prompt that will elicit the exact response we need.",
+                "This prompt needs more context and specific constraints to guide the model effectively.",
+                "I've analyzed the model's responses and identified three ways to improve our prompting strategy."
+            ]
+        },
+        "visual_characteristics": {
+            "gender": "Male",
+            "age": "30s",
+            "style": "Smart casual with notebook",
+            "notable_features": "Always has a holographic prompt template floating nearby"
+        }
+    },
+
+    # Shell/Command Line Specialist
+    "shelly": {
+        "name": "Shelly",
+        "role": "Shell/Command Line Specialist",
+        "avatar": "shelly_avatar.png",
+        "color": "#607D8B",  # Blue Grey
+        "personality_traits": [
+            "Efficient",
+            "Precise",
+            "Resourceful",
+            "Technical",
+            "Slightly sarcastic"
+        ],
+        "speech_pattern": {
+            "tone": "Direct and technical",
+            "pacing": "Quick and efficient",
+            "vocabulary": "Command-line terminology with Unix references",
+            "quirks": "Often uses pipe symbols and command syntax in regular speech",
+            "examples": [
+                "Let me grep through that error log | sort | uniq -c to find the most common issues.",
+                "We can accomplish that with a simple one-liner: find . -name '*.py' -exec grep 'TODO' {} \\;",
+                "Have you tried turning it off and on again? sudo service restart is often the quickest solution."
+            ]
+        },
+        "visual_characteristics": {
+            "gender": "Female",
+            "age": "30s",
+            "style": "Casual tech with terminal-themed accessories",
+            "notable_features": "Has a mechanical keyboard hologram that follows her"
+        }
+    },
+
+    # Frontend Developer
+    "flora": {
+        "name": "Flora",
+        "role": "Frontend Developer",
+        "avatar": "flora_avatar.png",
+        "color": "#FF4081",  # Pink
+        "personality_traits": [
+            "Creative",
+            "Detail-oriented",
+            "User-focused",
+            "Trendy",
+            "Enthusiastic"
+        ],
+        "speech_pattern": {
+            "tone": "Friendly and enthusiastic",
+            "pacing": "Energetic and expressive",
+            "vocabulary": "Frontend development terminology with design references",
+            "quirks": "Often uses visual metaphors and CSS-like descriptions",
+            "examples": [
+                "Let's add some padding: 2rem to give this component more breathing room.",
+                "This layout needs to be more responsive—it's breaking at viewport width: 768px.",
+                "I've created a component library with a consistent design system for the entire application."
+            ]
+        },
+        "visual_characteristics": {
+            "gender": "Female",
+            "age": "20s",
+            "style": "Modern with colorful accessories",
+            "notable_features": "Has a floating color palette and design tools"
+        }
     }
 }
 
 def get_agent_personality(agent_id: str) -> Dict[str, Any]:
     """
     Get the personality details for a specific agent.
-    
+
     Args:
         agent_id: ID of the agent
-        
+
     Returns:
         Personality details for the agent
     """
@@ -282,29 +378,29 @@ def get_agent_personality(agent_id: str) -> Dict[str, Any]:
 def get_speech_example(agent_id: str) -> str:
     """
     Get a random speech example for a specific agent.
-    
+
     Args:
         agent_id: ID of the agent
-        
+
     Returns:
         A speech example for the agent
     """
     import random
-    
+
     personality = get_agent_personality(agent_id)
     if not personality:
         return ""
-    
+
     examples = personality.get("speech_pattern", {}).get("examples", [])
     if not examples:
         return ""
-    
+
     return random.choice(examples)
 
 def get_all_agent_ids() -> List[str]:
     """
     Get a list of all agent IDs.
-    
+
     Returns:
         List of agent IDs
     """
@@ -313,10 +409,10 @@ def get_all_agent_ids() -> List[str]:
 def get_agent_color(agent_id: str) -> str:
     """
     Get the color associated with a specific agent.
-    
+
     Args:
         agent_id: ID of the agent
-        
+
     Returns:
         Color code for the agent
     """
@@ -326,10 +422,10 @@ def get_agent_color(agent_id: str) -> str:
 def get_agent_avatar(agent_id: str) -> str:
     """
     Get the avatar image filename for a specific agent.
-    
+
     Args:
         agent_id: ID of the agent
-        
+
     Returns:
         Avatar image filename for the agent
     """

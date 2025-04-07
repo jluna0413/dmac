@@ -17,7 +17,6 @@ from config.config import config
 from utils.secure_logging import get_logger
 from utils.error_handling import handle_async_errors, AgentError
 from agents.base_agent import BaseAgent
-from models.model_manager import model_manager
 from webarena.webarena_manager import webarena_manager
 from webarena.ollama_integration import webarena_ollama_integration
 from webarena.visualization import webarena_visualization
@@ -35,7 +34,8 @@ class WebArenaAgent(BaseAgent):
             agent_id: The ID of the agent.
             name: The name of the agent.
         """
-        super().__init__(agent_id, name, agent_type="webarena")
+        super().__init__(agent_id, name)
+        self.agent_id = agent_id
         
         # Load configuration
         self.default_model = config.get('agents.webarena.default_model', 'llama2')
@@ -454,6 +454,7 @@ class WebArenaAgent(BaseAgent):
                         'message': "Please specify run IDs for the completion time visualization.",
                     }
                 
+                visualization_path = await webarena_visualization.generate_completion_time_visualization(run_ids)
                 visualization_path = await webarena_visualization.generate_completion_time_visualization(run_ids)
             elif visualization_type == 'action_count':
                 if not run_ids:
