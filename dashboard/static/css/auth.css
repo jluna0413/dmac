@@ -229,6 +229,23 @@ body {
     color: white;
 }
 
+/* Ensure disabled social buttons maintain purple background */
+.btn-social:disabled,
+.btn-social[disabled] {
+    background-color: var(--auth-primary) !important;
+    border-color: var(--auth-primary) !important;
+    color: white !important;
+    opacity: 0.85;
+    cursor: not-allowed;
+}
+
+/* Style for spinner in social buttons */
+.btn-social .spinner-border {
+    margin-right: 8px;
+    border-color: white;
+    border-right-color: transparent;
+}
+
 .btn-social i {
     margin-right: 12px;
     font-size: 18px;
