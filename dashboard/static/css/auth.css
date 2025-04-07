@@ -51,6 +51,8 @@ body {
 .auth-header {
     padding: 30px 30px 20px;
     text-align: center;
+    /* Add more space for the larger logo */
+    margin-bottom: 20px;
 }
 
 .auth-header .brand-logo {
@@ -61,13 +63,18 @@ body {
 }
 
 .auth-header .brand-logo img {
-    height: 40px;
-    width: 40px;
+    height: 120px;
+    /* 3x bigger: 40px * 3 = 120px */
+    width: auto;
+    /* Maintain aspect ratio */
     margin-right: 12px;
+    object-fit: contain;
+    /* Ensure the image is fully visible */
 }
 
 .auth-header .brand-name {
-    font-size: 24px;
+    font-size: 36px;
+    /* Increased to match the larger logo */
     font-weight: 500;
 }
 
@@ -158,7 +165,7 @@ body {
     border-left: none;
 }
 
-.input-group .form-control:focus + .input-group-text {
+.input-group .form-control:focus+.input-group-text {
     border-color: var(--auth-primary);
 }
 
@@ -308,11 +315,11 @@ body {
     z-index: 1;
 }
 
-input:checked + .theme-slider {
+input:checked+.theme-slider {
     background-color: #2196F3;
 }
 
-input:checked + .theme-slider:before {
+input:checked+.theme-slider:before {
     transform: translateX(26px);
 }
 
@@ -359,17 +366,17 @@ input:checked + .theme-slider:before {
     .auth-header {
         padding: 20px 20px 10px;
     }
-    
+
     .auth-body {
         padding: 10px 20px 20px;
     }
-    
+
     .auth-footer {
         padding: 15px 20px;
         flex-direction: column;
         gap: 10px;
     }
-    
+
     .btn {
         padding: 10px 16px;
     }
