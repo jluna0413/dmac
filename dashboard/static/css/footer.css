@@ -12,16 +12,18 @@
 }
 
 .footer img {
-    height: 30px;
+    height: 36px;
     width: auto;
     object-fit: contain;
-    max-width: 100px;
+    max-width: 150px;
 }
 
 .footer .brand-name {
     font-weight: 700;
     font-size: 1.25rem;
     margin-left: 0.5rem;
+    display: none;
+    /* Hide the brand name */
 }
 
 .footer p {

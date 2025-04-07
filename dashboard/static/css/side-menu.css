@@ -80,9 +80,10 @@
 }
 
 .side-menu-header .brand-logo img {
-    height: 32px;
-    width: 32px;
-    margin-right: 12px;
+    height: 36px;
+    width: auto;
+    margin-right: 0;
+    max-width: 150px;
 }
 
 .side-menu-header .brand-name {

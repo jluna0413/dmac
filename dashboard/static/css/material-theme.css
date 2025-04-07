@@ -668,11 +668,19 @@ input:checked+.theme-slider .theme-icon-dark {
     max-width: 100px;
 }
 
+.brand-logo img.logo-only {
+    margin-right: 0;
+    height: 36px;
+    max-width: 150px;
+}
+
 .brand-name {
     font-weight: 700;
     font-size: 1.25rem;
     color: var(--header-text);
     letter-spacing: 0.5px;
+    display: none;
+    /* Hide all brand names */
 }
 
 /* Loading Animation */
