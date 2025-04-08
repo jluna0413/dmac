@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - Agent Dashboard</title>
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Material Icons for UI elements -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='images/dmac-logo.svg') }}" alt="DMac Logo" class="logo">
+                <h1>DMac</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}"><i class="material-icons">dashboard</i> Dashboard</a></li>
+                    <li><a href="{{ url_for('agents') }}"><i class="material-icons">smart_toy</i> Agents</a></li>
+                    <li><a href="{{ url_for('tasks') }}"><i class="material-icons">assignment</i> Tasks</a></li>
+                    <li><a href="{{ url_for('models') }}"><i class="material-icons">model_training</i> Models</a></li>
+                    <li><a href="{{ url_for('datasets') }}"><i class="material-icons">dataset</i> Datasets</a></li>
+                    <li><a href="{{ url_for('benchmarks') }}"><i class="material-icons">speed</i> Training & Benchmarks</a></li>
+                    <li><a href="{{ url_for('settings') }}"><i class="material-icons">settings</i> Settings</a></li>
+                </ul>
+            </nav>
+
+            <!-- Added Chat and Onboarding buttons -->
+            <div class="sidebar-actions">
+                <a href="{{ url_for('chat') }}" class="sidebar-action-btn">
+                    <i class="material-icons">chat</i>
+                    <span>Chat</span>
+                </a>
+                <a href="{{ url_for('onboarding') }}" class="sidebar-action-btn">
+                    <i class="material-icons">school</i>
+                    <span>Onboarding</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="page-header">
+                <h1>{{ agent.name }} Dashboard</h1>
+                <div class="agent-status-badge {{ agent.status }}">{{ agent.status }}</div>
+            </header>
+
+            <div class="agent-dashboard">
+                <!-- Agent Info Section -->
+                <div class="dashboard-section agent-info-section">
+                    <div class="agent-profile">
+                        <img src="{{ url_for('static', filename='images/agents/' + agent.id + '.svg') }}" alt="{{ agent.name }}" class="agent-avatar large">
+                        <div class="agent-details">
+                            <h2>{{ agent.name }}</h2>
+                            <p class="agent-role">{{ agent.description }}</p>
+                            <div class="agent-stats">
+                                <div class="stat">
+                                    <span class="stat-label">Tasks Completed</span>
+                                    <span class="stat-value">{{ agent.performance.tasks_completed }}</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Success Rate</span>
+                                    <span class="stat-value">{{ agent.performance.success_rate }}</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Response Time</span>
+                                    <span class="stat-value">{{ agent.performance.average_response_time }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="agent-capabilities">
+                        <h3>Capabilities</h3>
+                        <div class="capability-tags">
+                            {% for capability in agent.capabilities %}
+                            <span class="capability-tag">{{ capability }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs Navigation -->
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="benchmarks">Benchmarks</button>
+                    <button class="tab-btn" data-tab="performance">Performance</button>
+                    <button class="tab-btn" data-tab="tasks">Tasks</button>
+                    <button class="tab-btn" data-tab="settings">Settings</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Benchmarks Tab -->
+                    <div class="tab-pane active" id="benchmarks-tab">
+                        <div class="dashboard-section">
+                            <h3>Model Performance Comparison</h3>
+                            <div class="benchmark-chart-container">
+                                <canvas id="modelComparisonChart"></canvas>
+                            </div>
+                            <div class="benchmark-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: rgba(75, 192, 192, 0.7);"></span>
+                                    <span class="legend-label">GandalfBaum/deepseek_r1-claude3.7</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: rgba(153, 102, 255, 0.7);"></span>
+                                    <span class="legend-label">gemma3:12b</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: rgba(255, 159, 64, 0.7);"></span>
+                                    <span class="legend-label">qwen2.5-coder:1.5b-base</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-section">
+                            <h3>Recent Benchmarks</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Task</th>
+                                        <th>Date</th>
+                                        <th>Best Model</th>
+                                        <th>Accuracy</th>
+                                        <th>Latency</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="benchmarks-table-body">
+                                    <!-- Benchmark data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Performance Tab -->
+                    <div class="tab-pane" id="performance-tab">
+                        <div class="dashboard-section">
+                            <h3>Performance Metrics</h3>
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <h4>Task Completion Status</h4>
+                                    <div class="chart-container">
+                                        <canvas id="taskStatusChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <h4>Task Categories</h4>
+                                    <div class="chart-container">
+                                        <canvas id="taskCategoriesChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <h4>Response Time Trend</h4>
+                                    <div class="chart-container">
+                                        <canvas id="responseTimeChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <h4>Success Rate Trend</h4>
+                                    <div class="chart-container">
+                                        <canvas id="successRateChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tasks Tab -->
+                    <div class="tab-pane" id="tasks-tab">
+                        <div class="dashboard-section">
+                            <h3>Recent Tasks</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task ID</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Completed</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tasks-table-body">
+                                    <!-- Task data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-pane" id="settings-tab">
+                        <div class="dashboard-section">
+                            <h3>Agent Configuration</h3>
+                            <form id="agent-config-form" class="settings-form">
+                                <div class="form-group">
+                                    <label for="model-name">Model Name</label>
+                                    <input type="text" id="model-name" name="model_name" value="{{ agent.configuration.model_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="temperature">Temperature</label>
+                                    <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.1" value="{{ agent.configuration.temperature }}">
+                                    <span class="range-value">{{ agent.configuration.temperature }}</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="max-context-length">Max Context Length</label>
+                                    <input type="number" id="max-context-length" name="max_context_length" value="{{ agent.configuration.max_context_length }}">
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <label>
+                                        <input type="checkbox" id="vision-enabled" name="vision_enabled" {% if agent.configuration.vision_enabled %}checked{% endif %}>
+                                        Enable Vision
+                                    </label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <label>
+                                        <input type="checkbox" id="rl-enabled" name="rl_enabled" {% if agent.configuration.rl_enabled %}checked{% endif %}>
+                                        Enable Reinforcement Learning
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="rl-model">RL Model</label>
+                                    <input type="text" id="rl-model" name="rl_model" value="{{ agent.configuration.rl_model }}">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="primary-button">Save Changes</button>
+                                    <button type="button" class="secondary-button" id="reset-config-btn">Reset to Defaults</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Interface - Multi-modal interaction with the agent -->
+            <!-- This interface allows direct communication with the agent via text, voice, file upload, or canvas -->
+            <div class="chat-interface">
+                <div class="chat-header">
+                    <h3>Chat with {{ agent.name }}</h3>
+                    <button class="toggle-chat-btn" id="toggle-chat-btn">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="chat-body">
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Chat messages will be displayed here -->
+                        <div class="message agent-message">
+                            <img src="{{ url_for('static', filename='images/agents/' + agent.id + '.svg') }}" alt="{{ agent.name }}" class="message-avatar">
+                            <div class="message-content">
+                                <p>Hello! I'm {{ agent.name }}. How can I assist you today?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <div class="chat-input-actions">
+                            <button class="chat-action-btn" id="voice-input-btn">
+                                <i class="material-icons">mic</i>
+                            </button>
+                            <button class="chat-action-btn" id="file-upload-btn">
+                                <i class="material-icons">attach_file</i>
+                            </button>
+                            <button class="chat-action-btn" id="canvas-btn">
+                                <i class="material-icons">brush</i>
+                            </button>
+                        </div>
+                        <textarea id="chat-input" placeholder="Type your message here..."></textarea>
+                        <button class="send-btn" id="send-message-btn">
+                            <i class="material-icons">send</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch agent data
+        const agentId = '{{ agent.id }}';
+
+        // Tab navigation
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and panes
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                // Show corresponding tab pane
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Toggle chat interface
+        document.getElementById('toggle-chat-btn').addEventListener('click', () => {
+            const chatInterface = document.querySelector('.chat-interface');
+            chatInterface.classList.toggle('collapsed');
+
+            const icon = document.querySelector('#toggle-chat-btn i');
+            if (chatInterface.classList.contains('collapsed')) {
+                icon.textContent = 'expand_more';
+            } else {
+                icon.textContent = 'expand_less';
+            }
+        });
+
+        // Send message
+        document.getElementById('send-message-btn').addEventListener('click', sendMessage);
+        document.getElementById('chat-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+
+            if (message) {
+                // Add user message to chat
+                addMessage('user', message);
+
+                // Clear input
+                input.value = '';
+
+                // Send message to agent
+                fetch(`/api/agents/${agentId}/message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        type: 'text'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add agent response to chat
+                        addMessage('agent', data.content);
+                    } else {
+                        // Add error message to chat
+                        addMessage('agent', `Error: ${data.error}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    addMessage('agent', 'Sorry, there was an error processing your request.');
+                });
+            }
+        }
+
+        function addMessage(type, content) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+
+            if (type === 'agent') {
+                messageDiv.innerHTML = `
+                    <img src="{{ url_for('static', filename='images/agents/' + agent.id + '.svg') }}" alt="{{ agent.name }}" class="message-avatar">
+                    <div class="message-content">
+                        <p>${content}</p>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <p>${content}</p>
+                    </div>
+                `;
+            }
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Load benchmark data
+        fetch(`/api/agents/${agentId}/benchmarks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                category: 'all',
+                limit: 5
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Populate benchmarks table
+                const tableBody = document.getElementById('benchmarks-table-body');
+                tableBody.innerHTML = '';
+
+                data.benchmarks.forEach(benchmark => {
+                    // Find best model
+                    let bestModel = benchmark.models[0];
+                    benchmark.models.forEach(model => {
+                        if (model.accuracy > bestModel.accuracy) {
+                            bestModel = model;
+                        }
+                    });
+
+                    // Format date
+                    const date = new Date(benchmark.timestamp);
+                    const formattedDate = date.toLocaleDateString();
+
+                    // Add row to table
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${benchmark.category}</td>
+                        <td>${benchmark.task}</td>
+                        <td>${formattedDate}</td>
+                        <td>${bestModel.name}</td>
+                        <td>${(bestModel.accuracy * 100).toFixed(1)}%</td>
+                        <td>${bestModel.latency}ms</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                // Create model comparison chart
+                createModelComparisonChart(data.benchmarks);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading benchmarks:', error);
+        });
+
+        // Load performance data
+        fetch(`/api/agents/${agentId}/performance`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                period: 'week'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Create performance charts
+                createTaskStatusChart(data.task_status);
+                createTaskCategoriesChart(data.task_categories);
+                createResponseTimeChart(data.performance_data);
+                createSuccessRateChart(data.performance_data);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading performance data:', error);
+        });
+
+        // Create model comparison chart
+        // This radar chart visualizes performance metrics across different models
+        // It helps compare the strengths and weaknesses of each model for this agent
+        function createModelComparisonChart(benchmarks) {
+            const ctx = document.getElementById('modelComparisonChart').getContext('2d');
+
+            // Extract unique models and metrics
+            const models = [];
+            const metrics = ['accuracy', 'latency', 'tokens_per_second', 'code_quality', 'execution_time'];
+            const metricLabels = {
+                'accuracy': 'Accuracy',
+                'latency': 'Latency (ms)',
+                'tokens_per_second': 'Tokens/sec',
+                'code_quality': 'Code Quality',
+                'execution_time': 'Execution Time (s)'
+            };
+
+            // Extract all models
+            benchmarks.forEach(benchmark => {
+                benchmark.models.forEach(model => {
+                    if (!models.includes(model.name)) {
+                        models.push(model.name);
+                    }
+                });
+            });
+
+            // Prepare datasets
+            const datasets = models.map((model, index) => {
+                const colors = [
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
+                ];
+
+                // Calculate average metrics for this model
+                const data = metrics.map(metric => {
+                    let sum = 0;
+                    let count = 0;
+
+                    benchmarks.forEach(benchmark => {
+                        const modelData = benchmark.models.find(m => m.name === model);
+                        if (modelData && modelData[metric] !== undefined && modelData[metric] !== 'N/A') {
+                            sum += parseFloat(modelData[metric]);
+                            count++;
+                        }
+                    });
+
+                    return count > 0 ? (sum / count) : 0;
+                });
+
+                return {
+                    label: model,
+                    data: data,
+                    backgroundColor: colors[index % colors.length],
+                    borderColor: colors[index % colors.length].replace('0.7', '1'),
+                    borderWidth: 1
+                };
+            });
+
+            // Create chart
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: metrics.map(metric => metricLabels[metric]),
+                    datasets: datasets
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            ticks: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create task status chart
+        function createTaskStatusChart(taskStatus) {
+            const ctx = document.getElementById('taskStatusChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(taskStatus).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
+                    datasets: [{
+                        data: Object.values(taskStatus),
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(255, 206, 86, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Create task categories chart
+        function createTaskCategoriesChart(taskCategories) {
+            const ctx = document.getElementById('taskCategoriesChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(taskCategories).map(key => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())),
+                    datasets: [{
+                        data: Object.values(taskCategories),
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(201, 203, 207, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(201, 203, 207, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Create response time chart
+        function createResponseTimeChart(performanceData) {
+            const ctx = document.getElementById('responseTimeChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: performanceData.map(data => data.interval_name),
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: performanceData.map(data => data.average_response_time),
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Create success rate chart
+        function createSuccessRateChart(performanceData) {
+            const ctx = document.getElementById('successRateChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: performanceData.map(data => data.interval_name),
+                    datasets: [{
+                        label: 'Success Rate (%)',
+                        data: performanceData.map(data => data.success_rate),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Handle agent configuration form
+        document.getElementById('agent-config-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const config = {
+                model_name: formData.get('model_name'),
+                temperature: parseFloat(formData.get('temperature')),
+                max_context_length: parseInt(formData.get('max_context_length')),
+                vision_enabled: formData.get('vision_enabled') === 'on',
+                rl_enabled: formData.get('rl_enabled') === 'on',
+                rl_model: formData.get('rl_model')
+            };
+
+            // Save configuration
+            fetch(`/api/agents/${agentId}/config`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Configuration saved successfully!');
+                } else {
+                    alert(`Error saving configuration: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving configuration:', error);
+                alert('Error saving configuration. Please try again.');
+            });
+        });
+
+        // Handle temperature range input
+        document.getElementById('temperature').addEventListener('input', (e) => {
+            document.querySelector('.range-value').textContent = e.target.value;
+        });
+
+        // Handle reset configuration button
+        document.getElementById('reset-config-btn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset the configuration to defaults?')) {
+                fetch(`/api/agents/${agentId}/config/reset`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Configuration reset successfully!');
+                        // Reload the page to show updated configuration
+                        window.location.reload();
+                    } else {
+                        alert(`Error resetting configuration: ${data.error}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resetting configuration:', error);
+                    alert('Error resetting configuration. Please try again.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

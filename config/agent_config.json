@@ -1,5 +1,57 @@
 {
   "agents": {
+    "cody": {
+      "enabled": true,
+      "model_name": "GandalfBaum/deepseek_r1-claude3.7:latest",
+      "temperature": 0.2,
+      "max_context_length": 16384,
+      "vision_enabled": true,
+      "rl_enabled": true,
+      "rl_model": "openManus",
+      "code_completion_enabled": true,
+      "reasoning_model": "GandalfBaum/deepseek_r1-claude3.7:latest",
+      "generation_model": "claude-3-7-sonnet",
+      "supports_native_reasoning": true,
+      "enable_proxy": {
+        "reasoning_model": false,
+        "generation_model": true
+      },
+      "capabilities": [
+        "code_search",
+        "code_generation",
+        "code_completion",
+        "code_explanation",
+        "code_refactoring",
+        "bug_finding",
+        "test_generation",
+        "code_documentation",
+        "project_analysis",
+        "vision_code_understanding",
+        "reinforcement_learning"
+      ]
+    },
+    "macoder": {
+      "enabled": true,
+      "model_name": "gemma3:12b",
+      "temperature": 0.2,
+      "benchmark_models": [
+        "gemma3:12b",
+        "qwen2.5-coder:1.5b-base",
+        "llama3:8b"
+      ],
+      "capabilities": [
+        "code_search",
+        "code_generation",
+        "code_completion",
+        "code_explanation",
+        "code_refactoring",
+        "bug_finding",
+        "test_generation",
+        "code_documentation",
+        "project_analysis",
+        "model_benchmarking"
+      ]
+    },
     "codey": {
       "enabled": true,
       "model_name": "gemma3:12b",
@@ -55,10 +107,14 @@
     "default_metrics": [
       "accuracy",
       "latency",
-      "tokens_per_second"
+      "tokens_per_second",
+      "code_quality",
+      "execution_time"
     ],
     "categories": [
       "code_generation",
+      "code_completion",
+      "code_explanation",
       "prompt_engineering",
       "shell_scripting",
       "frontend_development"
@@ -66,16 +122,25 @@
     "available_models": [
       "gemma3:12b",
       "qwen2.5-coder:1.5b-base",
+      "llama3:8b",
       "GandalfBaum/deepseek_r1-claude3.7:latest",
       "qwq:latest"
     ]
   },
   "task_routing": {
-    "code_generation": "codey",
+    "code_search": "cody",
+    "code_generation": "cody",
+    "code_completion": "cody",
+    "code_explanation": "cody",
+    "code_refactoring": "cody",
+    "bug_finding": "cody",
+    "test_generation": "cody",
+    "code_documentation": "cody",
+    "project_analysis": "cody",
+    "vision_code_understanding": "cody",
+    "reinforcement_learning": "cody",
     "code_review": "codey",
     "debugging": "codey",
-    "refactoring": "codey",
-    "documentation": "codey",
     "prompt_creation": "perry",
     "prompt_optimization": "perry",
     "prompt_analysis": "perry",
@@ -91,6 +156,24 @@
     "css_styling": "flora",
     "responsive_design": "flora",
     "accessibility_review": "flora"
+  },
+  "supervision": {
+    "enabled": true,
+    "hierarchy": {
+      "perry": [
+        "shelly",
+        "flora"
+      ]
+    },
+    "coordination": {
+      "enabled": true,
+      "interval": 60,
+      "metrics": [
+        "task_completion",
+        "code_quality",
+        "collaboration_efficiency"
+      ]
+    }
   },
   "reinforcement_learning": {
     "enabled": true,

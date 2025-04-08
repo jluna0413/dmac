@@ -2,6 +2,79 @@
 
 All notable changes to the DMac project will be documented in this file.
 
+## [1.4.0] - 2025-04-09
+
+### Added
+- **Cody Agent**: Implemented native code assistant with DeepClaude integration
+  - Added code generation, completion, and explanation capabilities
+  - Implemented code refactoring and bug finding
+  - Added reinforcement learning integration with OpenManus RL
+  - Implemented vision capabilities for code understanding
+
+- **DeepClaude Integration**: Implemented hybrid approach combining DeepSeek R1 and Claude 3.7
+  - Created flexible DeepClaude module for use by any agent
+  - Implemented reasoning extraction and refinement
+  - Added caching for improved performance
+  - Created comprehensive documentation
+
+- **Agent Dashboard**: Created detailed dashboard for agent monitoring and interaction
+  - Implemented live agent data display
+  - Added benchmark visualization with model comparison
+  - Created performance metrics visualization
+  - Implemented multi-modal chat interface (text, voice, file, canvas)
+  - Added agent configuration interface
+
+### Changed
+- **Agent System**: Updated agent factory to include Cody
+- **API Layer**: Added new API endpoints for Cody and agent dashboards
+- **Model Manager**: Enhanced to support the DeepClaude approach
+- **UI**: Updated agents page to link to agent dashboards
+
+### Fixed
+- Improved model integration with better error handling
+- Enhanced agent configuration with more detailed options
+- Fixed styling issues in the agent interface
+
+## [1.3.0] - 2025-04-08
+
+### Added
+- **MaCoder**: Implemented native code assistant with code completion functionality
+  - Added code indexing and analysis
+  - Implemented code generation, completion, and explanation
+  - Added refactoring, bug finding, and test generation
+  - Implemented project analysis and benchmarking
+  - Created VS Code extension for MaCoder
+  - Added API endpoints for all MaCoder functionality
+
+- **LangChain Integration**: Replaced WebArena with LangChain for agent evaluation and benchmarking
+  - Implemented agent evaluation framework
+  - Added benchmarking capabilities
+  - Created visualization tools for evaluation results
+
+- **Documentation**: Enhanced project documentation
+  - Updated wiki with MaCoder and LangChain information
+  - Created comprehensive MaCoder documentation
+  - Added detailed implementation roadmap
+  - Updated agent documentation
+
+### Changed
+- **Agent System**: Updated agent factory to include MaCoder
+- **API Layer**: Modified API routes to include MaCoder endpoints
+- **Configuration**: Enhanced agent configuration with MaCoder settings
+- **Documentation**: Replaced WebArena references with LangChain
+
+### Removed
+- **WebArena Integration**: Removed WebArena due to lack of active development and compatibility issues
+  - Removed WebArena API endpoints
+  - Removed WebArena agent
+  - Removed WebArena configuration
+  - Removed WebArena documentation
+
+### Fixed
+- Resolved issues with Python symbol extraction
+- Fixed code completion caching
+- Addressed performance issues with large codebases
+
 ## [1.2.3] - 2025-04-06
 
 ### Added
