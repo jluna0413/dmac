@@ -1,0 +1,21 @@
+{
+  "name": "dmac-website",
+  "version": "1.0.0",
+  "description": "DMac AI Agent Swarm Platform Website",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests configured\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jluna0413/dmac.git"
+  },
+  "keywords": [
+    "dmac",
+    "ai",
+    "agent",
+    "swarm"
+  ],
+  "author": "Jonathan Luna",
+  "license": "MIT"
+}
