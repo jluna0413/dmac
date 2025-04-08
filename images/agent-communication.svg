@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <!-- Background -->
+  <rect width="600" height="400" fill="#f5f5f5" />
+  
+  <!-- Title -->
+  <text x="300" y="40" font-family="Arial" font-size="20" fill="#212121" text-anchor="middle">DMac Agent Communication</text>
+  
+  <!-- Agents -->
+  <g transform="translate(50, 150) scale(0.4)">
+    <!-- Cody -->
+    <circle cx="100" cy="100" r="90" fill="#bb86fc" fill-opacity="0.9" />
+    <rect x="60" y="50" width="80" height="70" rx="10" fill="#6200ee" />
+    <circle cx="80" cy="80" r="10" fill="#03dac6" />
+    <circle cx="120" cy="80" r="10" fill="#03dac6" />
+    <rect x="75" y="100" width="50" height="5" rx="2" fill="#03dac6" />
+    <text x="100" y="200" font-family="Arial" font-size="16" fill="#212121" text-anchor="middle">Cody</text>
+  </g>
+  
+  <g transform="translate(200, 150) scale(0.4)">
+    <!-- Perry -->
+    <circle cx="100" cy="100" r="90" fill="#c8e6c9" fill-opacity="0.9" />
+    <rect x="60" y="50" width="80" height="70" rx="10" fill="#4caf50" />
+    <circle cx="80" cy="80" r="10" fill="#03dac6" />
+    <circle cx="120" cy="80" r="10" fill="#03dac6" />
+    <path d="M75 100 Q100 110 125 100" stroke="#03dac6" stroke-width="5" fill="none" />
+    <text x="100" y="200" font-family="Arial" font-size="16" fill="#212121" text-anchor="middle">Perry</text>
+  </g>
+  
+  <g transform="translate(350, 150) scale(0.4)">
+    <!-- Shelly -->
+    <circle cx="100" cy="100" r="90" fill="#ffecb3" fill-opacity="0.9" />
+    <rect x="60" y="50" width="80" height="70" rx="10" fill="#ffa000" />
+    <circle cx="80" cy="80" r="10" fill="#03dac6" />
+    <circle cx="120" cy="80" r="10" fill="#03dac6" />
+    <rect x="75" y="100" width="50" height="5" rx="2" fill="#03dac6" />
+    <text x="100" y="200" font-family="Arial" font-size="16" fill="#212121" text-anchor="middle">Shelly</text>
+  </g>
+  
+  <g transform="translate(500, 150) scale(0.4)">
+    <!-- Flora -->
+    <circle cx="100" cy="100" r="90" fill="#bbdefb" fill-opacity="0.9" />
+    <rect x="60" y="50" width="80" height="70" rx="10" fill="#2196f3" />
+    <circle cx="80" cy="80" r="10" fill="#03dac6" />
+    <circle cx="120" cy="80" r="10" fill="#03dac6" />
+    <path d="M75 100 Q100 110 125 100" stroke="#03dac6" stroke-width="5" fill="none" />
+    <text x="100" y="200" font-family="Arial" font-size="16" fill="#212121" text-anchor="middle">Flora</text>
+  </g>
+  
+  <!-- Connection Lines -->
+  <g stroke="#6200ee" stroke-width="2">
+    <line x1="100" y1="150" x2="200" y2="150" />
+    <line x1="250" y1="150" x2="350" y2="150" />
+    <line x1="400" y1="150" x2="500" y2="150" />
+  </g>
+  
+  <!-- Central Hub -->
+  <circle cx="300" cy="300" r="50" fill="#6200ee" fill-opacity="0.2" stroke="#6200ee" stroke-width="2" />
+  <text x="300" y="305" font-family="Arial" font-size="14" fill="#212121" text-anchor="middle">Swarm</text>
+  <text x="300" y="325" font-family="Arial" font-size="14" fill="#212121" text-anchor="middle">Orchestrator</text>
+  
+  <!-- Connection Lines to Hub -->
+  <g stroke="#6200ee" stroke-width="2" stroke-dasharray="5,5">
+    <line x1="100" y1="180" x2="270" y2="270" />
+    <line x1="250" y1="180" x2="285" y2="255" />
+    <line x1="400" y1="180" x2="315" y2="255" />
+    <line x1="550" y1="180" x2="330" y2="270" />
+  </g>
+  
+  <!-- Data Flow Indicators -->
+  <g fill="#03dac6">
+    <circle cx="150" cy="150" r="5" />
+    <circle cx="300" cy="150" r="5" />
+    <circle cx="450" cy="150" r="5" />
+    <circle cx="185" cy="225" r="5" />
+    <circle cx="267" cy="262" r="5" />
+    <circle cx="333" cy="262" r="5" />
+    <circle cx="440" cy="225" r="5" />
+  </g>
+</svg>

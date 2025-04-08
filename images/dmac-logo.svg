@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="0 0 200 60">
+  <!-- Background Shape -->
+  <rect width="200" height="60" rx="8" fill="#ffffff" />
+  
+  <!-- D Letter -->
+  <path d="M30 15 L30 45 L45 45 C52 45 58 40 58 30 C58 20 52 15 45 15 Z" fill="#6200ee" />
+  <path d="M30 15 L30 45 L45 45 C52 45 58 40 58 30 C58 20 52 15 45 15 Z" fill="#6200ee" stroke="#6200ee" stroke-width="2" fill-opacity="0.8" />
+  
+  <!-- M Letter -->
+  <path d="M65 15 L65 45 L75 45 L75 25 L85 40 L95 25 L95 45 L105 45 L105 15 L95 15 L85 30 L75 15 Z" fill="#6200ee" />
+  
+  <!-- a Letter -->
+  <path d="M115 25 C115 20 120 15 125 15 C130 15 135 20 135 25 L135 45 L125 45 L125 40 C123 43 120 45 115 45 C110 45 105 40 105 35 C105 30 110 25 115 25 Z" fill="#03dac6" />
+  <circle cx="125" cy="30" r="5" fill="#ffffff" />
+  
+  <!-- c Letter -->
+  <path d="M145 25 C145 20 150 15 155 15 C160 15 165 20 165 25 L165 30 L155 30 L155 25 L145 25 L145 35 L155 35 L155 30 L165 30 L165 35 C165 40 160 45 155 45 C150 45 145 40 145 35 Z" fill="#03dac6" />
+  
+  <!-- Circuit Lines -->
+  <line x1="30" y1="30" x2="20" y2="30" stroke="#03dac6" stroke-width="2" />
+  <line x1="20" y1="30" x2="20" y2="50" stroke="#03dac6" stroke-width="2" />
+  <line x1="20" y1="50" x2="180" y2="50" stroke="#03dac6" stroke-width="2" />
+  <line x1="180" y1="50" x2="180" y2="30" stroke="#03dac6" stroke-width="2" />
+  <line x1="180" y1="30" x2="170" y2="30" stroke="#03dac6" stroke-width="2" />
+  
+  <!-- Connection Points -->
+  <circle cx="30" cy="30" r="3" fill="#03dac6" />
+  <circle cx="85" cy="30" r="3" fill="#03dac6" />
+  <circle cx="125" cy="30" r="3" fill="#03dac6" />
+  <circle cx="165" cy="30" r="3" fill="#03dac6" />
+</svg>
