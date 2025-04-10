@@ -1,0 +1,175 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: var(--vscode-font-family);
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-editor-background);
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--vscode-editor-foreground);
+  margin-top: 0;
+}
+
+button {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+input, textarea, select {
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  padding: 8px;
+  border-radius: 2px;
+}
+
+.panel {
+  margin-bottom: 20px;
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.panel-header {
+  background-color: var(--vscode-panel-background);
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--vscode-panel-border);
+  font-weight: bold;
+}
+
+.panel-body {
+  padding: 15px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  border-bottom-color: var(--vscode-focusBorder);
+  font-weight: bold;
+}
+
+.tab-content {
+  display: none;
+  padding: 20px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  padding: 15px;
+  background-color: var(--vscode-editor-background);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card-body {
+  margin-bottom: 15px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.badge {
+  background-color: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.alert {
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.alert-info {
+  background-color: var(--vscode-infoBackground);
+  color: var(--vscode-infoForeground);
+  border: 1px solid var(--vscode-infoBorder);
+}
+
+.alert-warning {
+  background-color: var(--vscode-editorWarning-background);
+  color: var(--vscode-editorWarning-foreground);
+  border: 1px solid var(--vscode-editorWarning-border);
+}
+
+.alert-error {
+  background-color: var(--vscode-editorError-background);
+  color: var(--vscode-editorError-foreground);
+  border: 1px solid var(--vscode-editorError-border);
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--vscode-progressBar-background);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

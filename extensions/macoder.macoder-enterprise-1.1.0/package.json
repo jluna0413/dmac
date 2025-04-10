@@ -1,0 +1,174 @@
+{
+  "name": "macoder-enterprise",
+  "displayName": "MaCoder Enterprise",
+  "description": "Enterprise-ready AI-powered coding assistant with advanced capabilities",
+  "version": "1.1.0",
+  "publisher": "macoder",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jluna0413/dmac.git"
+  },
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "macoder-enterprise.openPanel",
+        "title": "MaCoder Enterprise: Open Panel"
+      },
+      {
+        "command": "macoder-enterprise.generateCode",
+        "title": "MaCoder Enterprise: Generate Code"
+      },
+      {
+        "command": "macoder-enterprise.generateTests",
+        "title": "MaCoder Enterprise: Generate Tests"
+      },
+      {
+        "command": "macoder-enterprise.analyzeError",
+        "title": "MaCoder Enterprise: Analyze Error"
+      },
+      {
+        "command": "macoder-enterprise.analyzePerformance",
+        "title": "MaCoder Enterprise: Analyze Performance"
+      },
+      {
+        "command": "macoder-enterprise.suggestImprovements",
+        "title": "MaCoder Enterprise: Suggest Improvements"
+      },
+      {
+        "command": "macoder-enterprise.listStrategies",
+        "title": "MaCoder Enterprise: List Code Generation Strategies"
+      },
+      {
+        "command": "macoder-enterprise.listPlugins",
+        "title": "MaCoder Enterprise: List Installed Plugins"
+      },
+      {
+        "command": "macoder-enterprise.detectDomain",
+        "title": "MaCoder Enterprise: Detect Project Domain"
+      },
+      {
+        "command": "macoder-enterprise.showLearningStats",
+        "title": "MaCoder Enterprise: Show Learning Statistics"
+      },
+      {
+        "command": "macoder-enterprise.openBrainstorming",
+        "title": "MaCoder Enterprise: Open Brainstorming Mode"
+      },
+      {
+        "command": "macoder-enterprise.startAutonomous",
+        "title": "MaCoder Enterprise: Start Autonomous Mode"
+      },
+      {
+        "command": "macoder-enterprise.openModelBrowser",
+        "title": "MaCoder Enterprise: Open Model Browser"
+      },
+      {
+        "command": "macoder-enterprise.configureDMacIntegration",
+        "title": "MaCoder Enterprise: Configure DMac Integration"
+      }
+    ],
+    "configuration": {
+      "title": "MaCoder Enterprise",
+      "properties": {
+        "macoder-enterprise.logLevel": {
+          "type": "string",
+          "default": "info",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ],
+          "description": "Log level for MaCoder"
+        },
+        "macoder-enterprise.modelProvider": {
+          "type": "string",
+          "default": "ollama",
+          "enum": [
+            "ollama",
+            "huggingface"
+          ],
+          "description": "Model provider to use"
+        },
+        "macoder-enterprise.modelId": {
+          "type": "string",
+          "default": "codellama:7b",
+          "description": "Model ID to use"
+        },
+        "macoder-enterprise.ollamaBaseUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Base URL for Ollama API"
+        },
+        "macoder-enterprise.huggingfaceApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for HuggingFace"
+        },
+        "macoder-enterprise.dmacIntegration.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable DMac integration"
+        },
+        "macoder-enterprise.dmacIntegration.chromaDbUrl": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "URL for ChromaDB"
+        },
+        "macoder-enterprise.dmacIntegration.useSharedChromaDb": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use shared ChromaDB instance from DMac"
+        },
+        "macoder-enterprise.dmacIntegration.agentCommunicationEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable communication with other DMac agents"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.60.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.12",
+    "node-fetch": "^2.7.0"
+  }
+}
