@@ -1,0 +1,16 @@
+{
+  "macoder.openPanel.title": "MaCoder: Open Panel",
+  "macoder.generateCode.title": "MaCoder: Generate Code",
+  "macoder.generateTests.title": "MaCoder: Generate Tests",
+  "macoder.analyzeError.title": "MaCoder: Analyze Error",
+  "macoder.analyzePerformance.title": "MaCoder: Analyze Performance",
+  "macoder.suggestImprovements.title": "MaCoder: Suggest Improvements",
+  "macoder.listStrategies.title": "MaCoder: List Code Generation Strategies",
+  "macoder.listPlugins.title": "MaCoder: List Installed Plugins",
+  "macoder.detectDomain.title": "MaCoder: Detect Project Domain",
+  "macoder.showLearningStats.title": "MaCoder: Show Learning Statistics",
+  "macoder.openBrainstorming.title": "MaCoder: Open Brainstorming Mode",
+  "macoder.startAutonomous.title": "MaCoder: Start Autonomous Mode",
+  "macoder.openModelBrowser.title": "MaCoder: Open Model Browser",
+  "macoder.configureDMacIntegration.title": "MaCoder: Configure DMac Integration"
+}

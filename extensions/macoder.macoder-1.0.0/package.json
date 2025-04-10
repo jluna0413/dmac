@@ -1,0 +1,187 @@
+{
+  "name": "macoder",
+  "displayName": "MaCoder",
+  "description": "AI-powered coding assistant with advanced capabilities",
+  "version": "1.0.0",
+  "publisher": "macoder",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jluna0413/dmac.git"
+  },
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:macoder.openPanel",
+    "onCommand:macoder.generateCode",
+    "onCommand:macoder.generateTests",
+    "onCommand:macoder.analyzeError",
+    "onCommand:macoder.analyzePerformance",
+    "onCommand:macoder.suggestImprovements",
+    "onCommand:macoder.listStrategies",
+    "onCommand:macoder.listPlugins",
+    "onCommand:macoder.detectDomain",
+    "onCommand:macoder.showLearningStats",
+    "onCommand:macoder.openBrainstorming",
+    "onCommand:macoder.startAutonomous",
+    "onCommand:macoder.openModelBrowser",
+    "onCommand:macoder.configureDMacIntegration"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "macoder.openPanel",
+        "title": "MaCoder: Open Panel"
+      },
+      {
+        "command": "macoder.generateCode",
+        "title": "MaCoder: Generate Code"
+      },
+      {
+        "command": "macoder.generateTests",
+        "title": "MaCoder: Generate Tests"
+      },
+      {
+        "command": "macoder.analyzeError",
+        "title": "MaCoder: Analyze Error"
+      },
+      {
+        "command": "macoder.analyzePerformance",
+        "title": "MaCoder: Analyze Performance"
+      },
+      {
+        "command": "macoder.suggestImprovements",
+        "title": "MaCoder: Suggest Improvements"
+      },
+      {
+        "command": "macoder.listStrategies",
+        "title": "MaCoder: List Code Generation Strategies"
+      },
+      {
+        "command": "macoder.listPlugins",
+        "title": "MaCoder: List Installed Plugins"
+      },
+      {
+        "command": "macoder.detectDomain",
+        "title": "MaCoder: Detect Project Domain"
+      },
+      {
+        "command": "macoder.showLearningStats",
+        "title": "MaCoder: Show Learning Statistics"
+      },
+      {
+        "command": "macoder.openBrainstorming",
+        "title": "MaCoder: Open Brainstorming Mode"
+      },
+      {
+        "command": "macoder.startAutonomous",
+        "title": "MaCoder: Start Autonomous Mode"
+      },
+      {
+        "command": "macoder.openModelBrowser",
+        "title": "MaCoder: Open Model Browser"
+      },
+      {
+        "command": "macoder.configureDMacIntegration",
+        "title": "MaCoder: Configure DMac Integration"
+      }
+    ],
+    "configuration": {
+      "title": "MaCoder",
+      "properties": {
+        "macoder.logLevel": {
+          "type": "string",
+          "default": "info",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ],
+          "description": "Log level for MaCoder"
+        },
+        "macoder.modelProvider": {
+          "type": "string",
+          "default": "ollama",
+          "enum": [
+            "ollama",
+            "huggingface"
+          ],
+          "description": "Model provider to use"
+        },
+        "macoder.modelId": {
+          "type": "string",
+          "default": "codellama:7b",
+          "description": "Model ID to use"
+        },
+        "macoder.ollamaBaseUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Base URL for Ollama API"
+        },
+        "macoder.huggingfaceApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for HuggingFace"
+        },
+        "macoder.dmacIntegration.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable DMac integration"
+        },
+        "macoder.dmacIntegration.chromaDbUrl": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "URL for ChromaDB"
+        },
+        "macoder.dmacIntegration.useSharedChromaDb": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use shared ChromaDB instance from DMac"
+        },
+        "macoder.dmacIntegration.agentCommunicationEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable communication with other DMac agents"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.60.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.12",
+    "node-fetch": "^2.7.0"
+  }
+}
