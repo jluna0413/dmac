@@ -1,0 +1,11 @@
+{
+  "task_id": "task_1743826318_71701d10",
+  "task_type": "command_generation",
+  "description": "Find all Python files in the current directory and its subdirectories that contain the word 'import'",
+  "data": {},
+  "priority": 1,
+  "status": "pending",
+  "agent_id": "shelly",
+  "created_at": 1743826318.1938124,
+  "updated_at": 1743826318.1938124
+}

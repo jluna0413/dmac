@@ -1,0 +1,112 @@
+{
+  "models": {
+    "gemma:7b": {
+      "benchmarks": {
+        "code_generation_coding_basics_1685432789": {
+          "agent_id": "flora",
+          "timestamp": "2025-04-05T00:15:40.971719",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 0.0009975433349609375,
+            "average_latency": 0.0003325144449869792,
+            "total_tokens": 0,
+            "tokens_per_second": 0.0
+          }
+        },
+        "prompt_engineering_prompt_basics_1685432790": {
+          "agent_id": "flora",
+          "timestamp": "2025-04-05T00:15:40.981915",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 0.0,
+            "average_latency": 0.0,
+            "total_tokens": 0,
+            "tokens_per_second": 0
+          }
+        },
+        "shell_scripting_shell_basics_1685432791": {
+          "agent_id": "flora",
+          "timestamp": "2025-04-05T00:15:40.993438",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 0.0,
+            "average_latency": 0.0,
+            "total_tokens": 0,
+            "tokens_per_second": 0
+          }
+        },
+        "frontend_development_frontend_basics_1685432792": {
+          "agent_id": "flora",
+          "timestamp": "2025-04-05T00:15:42.078927",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 1.064218282699585,
+            "average_latency": 0.26605457067489624,
+            "total_tokens": 0,
+            "tokens_per_second": 0.0
+          }
+        }
+      },
+      "average_score": 0.0,
+      "total_benchmarks": 4
+    },
+    "gemma3:12b": {
+      "benchmarks": {
+        "code_generation_coding_basics_1685432789": {
+          "agent_id": "shelly",
+          "timestamp": "2025-04-05T00:20:16.349693",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 0.0,
+            "average_latency": 0.0,
+            "total_tokens": 0,
+            "tokens_per_second": 0
+          }
+        },
+        "prompt_engineering_prompt_basics_1685432790": {
+          "agent_id": "shelly",
+          "timestamp": "2025-04-05T00:20:16.361199",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 0.0,
+            "average_latency": 0.0,
+            "total_tokens": 0,
+            "tokens_per_second": 0
+          }
+        },
+        "shell_scripting_shell_basics_1685432791": {
+          "agent_id": "perry",
+          "timestamp": "2025-04-05T00:20:16.322734",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 0.0,
+            "average_latency": 0.0,
+            "total_tokens": 0,
+            "tokens_per_second": 0
+          }
+        },
+        "frontend_development_frontend_basics_1685432792": {
+          "agent_id": "perry",
+          "timestamp": "2025-04-05T00:20:16.338678",
+          "metrics": {
+            "accuracy": 0.0,
+            "average_score": 0.0,
+            "total_latency": 0.0010366439819335938,
+            "average_latency": 0.00025916099548339844,
+            "total_tokens": 0,
+            "tokens_per_second": 0.0
+          }
+        }
+      },
+      "average_score": 0.0,
+      "total_benchmarks": 4
+    }
+  }
+}

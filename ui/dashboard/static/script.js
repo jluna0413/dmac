@@ -3,10 +3,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the dashboard
     initDashboard();
-    
+
     // Set up event listeners
     setupEventListeners();
-    
+
     // Refresh the dashboard every 5 seconds
     setInterval(refreshDashboard, 5000);
 });
@@ -51,14 +51,14 @@ function fetchComponentStatus() {
 function updateComponentStatus(data) {
     const componentList = document.getElementById('component-list');
     if (!componentList) return;
-    
+
     componentList.innerHTML = '';
-    
+
     for (const [name, status] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         const statusClass = status.running ? 'status-running' : (status.enabled ? 'status-stopped' : 'status-disabled');
-        
+
         li.innerHTML = `
             <div>
                 <span class="component-name">${name}</span>
@@ -72,10 +72,10 @@ function updateComponentStatus(data) {
                 <button class="open-component-btn" data-component="${name}" ${status.running ? '' : 'disabled'}>Open</button>
             </div>
         `;
-        
+
         componentList.appendChild(li);
     }
-    
+
     // Re-attach event listeners
     document.querySelectorAll('.open-component-btn').forEach(function(button) {
         button.addEventListener('click', function() {
@@ -114,19 +114,19 @@ function fetchAgentStatus() {
 function updateAgentStatus(data) {
     const agentList = document.getElementById('agent-list');
     if (!agentList) return;
-    
+
     agentList.innerHTML = '';
-    
+
     if (Object.keys(data).length === 0) {
         agentList.innerHTML = '<li>No agents available</li>';
         return;
     }
-    
+
     for (const [id, agent] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         const stateClass = `agent-state-${agent.state.toLowerCase()}`;
-        
+
         li.innerHTML = `
             <div class="agent-name">${agent.name}</div>
             <div class="agent-type">${agent.agent_type}</div>
@@ -134,7 +134,7 @@ function updateAgentStatus(data) {
                 State: ${agent.state}
             </div>
         `;
-        
+
         agentList.appendChild(li);
     }
 }
@@ -153,26 +153,26 @@ function fetchTaskStatus() {
 function updateTaskStatus(data) {
     const taskList = document.getElementById('task-list');
     if (!taskList) return;
-    
+
     taskList.innerHTML = '';
-    
+
     if (Object.keys(data).length === 0) {
         taskList.innerHTML = '<li>No tasks available</li>';
         return;
     }
-    
+
     for (const [id, task] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         const statusClass = `task-status-${task.status.toLowerCase()}`;
-        
+
         li.innerHTML = `
             <div class="task-prompt">${task.prompt}</div>
             <div class="task-status ${statusClass}">
                 Status: ${task.status}
             </div>
         `;
-        
+
         taskList.appendChild(li);
     }
 }
@@ -191,17 +191,17 @@ function fetchModelStatus() {
 function updateModelStatus(data) {
     const modelList = document.getElementById('model-list');
     if (!modelList) return;
-    
+
     modelList.innerHTML = '';
-    
+
     if (Object.keys(data).length === 0) {
         modelList.innerHTML = '<li>No models available</li>';
         return;
     }
-    
+
     for (const [name, model] of Object.entries(data)) {
         const li = document.createElement('li');
-        
+
         li.innerHTML = `
             <div class="model-name">${name}</div>
             <div class="model-type">${model.type}</div>
@@ -209,7 +209,7 @@ function updateModelStatus(data) {
                 Usage: ${model.usage_count} requests
             </div>
         `;
-        
+
         modelList.appendChild(li);
     }
 }

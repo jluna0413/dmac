@@ -12,7 +12,7 @@ from pathlib import Path
 # Add the current directory to the path so we can import our modules
 sys.path.append(str(Path(__file__).parent))
 
-from config.config import config
+from config.config import config, Config
 from core.swarm.orchestrator import Orchestrator
 from core.openmanus_rl.integration import OpenManusRLIntegration
 from models.model_manager import ModelManager
@@ -53,7 +53,14 @@ async def main():
     # Load custom configuration if provided
     if args.config:
         logger.info(f'Loading configuration from {args.config}')
-        # TODO: Implement custom configuration loading
+        import config.config as config_module
+        config_module.config = Config(args.config)
+
+    # Initialize variables to None for safe cleanup
+    model_manager = None
+    integration_manager = None
+    openmanus_integration = None
+    orchestrator = None
 
     try:
         # Initialize the model manager
@@ -96,13 +103,13 @@ async def main():
     finally:
         # Cleanup
         logger.info('Cleaning up')
-        if 'orchestrator' in locals():
+        if orchestrator is not None:
             await orchestrator.cleanup()
-        if 'openmanus_integration' in locals():
+        if openmanus_integration is not None:
             await openmanus_integration.cleanup()
-        if 'integration_manager' in locals():
+        if integration_manager is not None:
             await integration_manager.cleanup()
-        if 'model_manager' in locals():
+        if model_manager is not None:
             await model_manager.cleanup()
 
 

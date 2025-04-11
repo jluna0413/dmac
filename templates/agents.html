@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMac - Agents</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='images/dmac-logo.svg') }}" alt="DMac Logo" class="logo">
+                <h1>DMac</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}"><i class="material-icons">dashboard</i> Dashboard</a></li>
+                    <li class="active"><a href="{{ url_for('agents') }}"><i class="material-icons">smart_toy</i> Agents</a></li>
+                    <li><a href="{{ url_for('tasks') }}"><i class="material-icons">assignment</i> Tasks</a></li>
+                    <li><a href="{{ url_for('models') }}"><i class="material-icons">model_training</i> Models</a></li>
+                    <li><a href="{{ url_for('datasets') }}"><i class="material-icons">dataset</i> Datasets</a></li>
+                    <li><a href="{{ url_for('benchmarks') }}"><i class="material-icons">speed</i> Training & Benchmarks</a></li>
+                    <li><a href="{{ url_for('settings') }}"><i class="material-icons">settings</i> Settings</a></li>
+                </ul>
+            </nav>
+
+            <!-- Added Chat and Onboarding buttons -->
+            <div class="sidebar-actions">
+                <a href="{{ url_for('chat') }}" class="sidebar-action-btn">
+                    <i class="material-icons">chat</i>
+                    <span>Chat</span>
+                </a>
+                <a href="{{ url_for('onboarding') }}" class="sidebar-action-btn">
+                    <i class="material-icons">school</i>
+                    <span>Onboarding</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="page-header">
+                <h1>Agents</h1>
+                <button class="primary-button" id="create-agent-btn">
+                    <i class="material-icons">add</i> Create Agent
+                </button>
+            </header>
+
+            <div class="agent-cards" id="agent-container">
+                <!-- Agent cards will be loaded here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Card Template -->
+    <template id="agent-card-template">
+        <div class="agent-card">
+            <div class="agent-header">
+                <img src="" alt="" class="agent-avatar">
+                <h2 class="agent-name"></h2>
+                <span class="agent-specialty"></span>
+            </div>
+            <div class="agent-description">
+                <p></p>
+            </div>
+            <div class="agent-benchmark">
+                <h3>Benchmark Scores</h3>
+                <div class="benchmark-graph">
+                    <!-- Benchmark graph will be added here -->
+                </div>
+            </div>
+            <div class="agent-actions">
+                <button class="secondary-button chat-btn">
+                    <i class="material-icons">chat</i> Chat
+                </button>
+                <button class="secondary-button details-btn">
+                    <i class="material-icons">info</i> Details
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <style>
+        /* Sidebar Actions */
+        .sidebar-actions {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .sidebar-action-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-action-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .sidebar-action-btn i {
+            margin-right: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar-actions {
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 10px;
+            }
+
+            .sidebar-action-btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <script>
+        // Fetch agents from the API
+        fetch('/api/agents')
+            .then(response => response.json())
+            .then(agents => {
+                const container = document.getElementById('agent-container');
+                const template = document.getElementById('agent-card-template');
+
+                // Clear the container
+                container.innerHTML = '';
+
+                // Add each agent
+                agents.forEach(agent => {
+                    // Clone the template
+                    const card = template.content.cloneNode(true);
+
+                    // Set the agent data
+                    card.querySelector('.agent-name').textContent = agent.name;
+                    card.querySelector('.agent-specialty').textContent = agent.specialty;
+                    card.querySelector('.agent-description p').textContent = agent.description;
+
+                    // Set the agent avatar
+                    const avatar = card.querySelector('.agent-avatar');
+                    avatar.src = `/static/images/agents/${agent.id}.svg`;
+                    avatar.alt = agent.name;
+
+                    // Set the button actions
+                    const chatBtn = card.querySelector('.chat-btn');
+                    chatBtn.dataset.agent = agent.id;
+                    chatBtn.addEventListener('click', () => {
+                        window.location.href = `/chat?agent=${agent.id}`;
+                    });
+
+                    const detailsBtn = card.querySelector('.details-btn');
+                    detailsBtn.dataset.agent = agent.id;
+                    detailsBtn.addEventListener('click', () => {
+                        // Navigate to agent dashboard
+                        window.location.href = `/agent/${agent.id}`;
+                    });
+
+                    // Add the card to the container
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching agents:', error);
+                document.getElementById('agent-container').innerHTML = '<p class="error">Error loading agents. Please try again later.</p>';
+            });
+
+        // Handle create agent button
+        document.getElementById('create-agent-btn').addEventListener('click', () => {
+            alert('Create agent functionality will be implemented here.');
+        });
+    </script>
+</body>
+</html>

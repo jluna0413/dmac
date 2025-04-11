@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}DMac - Chat{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/unified-input.css">
+    <link rel="stylesheet" href="/static/css/voice-interaction.css">
+    <link rel="stylesheet" href="/static/css/chat-layout.css">
+    <link rel="stylesheet" href="/static/css/opencanvas.css">
+{% endblock %}
+
+{% block content %}
+<div class="chat-interface-wrapper">
+    <!-- Left Sidebar - Chat History -->
+    <div class="chat-sidebar chat-history-sidebar">
+        <div class="sidebar-header">
+            <h3>Chats</h3>
+            <button id="new-chat-button" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> New Chat
+            </button>
+        </div>
+        <div class="sidebar-content" id="chat-history-list">
+            <!-- Chat history will be populated here -->
+            <div class="chat-history-item active">
+                <div class="chat-title">Current Chat</div>
+                <div class="chat-preview">Welcome to DMac AI Assistant...</div>
+            </div>
+            <div class="chat-history-item">
+                <div class="chat-title">Previous Chat</div>
+                <div class="chat-preview">Sample conversation...</div>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="clear-history-button" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-trash"></i> Clear All Chats
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="chat-main-area">
+        <div id="chat-container" class="chat-container">
+            <!-- Welcome message -->
+            <div class="message assistant-message">
+                <div class="message-content">
+                    <h4>Welcome to DMac AI Assistant</h4>
+                    <p>I'm here to help you with your tasks. You can:</p>
+                    <ul>
+                        <li>Ask me questions about AI, programming, or any topic</li>
+                        <li>Upload files for me to analyze</li>
+                        <li>Use voice input by clicking the microphone button</li>
+                        <li>Activate deep research mode for more thorough answers</li>
+                        <li>Enable deep thinking mode for complex problems</li>
+                        <li>Open Langchain OpenCanvas for visual workflows</li>
+                    </ul>
+                    <p>How can I assist you today?</p>
+                </div>
+            </div>
+        </div>
+        <!-- Input container moved to footer -->
+        <!-- <div id="input-container" class="unified-input-container"></div> -->
+    </div>
+
+    <!-- OpenCanvas Container -->
+    <div id="opencanvas-container" class="opencanvas-container">
+        <div class="opencanvas-header">
+            <h3>Langchain OpenCanvas</h3>
+            <button id="opencanvas-close" class="opencanvas-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="opencanvas-content">
+            <div class="opencanvas-tools">
+                <button class="opencanvas-tool-button" id="opencanvas-new">
+                    <i class="fas fa-plus"></i> New
+                </button>
+                <button class="opencanvas-tool-button" id="opencanvas-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button class="opencanvas-tool-button" id="opencanvas-run">
+                    <i class="fas fa-play"></i> Run
+                </button>
+            </div>
+            <div id="opencanvas-frame-container" style="height: calc(100% - 40px);">
+                <!-- OpenCanvas iframe will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar - Model Information -->
+    <div class="chat-sidebar chat-capabilities-sidebar">
+        <div class="sidebar-header">
+            <h3>Model Information</h3>
+        </div>
+        <div class="sidebar-content">
+            <div class="capability-section">
+                <h4>Models Menu</h4>
+                <div class="model-providers">
+                    <!-- Model Provider Dropdown -->
+                    <div class="dropdown model-dropdown">
+                        <button class="btn dropdown-toggle w-100" type="button" id="modelProviderDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="selected-provider">Select Provider</span>
+                        </button>
+                        <ul class="dropdown-menu w-100" aria-labelledby="modelProviderDropdown">
+                            <li class="dropdown-header">API Service Providers</li>
+                            <li><a class="dropdown-item provider-item" href="#" data-provider="gemini">Gemini</a></li>
+                            <li><a class="dropdown-item provider-item" href="#" data-provider="openai">OpenAI</a></li>
+                            <li><a class="dropdown-item provider-item" href="#" data-provider="deepseek">DeepSeek</a></li>
+                            <li><a class="dropdown-item provider-item" href="#" data-provider="huggingface">HuggingFace</a></li>
+                            <li><a class="dropdown-item provider-item" href="#" data-provider="openrouter">OpenRouter</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header">Local Model Providers</li>
+                            <li><a class="dropdown-item provider-item" href="#" data-provider="ollama">Ollama</a></li>
+                            <li><a class="dropdown-item provider-item" href="#" data-provider="lmstudio">LM Studio</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Model Selection Dropdown -->
+                    <div class="dropdown model-dropdown mt-2">
+                        <button class="btn dropdown-toggle w-100" type="button" id="modelSelectionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="selected-model">Select Model</span>
+                        </button>
+                        <ul class="dropdown-menu w-100" aria-labelledby="modelSelectionDropdown">
+                            <!-- Gemini Models -->
+                            <div id="gemini-models" class="model-list" style="display: none;">
+                                <li class="dropdown-header">Gemini Models</li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="gemini-flash-2.0">Flash 2.0</a></li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="gemini-2.5-pro">2.5 Pro</a></li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="gemini-1.5-pro">1.5 Pro</a></li>
+                            </div>
+
+                            <!-- OpenAI Models -->
+                            <div id="openai-models" class="model-list" style="display: none;">
+                                <li class="dropdown-header">OpenAI Models</li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="gpt-4o">GPT-4o</a></li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="gpt-4-turbo">GPT-4 Turbo</a></li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="gpt-3.5-turbo">GPT-3.5 Turbo</a></li>
+                            </div>
+
+                            <!-- DeepSeek Models -->
+                            <div id="deepseek-models" class="model-list" style="display: none;">
+                                <li class="dropdown-header">DeepSeek Models</li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="deepseek-coder">DeepSeek Coder</a></li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="deepseek-chat">DeepSeek Chat</a></li>
+                            </div>
+
+                            <!-- HuggingFace Models -->
+                            <div id="huggingface-models" class="model-list" style="display: none;">
+                                <li class="dropdown-header">HuggingFace Models</li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="hf-mistral">Mistral</a></li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="hf-llama3">Llama 3</a></li>
+                            </div>
+
+                            <!-- OpenRouter Models -->
+                            <div id="openrouter-models" class="model-list" style="display: none;">
+                                <li class="dropdown-header">OpenRouter Models</li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="openrouter-claude">Claude</a></li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="openrouter-mixtral">Mixtral</a></li>
+                            </div>
+
+                            <!-- Ollama Models -->
+                            <div id="ollama-models" class="model-list" style="display: none;">
+                                <li class="dropdown-header">Ollama Models</li>
+                                <li id="ollama-models-list">
+                                    <a class="dropdown-item model-item loading" href="#">Loading models...</a>
+                                </li>
+                            </div>
+
+                            <!-- LM Studio Models -->
+                            <div id="lmstudio-models" class="model-list" style="display: none;">
+                                <li class="dropdown-header">LM Studio Models</li>
+                                <li><a class="dropdown-item model-item" href="#" data-model="lmstudio-not-connected">Not connected</a></li>
+                            </div>
+
+                            <!-- Default message when no provider selected -->
+                            <div id="default-model-message" class="model-list">
+                                <li><span class="dropdown-item disabled">Select a provider first</span></li>
+                            </div>
+                        </ul>
+                    </div>
+
+                    <!-- Current Model Display -->
+                    <div class="current-model-container mt-3">
+                        <div class="current-model-label">Current Model:</div>
+                        <div id="current-model-display">None selected</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model capabilities and details sections -->
+            <div id="model-info-placeholder" class="text-center py-4 text-muted">
+                <i class="fas fa-robot fa-3x mb-3 opacity-50"></i>
+                <p>Select a model to view its capabilities and details</p>
+            </div>
+
+            <div id="model-info-content" style="display: none;">
+                <div class="capability-section">
+                    <h4>Capabilities</h4>
+                    <div class="model-capabilities">
+                        <div class="model-capability-item">
+                            <span class="capability-badge available"><i class="fas fa-check"></i></span>
+                            <span class="capability-name">Text Generation</span>
+                        </div>
+                        <div class="model-capability-item">
+                            <span class="capability-badge available"><i class="fas fa-check"></i></span>
+                            <span class="capability-name">Code Generation</span>
+                        </div>
+                        <div class="model-capability-item">
+                            <span class="capability-badge unavailable"><i class="fas fa-times"></i></span>
+                            <span class="capability-name">Vision</span>
+                        </div>
+                        <div class="model-capability-item">
+                            <span class="capability-badge available"><i class="fas fa-check"></i></span>
+                            <span class="capability-name">Web Search</span>
+                        </div>
+                        <div class="model-capability-item">
+                            <span class="capability-badge available"><i class="fas fa-check"></i></span>
+                            <span class="capability-name">Deep Thinking</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="capability-section">
+                    <h4>Model Details</h4>
+                    <div class="model-details">
+                        <div class="model-detail-item">
+                            <span class="detail-label">Type:</span>
+                            <span class="detail-value">-</span>
+                        </div>
+                        <div class="model-detail-item">
+                            <span class="detail-label">Parameters:</span>
+                            <span class="detail-value">-</span>
+                        </div>
+                        <div class="model-detail-item">
+                            <span class="detail-label">Context:</span>
+                            <span class="detail-value">-</span>
+                        </div>
+                        <div class="model-detail-item">
+                            <span class="detail-label">Provider:</span>
+                            <span class="detail-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="/static/js/voice-interaction.js"></script>
+    <script src="/static/js/unified-input.js"></script>
+    <script src="/static/js/feedback.js"></script>
+    <script src="/static/js/input-test.js"></script>
+{% endblock %}

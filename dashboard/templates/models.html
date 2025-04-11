@@ -1,0 +1,657 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>AI Models</h1>
+        <p>Manage and monitor the AI models used in the DMac system.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Available Models</h5>
+                <button class="btn btn-primary" id="refreshModelsBtn">Refresh Models</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="modelsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Size</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <div class="loading-container">
+                                        <div class="progress mb-3">
+                                            <div id="modelsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary me-3" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span id="modelsLoadingPercent" class="loading-percentage">0%</span>
+                                        </div>
+                                        <p id="modelsLoadingText" class="mt-2">Loading models...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Ollama Models</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="ollamaModelsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <div class="loading-container">
+                                        <div class="progress mb-3">
+                                            <div id="ollamaLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-info me-3" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span id="ollamaLoadingPercent" class="loading-percentage">0%</span>
+                                        </div>
+                                        <p id="ollamaLoadingText" class="mt-2">Loading Ollama models...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-primary" id="pullOllamaModelBtn" data-bs-toggle="modal" data-bs-target="#pullModelModal">Pull Model</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Model Performance</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="modelPerformanceChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pull Model Modal -->
+<div class="modal fade" id="pullModelModal" tabindex="-1" aria-labelledby="pullModelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pullModelModalLabel">Pull Ollama Model</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="pullModelForm">
+                    <div class="mb-3">
+                        <label for="modelName" class="form-label">Model Name</label>
+                        <input type="text" class="form-control" id="modelName" placeholder="e.g., llama2, mistral, gemma:2b">
+                        <div class="form-text">Enter the name of the model to pull from Ollama.</div>
+                    </div>
+                    <div class="alert alert-danger d-none" id="pullModelError"></div>
+                    <div class="d-none" id="pullModelLoadingContainer">
+                        <div class="progress mb-3">
+                            <div id="pullModelLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="spinner-border text-success me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span id="pullModelLoadingPercent" class="loading-percentage">0%</span>
+                        </div>
+                        <p id="pullModelLoadingText" class="text-center">Preparing to pull model...</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="pullModelSubmitBtn">Pull Model</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Model Details Modal -->
+<div class="modal fade" id="modelDetailsModal" tabindex="-1" aria-labelledby="modelDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modelDetailsModalLabel">Model Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="modelDetailsLoading">
+                    <div class="progress mb-3">
+                        <div id="modelDetailsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="spinner-border text-primary me-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span id="modelDetailsLoadingPercent" class="loading-percentage">0%</span>
+                    </div>
+                    <p id="modelDetailsLoadingText">Loading model details...</p>
+                </div>
+                <div id="modelDetailsContent" class="d-none">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Basic Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Name</th>
+                                    <td id="detailsModelName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Type</th>
+                                    <td id="detailsModelType"></td>
+                                </tr>
+                                <tr>
+                                    <th>Size</th>
+                                    <td id="detailsModelSize"></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td id="detailsModelStatus"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Performance Metrics</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Average Response Time</th>
+                                    <td id="detailsResponseTime"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tokens per Second</th>
+                                    <td id="detailsTokensPerSecond"></td>
+                                </tr>
+                                <tr>
+                                    <th>Memory Usage</th>
+                                    <td id="detailsMemoryUsage"></td>
+                                </tr>
+                                <tr>
+                                    <th>Success Rate</th>
+                                    <td id="detailsSuccessRate"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h6>Model Parameters</h6>
+                            <pre id="detailsModelParameters" class="bg-light p-3 rounded"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Load models
+        loadModels();
+        loadOllamaModels();
+
+        // Set up event handlers
+        $('#refreshModelsBtn').click(function() {
+            loadModels();
+            loadOllamaModels();
+        });
+
+        $('#pullModelSubmitBtn').click(function() {
+            pullOllamaModel();
+        });
+
+        // Initialize model performance chart
+        initModelPerformanceChart();
+    });
+
+    function loadModels() {
+        const token = localStorage.getItem('dmac_token');
+
+        // Show loading indicators
+        $('#modelsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#modelsLoadingPercent').text('10%');
+        $('#modelsLoadingText').text('Connecting to server...');
+
+        // Load models from API
+        $.ajax({
+            url: '/api/ollama/models',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                // Update loading indicators
+                $('#modelsLoadingBar').css('width', '50%').attr('aria-valuenow', 50);
+                $('#modelsLoadingPercent').text('50%');
+                $('#modelsLoadingText').text('Processing model information...');
+
+                if (response.success) {
+                    const ollamaModels = response.models || [];
+
+                    // Add API models
+                    const apiModels = [
+                        { name: 'gemini-pro', type: 'API', status: 'Available', size: 'N/A', source: 'api' }
+                    ];
+
+                    // Combine models
+                    const models = [
+                        ...ollamaModels.map(model => ({
+                            name: model.name,
+                            type: 'Ollama',
+                            status: model.status,
+                            size: model.size,
+                            source: 'ollama'
+                        })),
+                        ...apiModels
+                    ];
+
+                    // Update loading indicators
+                    $('#modelsLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#modelsLoadingPercent').text('90%');
+                    $('#modelsLoadingText').text('Preparing model list...');
+
+                    setTimeout(function() {
+                        $('#modelsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#modelsLoadingPercent').text('100%');
+                        $('#modelsLoadingText').text('Completed!');
+
+                        setTimeout(function() {
+                            // Update models table
+                            let tableHtml = '';
+                            models.forEach(model => {
+                                const statusClass = model.status === 'Available' ? 'bg-success' : 'bg-warning';
+                                tableHtml += `
+                                    <tr>
+                                        <td>${model.name}</td>
+                                        <td>${model.type}</td>
+                                        <td><span class="badge ${statusClass}">${model.status}</span></td>
+                                        <td>${model.size}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info view-model-btn" data-model-name="${model.name}">View</button>
+                                            <button class="btn btn-sm btn-primary test-model-btn" data-model-name="${model.name}">Test</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                            $('#modelsTable tbody').html(tableHtml);
+
+                            // Attach event handlers
+                            $('.view-model-btn').click(function() {
+                                const modelName = $(this).data('model-name');
+                                viewModelDetails(modelName);
+                            });
+
+                            $('.test-model-btn').click(function() {
+                                const modelName = $(this).data('model-name');
+                                testModel(modelName);
+                            });
+                        }, 500);
+                    }, 300);
+                }, 700);
+            }, 600);
+        }, 500);
+    }
+
+    function loadOllamaModels() {
+        const token = localStorage.getItem('dmac_token');
+
+        // Show loading indicators
+        $('#ollamaLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#ollamaLoadingPercent').text('10%');
+        $('#ollamaLoadingText').text('Connecting to Ollama server...');
+
+        // Load Ollama models from API
+        $.ajax({
+            url: '/api/ollama/models',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                // Update loading indicators
+                $('#ollamaLoadingBar').css('width', '50%').attr('aria-valuenow', 50);
+                $('#ollamaLoadingPercent').text('50%');
+                $('#ollamaLoadingText').text('Processing model information...');
+
+                if (response.success) {
+                    const ollamaModels = response.models || [];
+
+                    // Update loading indicators
+                    $('#ollamaLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#ollamaLoadingPercent').text('90%');
+                    $('#ollamaLoadingText').text('Preparing model list...');
+
+                    setTimeout(function() {
+                        $('#ollamaLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#ollamaLoadingPercent').text('100%');
+                        $('#ollamaLoadingText').text('Completed!');
+
+                    setTimeout(function() {
+                        // Update Ollama models table
+                        let tableHtml = '';
+                        ollamaModels.forEach(model => {
+                            const statusClass = model.status === 'Available' ? 'bg-success' : 'bg-warning';
+                            tableHtml += `
+                                <tr>
+                                    <td>${model.name}</td>
+                                    <td><span class="badge ${statusClass}">${model.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-ollama-model-btn" data-model-name="${model.name}">View</button>
+                                        <button class="btn btn-sm btn-danger remove-ollama-model-btn" data-model-name="${model.name}">Remove</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        $('#ollamaModelsTable tbody').html(tableHtml);
+
+                        // Attach event handlers
+                        $('.view-ollama-model-btn').click(function() {
+                            const modelName = $(this).data('model-name');
+                            viewModelDetails(modelName);
+                        });
+
+                        $('.remove-ollama-model-btn').click(function() {
+                            const modelName = $(this).data('model-name');
+                            removeOllamaModel(modelName);
+                        });
+                    }, 500);
+                }, 300);
+            },
+            error: function(xhr) {
+                console.error('Error loading Ollama models:', xhr);
+                $('#ollamaLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-info').addClass('bg-danger');
+                $('#ollamaLoadingPercent').text('Error');
+                $('#ollamaLoadingText').text('Error loading Ollama models');
+
+                setTimeout(function() {
+                    // Show error message in table
+                    $('#ollamaModelsTable tbody').html('<tr><td colspan="3" class="text-center text-danger">Error loading Ollama models. Please try again.</td></tr>');
+                }, 500);
+            }
+        });
+    }
+
+    function pullOllamaModel() {
+        const token = localStorage.getItem('dmac_token');
+        const modelName = $('#modelName').val();
+
+        if (!modelName) {
+            $('#pullModelError').text('Please enter a model name').removeClass('d-none');
+            return;
+        }
+
+        // Hide error message
+        $('#pullModelError').addClass('d-none');
+
+        // Show loading container
+        $('#pullModelLoadingContainer').removeClass('d-none');
+
+        // Disable button
+        $('#pullModelSubmitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Pulling...');
+
+        // Start loading animation
+        $('#pullModelLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#pullModelLoadingPercent').text('10%');
+        $('#pullModelLoadingText').text('Connecting to Ollama server...');
+
+        setTimeout(function() {
+            $('#pullModelLoadingBar').css('width', '25%').attr('aria-valuenow', 25);
+            $('#pullModelLoadingPercent').text('25%');
+            $('#pullModelLoadingText').text('Sending pull request...');
+
+            setTimeout(function() {
+                $('#pullModelLoadingBar').css('width', '40%').attr('aria-valuenow', 40);
+                $('#pullModelLoadingPercent').text('40%');
+                $('#pullModelLoadingText').text(`Pulling model: ${modelName}...`);
+
+                // Simulate a long-running pull operation
+                let progress = 40;
+                const interval = setInterval(function() {
+                    progress += 1;
+                    if (progress <= 95) {
+                        $('#pullModelLoadingBar').css('width', `${progress}%`).attr('aria-valuenow', progress);
+                        $('#pullModelLoadingPercent').text(`${progress}%`);
+                        $('#pullModelLoadingText').text(`Downloading model: ${modelName}... (${progress}%)`);
+                    } else {
+                        clearInterval(interval);
+
+                        // Complete the pull
+                        $('#pullModelLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#pullModelLoadingPercent').text('100%');
+                        $('#pullModelLoadingText').text('Model pulled successfully!');
+
+                        setTimeout(function() {
+                            // Hide loading container
+                            $('#pullModelLoadingContainer').addClass('d-none');
+
+                            // Reset loading bar
+                            $('#pullModelLoadingBar').css('width', '0%').attr('aria-valuenow', 0);
+
+                            // Enable button
+                            $('#pullModelSubmitBtn').prop('disabled', false).text('Pull Model');
+
+                            // Close modal
+                            $('#pullModelModal').modal('hide');
+
+                            // Reset form
+                            $('#pullModelForm')[0].reset();
+
+                            // Reload Ollama models
+                            loadOllamaModels();
+
+                            // Show success message
+                            alert(`Model "${modelName}" pulled successfully!`);
+                        }, 1000);
+                    }
+                }, 100);
+            }, 500);
+        }, 500);
+    }
+
+    function viewModelDetails(modelName) {
+        // Show modal
+        $('#modelDetailsModal').modal('show');
+
+        // Show loading indicator
+        $('#modelDetailsLoading').removeClass('d-none');
+        $('#modelDetailsContent').addClass('d-none');
+
+        // Start loading animation
+        $('#modelDetailsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#modelDetailsLoadingPercent').text('10%');
+        $('#modelDetailsLoadingText').text('Connecting to server...');
+
+        setTimeout(function() {
+            $('#modelDetailsLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#modelDetailsLoadingPercent').text('30%');
+            $('#modelDetailsLoadingText').text('Fetching model details...');
+
+            setTimeout(function() {
+                $('#modelDetailsLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                $('#modelDetailsLoadingPercent').text('60%');
+                $('#modelDetailsLoadingText').text('Processing model information...');
+
+                // Mock model details
+                const modelDetails = {
+                    name: modelName,
+                    type: modelName.includes('llama') || modelName.includes('mistral') || modelName.includes('gemma') ? 'Ollama' : 'API',
+                    size: modelName.includes('gemma') ? '2B' : '7B',
+                    status: 'Available',
+                    responseTime: '250ms',
+                    tokensPerSecond: '45',
+                    memoryUsage: '4.2 GB',
+                    successRate: '92%',
+                    parameters: {
+                        temperature: 0.7,
+                        top_p: 0.9,
+                        max_tokens: 2048,
+                        context_window: 4096,
+                        model_type: 'transformer',
+                        architecture: 'decoder-only'
+                    }
+                };
+
+                setTimeout(function() {
+                    $('#modelDetailsLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#modelDetailsLoadingPercent').text('90%');
+                    $('#modelDetailsLoadingText').text('Preparing visualization...');
+
+                    setTimeout(function() {
+                        // Update model details
+                        $('#detailsModelName').text(modelDetails.name);
+                        $('#detailsModelType').text(modelDetails.type);
+                        $('#detailsModelSize').text(modelDetails.size);
+                        $('#detailsModelStatus').html(`<span class="badge bg-success">${modelDetails.status}</span>`);
+
+                        $('#detailsResponseTime').text(modelDetails.responseTime);
+                        $('#detailsTokensPerSecond').text(modelDetails.tokensPerSecond);
+                        $('#detailsMemoryUsage').text(modelDetails.memoryUsage);
+                        $('#detailsSuccessRate').text(modelDetails.successRate);
+
+                        $('#detailsModelParameters').text(JSON.stringify(modelDetails.parameters, null, 2));
+
+                        // Complete loading
+                        $('#modelDetailsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#modelDetailsLoadingPercent').text('100%');
+                        $('#modelDetailsLoadingText').text('Completed!');
+
+                        setTimeout(function() {
+                            // Hide loading indicator and show content
+                            $('#modelDetailsLoading').addClass('d-none');
+                            $('#modelDetailsContent').removeClass('d-none');
+                        }, 300);
+                    }, 400);
+                }, 500);
+            }, 600);
+        }, 500);
+    }
+
+    function testModel(modelName) {
+        alert(`Testing model: ${modelName}. This feature is not yet implemented.`);
+    }
+
+    function removeOllamaModel(modelName) {
+        if (confirm(`Are you sure you want to remove the model "${modelName}"?`)) {
+            alert(`Model "${modelName}" removed successfully!`);
+            loadOllamaModels();
+        }
+    }
+
+    function initModelPerformanceChart() {
+        const ctx = document.getElementById('modelPerformanceChart').getContext('2d');
+
+        // Mock performance data
+        const models = ['Gemini 2.5 Pro', 'Llama 2', 'Mistral', 'Gemma', 'DeepSeek Coder'];
+        const successRates = [95, 85, 88, 80, 90];
+        const responseTimes = [150, 300, 280, 320, 250];
+
+        // Normalize response times for better visualization (lower is better)
+        const maxResponseTime = Math.max(...responseTimes);
+        const normalizedResponseTimes = responseTimes.map(time => 100 - (time / maxResponseTime * 100) + 50);
+
+        window.modelPerformanceChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: models,
+                datasets: [
+                    {
+                        label: 'Success Rate (%)',
+                        data: successRates,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+                    },
+                    {
+                        label: 'Speed (normalized)',
+                        data: normalizedResponseTimes,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 99, 132, 1)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading models:', xhr);
+                $('#modelsLoadingBar').css('width', '100%').attr('aria-valuenow', 100).removeClass('bg-primary').addClass('bg-danger');
+                $('#modelsLoadingPercent').text('Error');
+                $('#modelsLoadingText').text('Error loading models');
+
+                setTimeout(function() {
+                    // Show error message in table
+                    $('#modelsTable tbody').html('<tr><td colspan="5" class="text-center text-danger">Error loading models. Please try again.</td></tr>');
+                }, 500);
+            }
+        });
+    }
+</script>
+{% endblock %}

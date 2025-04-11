@@ -1,0 +1,602 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>WebArena Runs</h1>
+        <p>View and manage your WebArena experiment runs.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">All Runs</h5>
+                    <div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-status="all">All</button>
+                            <button type="button" class="btn btn-outline-info btn-sm filter-btn" data-status="running">Running</button>
+                            <button type="button" class="btn btn-outline-success btn-sm filter-btn" data-status="completed">Completed</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm filter-btn" data-status="failed">Failed</button>
+                        </div>
+                        <a href="/webarena" class="btn btn-primary btn-sm ms-2">New Run</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="runsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Task</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Start Time</th>
+                                <th>Duration</th>
+                                <th>Success Rate</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p>Loading runs...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Visualizations</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Generate Success Rate Visualization</h6>
+                                <p>Compare success rates across different runs.</p>
+                                <button class="btn btn-primary" id="generateSuccessRateBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Generate Completion Time Visualization</h6>
+                                <p>Compare task completion times across different runs.</p>
+                                <button class="btn btn-primary" id="generateCompletionTimeBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Generate Action Count Visualization</h6>
+                                <p>Compare action counts across different runs.</p>
+                                <button class="btn btn-primary" id="generateActionCountBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Generate Model Comparison</h6>
+                                <p>Compare different models on the same task.</p>
+                                <div class="form-group mb-2">
+                                    <select class="form-control" id="taskSelectForComparison">
+                                        <option value="">Select a task...</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" id="generateModelComparisonBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/webarena/visualizations" class="btn btn-primary">View All Visualizations</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Run Selection Modal -->
+<div class="modal fade" id="runSelectionModal" tabindex="-1" aria-labelledby="runSelectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="runSelectionModalLabel">Select Runs</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Select the runs to include in the visualization:</p>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="runSelectionTable">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>ID</th>
+                                <th>Task</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">Loading runs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="generateVisualizationBtn">Generate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualization Modal -->
+<div class="modal fade" id="visualizationModal" tabindex="-1" aria-labelledby="visualizationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="visualizationModalLabel">Visualization</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="visualizationLoading">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Generating visualization...</p>
+                </div>
+                <div id="visualizationContent" class="d-none">
+                    <img src="" id="visualizationImage" class="img-fluid" alt="Visualization">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-primary" id="downloadVisualizationBtn" download>Download</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Load runs
+        loadRuns();
+        
+        // Load tasks for model comparison
+        loadTasks();
+        
+        // Set up event handlers
+        $('.filter-btn').click(function() {
+            $('.filter-btn').removeClass('active');
+            $(this).addClass('active');
+            loadRuns($(this).data('status'));
+        });
+        
+        $('#generateSuccessRateBtn').click(function() {
+            showRunSelectionModal('success_rate');
+        });
+        
+        $('#generateCompletionTimeBtn').click(function() {
+            showRunSelectionModal('completion_time');
+        });
+        
+        $('#generateActionCountBtn').click(function() {
+            showRunSelectionModal('action_count');
+        });
+        
+        $('#generateModelComparisonBtn').click(function() {
+            const taskName = $('#taskSelectForComparison').val();
+            if (!taskName) {
+                alert('Please select a task');
+                return;
+            }
+            
+            generateModelComparison(taskName);
+        });
+    });
+    
+    function loadRuns(status = 'all') {
+        const token = localStorage.getItem('dmac_token');
+        
+        let url = '/api/webarena/runs';
+        if (status !== 'all') {
+            url += `?status=${status}`;
+        }
+        
+        $.ajax({
+            url: url,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const runs = response.runs || [];
+                let html = '';
+                
+                if (runs.length === 0) {
+                    html = '<tr><td colspan="8" class="text-center">No runs found</td></tr>';
+                } else {
+                    runs.forEach(run => {
+                        // Calculate duration
+                        let duration = 'N/A';
+                        if (run.duration) {
+                            duration = `${run.duration.toFixed(2)}s`;
+                        } else if (run.start_time && run.end_time) {
+                            duration = `${(run.end_time - run.start_time).toFixed(2)}s`;
+                        }
+                        
+                        // Get success rate
+                        let successRate = 'N/A';
+                        if (run.results && run.results.success_rate !== undefined) {
+                            successRate = `${(run.results.success_rate * 100).toFixed(2)}%`;
+                        }
+                        
+                        html += `
+                            <tr>
+                                <td>${run.id}</td>
+                                <td>${run.task_name}</td>
+                                <td>${run.model_name}</td>
+                                <td><span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span></td>
+                                <td>${formatDate(run.start_time)}</td>
+                                <td>${duration}</td>
+                                <td>${successRate}</td>
+                                <td>
+                                    <a href="/webarena/runs/${run.id}" class="btn btn-sm btn-info">View</a>
+                                    ${run.status === 'running' ? `<button class="btn btn-sm btn-danger stop-run-btn" data-run-id="${run.id}">Stop</button>` : ''}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                $('#runsTable tbody').html(html);
+                
+                // Attach event handlers to stop buttons
+                $('.stop-run-btn').click(function() {
+                    const runId = $(this).data('run-id');
+                    stopRun(runId);
+                });
+            },
+            error: function(xhr) {
+                console.error('Error loading runs:', xhr);
+                $('#runsTable tbody').html('<tr><td colspan="8" class="text-center">Error loading runs</td></tr>');
+            }
+        });
+    }
+    
+    function loadTasks() {
+        const token = localStorage.getItem('dmac_token');
+        
+        $.ajax({
+            url: '/api/webarena/tasks',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const tasks = response.tasks || [];
+                let html = '<option value="">Select a task...</option>';
+                
+                tasks.forEach(task => {
+                    html += `<option value="${task.id}">${task.name}</option>`;
+                });
+                
+                $('#taskSelectForComparison').html(html);
+            },
+            error: function(xhr) {
+                console.error('Error loading tasks:', xhr);
+                $('#taskSelectForComparison').html('<option value="">Error loading tasks</option>');
+            }
+        });
+    }
+    
+    function stopRun(runId) {
+        if (!confirm(`Are you sure you want to stop run ${runId}?`)) {
+            return;
+        }
+        
+        const token = localStorage.getItem('dmac_token');
+        
+        $.ajax({
+            url: `/api/webarena/runs/${runId}`,
+            type: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(`Run ${runId} stopped successfully`);
+                    loadRuns();
+                } else {
+                    alert(`Failed to stop run ${runId}`);
+                }
+            },
+            error: function(xhr) {
+                console.error('Error stopping run:', xhr);
+                alert(`Error stopping run ${runId}`);
+            }
+        });
+    }
+    
+    function showRunSelectionModal(visualizationType) {
+        // Store the visualization type
+        $('#runSelectionModal').data('visualization-type', visualizationType);
+        
+        // Set the modal title
+        let title = 'Select Runs';
+        switch (visualizationType) {
+            case 'success_rate':
+                title = 'Generate Success Rate Visualization';
+                break;
+            case 'completion_time':
+                title = 'Generate Completion Time Visualization';
+                break;
+            case 'action_count':
+                title = 'Generate Action Count Visualization';
+                break;
+        }
+        $('#runSelectionModalLabel').text(title);
+        
+        // Load completed runs
+        const token = localStorage.getItem('dmac_token');
+        
+        $.ajax({
+            url: '/api/webarena/runs?status=completed',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const runs = response.runs || [];
+                let html = '';
+                
+                if (runs.length === 0) {
+                    html = '<tr><td colspan="5" class="text-center">No completed runs found</td></tr>';
+                } else {
+                    runs.forEach(run => {
+                        html += `
+                            <tr>
+                                <td><input type="checkbox" class="run-checkbox" value="${run.id}"></td>
+                                <td>${run.id}</td>
+                                <td>${run.task_name}</td>
+                                <td>${run.model_name}</td>
+                                <td><span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span></td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                $('#runSelectionTable tbody').html(html);
+                
+                // Show the modal
+                $('#runSelectionModal').modal('show');
+                
+                // Set up event handler for the generate button
+                $('#generateVisualizationBtn').off('click').on('click', function() {
+                    const selectedRunIds = [];
+                    $('.run-checkbox:checked').each(function() {
+                        selectedRunIds.push($(this).val());
+                    });
+                    
+                    if (selectedRunIds.length === 0) {
+                        alert('Please select at least one run');
+                        return;
+                    }
+                    
+                    // Generate the visualization
+                    generateVisualization(visualizationType, selectedRunIds);
+                    
+                    // Hide the selection modal
+                    $('#runSelectionModal').modal('hide');
+                });
+            },
+            error: function(xhr) {
+                console.error('Error loading runs:', xhr);
+                $('#runSelectionTable tbody').html('<tr><td colspan="5" class="text-center">Error loading runs</td></tr>');
+            }
+        });
+    }
+    
+    function generateVisualization(visualizationType, runIds) {
+        const token = localStorage.getItem('dmac_token');
+        
+        // Show the visualization modal
+        $('#visualizationModal').modal('show');
+        
+        // Show loading indicator
+        $('#visualizationLoading').removeClass('d-none');
+        $('#visualizationContent').addClass('d-none');
+        
+        // Set the modal title
+        let title = 'Visualization';
+        switch (visualizationType) {
+            case 'success_rate':
+                title = 'Success Rate Visualization';
+                break;
+            case 'completion_time':
+                title = 'Completion Time Visualization';
+                break;
+            case 'action_count':
+                title = 'Action Count Visualization';
+                break;
+        }
+        $('#visualizationModalLabel').text(title);
+        
+        // Generate the visualization
+        let url = '';
+        switch (visualizationType) {
+            case 'success_rate':
+                url = '/api/webarena/visualizations/success-rate';
+                break;
+            case 'completion_time':
+                url = '/api/webarena/visualizations/completion-time';
+                break;
+            case 'action_count':
+                url = '/api/webarena/visualizations/action-count';
+                break;
+        }
+        
+        $.ajax({
+            url: url,
+            type: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                run_ids: runIds
+            }),
+            success: function(response) {
+                if (response.visualization_path) {
+                    // Set the image source
+                    $('#visualizationImage').attr('src', `/static/visualizations/${response.visualization_path.split('/').pop()}`);
+                    
+                    // Set the download link
+                    $('#downloadVisualizationBtn').attr('href', `/static/visualizations/${response.visualization_path.split('/').pop()}`);
+                    
+                    // Hide loading indicator and show content
+                    $('#visualizationLoading').addClass('d-none');
+                    $('#visualizationContent').removeClass('d-none');
+                } else {
+                    $('#visualizationModal').modal('hide');
+                    alert('Failed to generate visualization');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error generating visualization:', xhr);
+                $('#visualizationModal').modal('hide');
+                alert('Error generating visualization');
+            }
+        });
+    }
+    
+    function generateModelComparison(taskName) {
+        const token = localStorage.getItem('dmac_token');
+        
+        // Get all models
+        $.ajax({
+            url: '/api/webarena/models',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const models = response.models || [];
+                const modelNames = models.map(model => model.name);
+                
+                if (modelNames.length === 0) {
+                    alert('No models found');
+                    return;
+                }
+                
+                // Show the visualization modal
+                $('#visualizationModal').modal('show');
+                
+                // Show loading indicator
+                $('#visualizationLoading').removeClass('d-none');
+                $('#visualizationContent').addClass('d-none');
+                
+                // Set the modal title
+                $('#visualizationModalLabel').text(`Model Comparison for Task: ${taskName}`);
+                
+                // Generate the visualization
+                $.ajax({
+                    url: '/api/webarena/visualizations/model-comparison',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        task_name: taskName,
+                        model_names: modelNames
+                    }),
+                    success: function(response) {
+                        if (response.visualization_path) {
+                            // Set the image source
+                            $('#visualizationImage').attr('src', `/static/visualizations/${response.visualization_path.split('/').pop()}`);
+                            
+                            // Set the download link
+                            $('#downloadVisualizationBtn').attr('href', `/static/visualizations/${response.visualization_path.split('/').pop()}`);
+                            
+                            // Hide loading indicator and show content
+                            $('#visualizationLoading').addClass('d-none');
+                            $('#visualizationContent').removeClass('d-none');
+                        } else {
+                            $('#visualizationModal').modal('hide');
+                            alert('Failed to generate visualization');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error generating visualization:', xhr);
+                        $('#visualizationModal').modal('hide');
+                        alert('Error generating visualization');
+                    }
+                });
+            },
+            error: function(xhr) {
+                console.error('Error loading models:', xhr);
+                alert('Error loading models');
+            }
+        });
+    }
+    
+    function getStatusBadgeClass(status) {
+        switch (status) {
+            case 'completed':
+            case 'success':
+                return 'bg-success';
+            case 'running':
+            case 'active':
+                return 'bg-info';
+            case 'pending':
+                return 'bg-warning';
+            case 'failed':
+            case 'error':
+                return 'bg-danger';
+            default:
+                return 'bg-secondary';
+        }
+    }
+    
+    function formatDate(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp * 1000);
+        return date.toLocaleString();
+    }
+</script>
+{% endblock %}

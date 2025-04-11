@@ -1,0 +1,75 @@
+{
+  "benchmark_id": "prompt_engineering_prompt_basics_1685432790",
+  "entries": [
+    {
+      "agent_id": "perry",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.091725",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.833888053894043,
+        "average_latency": 0.27796268463134766,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "prompt_engineering_prompt_basics_1685432790"
+    },
+    {
+      "agent_id": "shelly",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.128709",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "prompt_engineering_prompt_basics_1685432790"
+    },
+    {
+      "agent_id": "flora",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.981915",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "prompt_engineering_prompt_basics_1685432790"
+    },
+    {
+      "agent_id": "perry",
+      "model_name": "gemma3:12b",
+      "timestamp": "2025-04-05T00:20:16.313313",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 67.1862895488739,
+        "average_latency": 22.395429849624634,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "prompt_engineering_prompt_basics_1685432790"
+    },
+    {
+      "agent_id": "shelly",
+      "model_name": "gemma3:12b",
+      "timestamp": "2025-04-05T00:20:16.361199",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "prompt_engineering_prompt_basics_1685432790"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "default_provider": "ollama",
+  "default_model": "gemma3:12b",
+  "ollama": {
+    "enabled": true,
+    "api_base": "http://localhost:11434",
+    "models": [
+      {
+        "name": "gemma3:12b",
+        "description": "Google's Gemma 3 12B model",
+        "context_length": 8192,
+        "strengths": [
+          "instruction-following",
+          "coding",
+          "reasoning"
+        ],
+        "weaknesses": [
+          "math",
+          "complex reasoning"
+        ]
+      },
+      {
+        "name": "qwen2.5-coder:1.5b-base",
+        "description": "Qwen 2.5 Coder 1.5B model",
+        "context_length": 8192,
+        "strengths": [
+          "coding",
+          "code completion",
+          "debugging"
+        ],
+        "weaknesses": [
+          "non-coding tasks"
+        ]
+      },
+      {
+        "name": "GandalfBaum/deepseek_r1-claude3.7:latest",
+        "description": "DeepSeek R1 Claude 3.7 model",
+        "context_length": 8192,
+        "strengths": [
+          "instruction-following",
+          "reasoning",
+          "creative writing"
+        ],
+        "weaknesses": [
+          "specialized knowledge"
+        ]
+      },
+      {
+        "name": "qwq:latest",
+        "description": "QWQ model",
+        "context_length": 8192,
+        "strengths": [
+          "instruction-following",
+          "reasoning"
+        ],
+        "weaknesses": [
+          "specialized knowledge"
+        ]
+      }
+    ]
+  },
+  "deepseek": {
+    "model_name": "deepseek-rl:1.3b",
+    "learning_enabled": true,
+    "learning_rate": 0.0001,
+    "batch_size": 16,
+    "epochs": 5,
+    "evaluation_interval": 100
+  }
+}

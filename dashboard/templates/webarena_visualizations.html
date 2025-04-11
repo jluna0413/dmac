@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>WebArena Visualizations</h1>
+        <p>Visualize and analyze WebArena experiment results using our open-source visualization tools.</p>
+        <div class="alert alert-info">
+            <strong>Note:</strong> Our visualization tools are completely open-source and don't rely on any proprietary services. They use standard Python libraries like matplotlib, pandas, and plotly to create visualizations.
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Generate Visualizations</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Success Rate Visualization</h6>
+                                <p>Compare success rates across different runs.</p>
+                                <button class="btn btn-primary" id="generateSuccessRateBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Completion Time Visualization</h6>
+                                <p>Compare task completion times across different runs.</p>
+                                <button class="btn btn-primary" id="generateCompletionTimeBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Action Count Visualization</h6>
+                                <p>Compare action counts across different runs.</p>
+                                <button class="btn btn-primary" id="generateActionCountBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Model Comparison</h6>
+                                <p>Compare different models on the same task.</p>
+                                <div class="form-group mb-2">
+                                    <select class="form-control" id="taskSelectForComparison">
+                                        <option value="">Select a task...</option>
+                                        <option value="shopping">Shopping</option>
+                                        <option value="booking">Booking</option>
+                                        <option value="search">Search</option>
+                                        <option value="form">Form Filling</option>
+                                        <option value="navigation">Navigation</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" id="generateModelComparisonBtn">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Visualizations <span class="badge bg-success">Open Source</span></h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card visualization-card">
+                            <div class="card-body">
+                                <h6 class="card-title">Success Rate Comparison</h6>
+                                <img src="/static/img/success_rate_sample.png" class="img-fluid" alt="Success Rate Visualization">
+                                <p class="card-text">Generated on 2023-07-01</p>
+                                <button class="btn btn-sm btn-primary">View</button>
+                                <button class="btn btn-sm btn-secondary">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card visualization-card">
+                            <div class="card-body">
+                                <h6 class="card-title">Completion Time Comparison</h6>
+                                <img src="/static/img/completion_time_sample.png" class="img-fluid" alt="Completion Time Visualization">
+                                <p class="card-text">Generated on 2023-07-02</p>
+                                <button class="btn btn-sm btn-primary">View</button>
+                                <button class="btn btn-sm btn-secondary">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card visualization-card">
+                            <div class="card-body">
+                                <h6 class="card-title">Model Comparison</h6>
+                                <img src="/static/img/model_comparison_sample.png" class="img-fluid" alt="Model Comparison Visualization">
+                                <p class="card-text">Generated on 2023-07-03</p>
+                                <button class="btn btn-sm btn-primary">View</button>
+                                <button class="btn btn-sm btn-secondary">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualization Modal -->
+<div class="modal fade" id="visualizationModal" tabindex="-1" aria-labelledby="visualizationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="visualizationModalLabel">Visualization</h5>
+                <span class="badge bg-success ms-2">Open Source</span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="visualizationLoading">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p id="visualizationLoadingText">Initializing open-source visualization tools...</p>
+                </div>
+                <div id="visualizationContent" class="d-none">
+                    <img src="" id="visualizationImage" class="img-fluid" alt="Visualization">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-primary" id="downloadVisualizationBtn" download>Download</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Set up event handlers
+        $('#generateSuccessRateBtn').click(function() {
+            showVisualizationModal('Success Rate Visualization');
+
+            // Simulate generating visualization with our open-source tools
+            $('#visualizationLoadingText').text('Running open-source visualization tools...');
+            setTimeout(function() {
+                $('#visualizationLoadingText').text('Processing data with pandas...');
+                setTimeout(function() {
+                    $('#visualizationLoadingText').text('Creating visualization with matplotlib...');
+                    setTimeout(function() {
+                        showVisualization('/static/img/success_rate_sample.png');
+                    }, 700);
+                }, 600);
+            }, 500);
+        });
+
+        $('#generateCompletionTimeBtn').click(function() {
+            showVisualizationModal('Completion Time Visualization');
+
+            // Simulate generating visualization with our open-source tools
+            $('#visualizationLoadingText').text('Running open-source visualization tools...');
+            setTimeout(function() {
+                $('#visualizationLoadingText').text('Analyzing completion time data...');
+                setTimeout(function() {
+                    $('#visualizationLoadingText').text('Creating visualization with matplotlib...');
+                    setTimeout(function() {
+                        showVisualization('/static/img/completion_time_sample.png');
+                    }, 800);
+                }, 700);
+            }, 600);
+        });
+
+        $('#generateActionCountBtn').click(function() {
+            showVisualizationModal('Action Count Visualization');
+
+            // Simulate generating visualization with our open-source tools
+            $('#visualizationLoadingText').text('Running open-source visualization tools...');
+            setTimeout(function() {
+                $('#visualizationLoadingText').text('Calculating action statistics...');
+                setTimeout(function() {
+                    $('#visualizationLoadingText').text('Creating bar chart visualization...');
+                    setTimeout(function() {
+                        showVisualization('/static/img/action_count_sample.png');
+                    }, 900);
+                }, 800);
+            }, 700);
+        });
+
+        $('#generateModelComparisonBtn').click(function() {
+            const taskName = $('#taskSelectForComparison').val();
+            if (!taskName) {
+                alert('Please select a task');
+                return;
+            }
+
+            showVisualizationModal(`Model Comparison for Task: ${taskName}`);
+            // Simulate generating visualization with our open-source tools
+            $('#visualizationLoadingText').text('Running open-source visualization tools...');
+            setTimeout(function() {
+                $('#visualizationLoadingText').text(`Comparing models on task: ${taskName}...`);
+                setTimeout(function() {
+                    $('#visualizationLoadingText').text('Creating comparison visualization...');
+                    setTimeout(function() {
+                        showVisualization('/static/img/model_comparison_sample.png');
+                    }, 1000);
+                }, 900);
+            }, 800);
+        });
+    });
+
+    function showVisualizationModal(title) {
+        // Set the modal title
+        $('#visualizationModalLabel').text(title);
+
+        // Show the modal
+        $('#visualizationModal').modal('show');
+
+        // Show loading indicator
+        $('#visualizationLoading').removeClass('d-none');
+        $('#visualizationContent').addClass('d-none');
+    }
+
+    function showVisualization(imagePath) {
+        // Set the image source
+        $('#visualizationImage').attr('src', imagePath);
+
+        // Set the download link
+        $('#downloadVisualizationBtn').attr('href', imagePath);
+
+        // Hide loading indicator and show content
+        $('#visualizationLoading').addClass('d-none');
+        $('#visualizationContent').removeClass('d-none');
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,230 @@
+/* Device Simulator Styles */
+
+:root {
+    --simulator-bg: #ffffff;
+    --simulator-text: #333333;
+    --simulator-border: rgba(0, 0, 0, 0.1);
+    --simulator-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --simulator-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+    --simulator-bg: #1e1e1e;
+    --simulator-text: #e0e0e0;
+    --simulator-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Device Simulator Toggle Button */
+.device-simulator-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1040;
+}
+
+.device-simulator-toggle .btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--simulator-shadow);
+    transition: var(--simulator-transition);
+}
+
+.device-simulator-toggle .btn:hover {
+    transform: scale(1.05);
+}
+
+.device-simulator-toggle .btn i {
+    font-size: 20px;
+}
+
+/* Device Simulator Panel */
+.device-simulator-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background-color: var(--simulator-bg);
+    box-shadow: var(--simulator-shadow);
+    z-index: 1050;
+    transition: var(--simulator-transition);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.device-simulator-panel.open {
+    right: 0;
+}
+
+.device-simulator-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--simulator-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.device-simulator-header h5 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.device-simulator-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+/* Device Frame */
+.device-frame {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    border: 10px solid #333;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: var(--simulator-transition);
+    margin: 0 auto;
+}
+
+.device-screen {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.device-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    transform-origin: 0 0;
+}
+
+/* Device Presets */
+.device-frame.iphone-5 {
+    width: 320px;
+    height: 568px;
+    max-width: 100%;
+}
+
+.device-frame.iphone-x {
+    width: 375px;
+    height: 812px;
+    max-width: 100%;
+    border-radius: 40px;
+}
+
+.device-frame.pixel {
+    width: 411px;
+    height: 731px;
+    max-width: 100%;
+}
+
+.device-frame.galaxy-s8 {
+    width: 360px;
+    height: 740px;
+    max-width: 100%;
+    border-radius: 30px;
+}
+
+.device-frame.ipad {
+    width: 768px;
+    height: 1024px;
+    max-width: 100%;
+    border-width: 20px;
+}
+
+.device-frame.ipad-pro {
+    width: 1024px;
+    height: 1366px;
+    max-width: 100%;
+    border-width: 20px;
+}
+
+.device-frame.galaxy-tab {
+    width: 800px;
+    height: 1280px;
+    max-width: 100%;
+    border-width: 15px;
+}
+
+.device-frame.laptop {
+    width: 1366px;
+    height: 768px;
+    max-width: 100%;
+    border-width: 20px;
+    border-bottom-width: 40px;
+}
+
+.device-frame.laptop-hd {
+    width: 1920px;
+    height: 1080px;
+    max-width: 100%;
+    border-width: 20px;
+    border-bottom-width: 40px;
+}
+
+/* Landscape Mode */
+.device-frame.landscape {
+    transform: rotate(90deg);
+    margin: 100px auto;
+}
+
+.device-frame.landscape.iphone-5 {
+    width: 568px;
+    height: 320px;
+}
+
+.device-frame.landscape.iphone-x {
+    width: 812px;
+    height: 375px;
+}
+
+.device-frame.landscape.pixel {
+    width: 731px;
+    height: 411px;
+}
+
+.device-frame.landscape.galaxy-s8 {
+    width: 740px;
+    height: 360px;
+}
+
+.device-frame.landscape.ipad {
+    width: 1024px;
+    height: 768px;
+}
+
+.device-frame.landscape.ipad-pro {
+    width: 1366px;
+    height: 1024px;
+}
+
+.device-frame.landscape.galaxy-tab {
+    width: 1280px;
+    height: 800px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .device-simulator-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .device-frame {
+        transform: scale(0.8);
+        transform-origin: top center;
+    }
+    
+    .device-frame.landscape {
+        transform: scale(0.6) rotate(90deg);
+        margin: 50px auto;
+    }
+}

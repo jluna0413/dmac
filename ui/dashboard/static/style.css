@@ -264,16 +264,16 @@ footer {
     header {
         flex-direction: column;
     }
-    
+
     nav ul {
         margin-top: 10px;
     }
-    
+
     nav ul li {
         margin-left: 10px;
         margin-right: 10px;
     }
-    
+
     .dashboard-grid {
         grid-template-columns: 1fr;
     }

@@ -1,0 +1,40 @@
+{
+  "id": "code_generation_coding_basics_1685432789",
+  "name": "Coding Basics Benchmark",
+  "category": "code_generation",
+  "description": "Basic benchmark for testing code generation capabilities",
+  "tasks": [
+    {
+      "type": "code_generation",
+      "data": {
+        "prompt": "Write a Python function that calculates the Fibonacci sequence up to n terms.",
+        "language": "python"
+      },
+      "expected_result": "def fibonacci(n):\n    fib_sequence = [0, 1]\n    if n <= 0:\n        return []\n    if n == 1:\n        return [0]\n    if n == 2:\n        return fib_sequence\n    \n    for i in range(2, n):\n        fib_sequence.append(fib_sequence[i-1] + fib_sequence[i-2])\n    \n    return fib_sequence"
+    },
+    {
+      "type": "code_generation",
+      "data": {
+        "prompt": "Write a JavaScript function to check if a string is a palindrome.",
+        "language": "javascript"
+      },
+      "expected_result": "function isPalindrome(str) {\n  const cleanStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');\n  return cleanStr === cleanStr.split('').reverse().join('');\n}"
+    },
+    {
+      "type": "code_review",
+      "data": {
+        "code": "def sort_list(items):\n    n = len(items)\n    for i in range(n):\n        for j in range(0, n - i - 1):\n            if items[j] > items[j + 1]:\n                items[j], items[j + 1] = items[j + 1], items[j]\n    return items",
+        "language": "python"
+      }
+    }
+  ],
+  "evaluation_criteria": {
+    "evaluation_type": "code_compiles",
+    "weight": 1.0
+  },
+  "created_at": "2023-05-30T12:33:09.123456",
+  "metadata": {
+    "difficulty": "beginner",
+    "tags": ["python", "javascript", "algorithms", "code-review"]
+  }
+}

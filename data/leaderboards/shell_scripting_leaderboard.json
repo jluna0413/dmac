@@ -1,0 +1,65 @@
+{
+  "category": "shell_scripting",
+  "entries": [
+    {
+      "benchmark_id": "shell_scripting_shell_basics_1685432791",
+      "agent_id": "perry",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.099145",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0009987354278564453,
+        "average_latency": 0.00024968385696411133,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "shell_scripting_shell_basics_1685432791"
+    },
+    {
+      "benchmark_id": "shell_scripting_shell_basics_1685432791",
+      "agent_id": "shelly",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.952140",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.8014180660247803,
+        "average_latency": 0.20035451650619507,
+        "total_tokens": 0,
+        "tokens_per_second": 0.0
+      },
+      "result_id": "shell_scripting_shell_basics_1685432791"
+    },
+    {
+      "benchmark_id": "shell_scripting_shell_basics_1685432791",
+      "agent_id": "flora",
+      "model_name": "gemma:7b",
+      "timestamp": "2025-04-05T00:15:40.993438",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "shell_scripting_shell_basics_1685432791"
+    },
+    {
+      "benchmark_id": "shell_scripting_shell_basics_1685432791",
+      "agent_id": "perry",
+      "model_name": "gemma3:12b",
+      "timestamp": "2025-04-05T00:20:16.322734",
+      "metrics": {
+        "accuracy": 0.0,
+        "average_score": 0.0,
+        "total_latency": 0.0,
+        "average_latency": 0.0,
+        "total_tokens": 0,
+        "tokens_per_second": 0
+      },
+      "result_id": "shell_scripting_shell_basics_1685432791"
+    }
+  ]
+}

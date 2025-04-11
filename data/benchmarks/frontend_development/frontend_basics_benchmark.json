@@ -1,0 +1,44 @@
+{
+  "id": "frontend_development_frontend_basics_1685432792",
+  "name": "Frontend Development Basics Benchmark",
+  "category": "frontend_development",
+  "description": "Basic benchmark for testing frontend development capabilities",
+  "tasks": [
+    {
+      "type": "create_component",
+      "data": {
+        "description": "Create a React component for a responsive navigation bar that includes a logo, navigation links, and a mobile hamburger menu that expands when clicked.",
+        "framework": "react"
+      }
+    },
+    {
+      "type": "design_ui",
+      "data": {
+        "description": "Design a contact form with fields for name, email, subject, and message. Include proper validation and a submit button.",
+        "style": "material"
+      }
+    },
+    {
+      "type": "create_css",
+      "data": {
+        "description": "Create CSS for a card component that displays a product with an image, title, description, price, and 'Add to Cart' button. The card should have hover effects and be responsive."
+      }
+    },
+    {
+      "type": "review_accessibility",
+      "data": {
+        "code": "<div class=\"menu\">\n  <div class=\"menu-item\" onclick=\"navigate('home')\">Home</div>\n  <div class=\"menu-item\" onclick=\"navigate('products')\">Products</div>\n  <div class=\"menu-item\" onclick=\"navigate('about')\">About</div>\n  <div class=\"menu-item\" onclick=\"navigate('contact')\">Contact</div>\n</div>"
+      }
+    }
+  ],
+  "evaluation_criteria": {
+    "evaluation_type": "contains_keywords",
+    "keywords": ["responsive", "component", "flex", "grid", "media query", "accessibility", "aria", "semantic", "validation", "hover"],
+    "weight": 1.0
+  },
+  "created_at": "2023-05-30T12:33:12.123456",
+  "metadata": {
+    "difficulty": "intermediate",
+    "tags": ["react", "css", "html", "responsive-design", "accessibility", "ui-design"]
+  }
+}

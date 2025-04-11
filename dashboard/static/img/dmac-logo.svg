@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Motion lines gradient -->
+  <defs>
+    <linearGradient id="motionGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2196F3" />
+      <stop offset="50%" stop-color="#1565C0" />
+      <stop offset="100%" stop-color="#9C27B0" />
+    </linearGradient>
+  </defs>
+
+  <!-- D with motion lines -->
+  <g transform="translate(0, 0)">
+    <!-- Motion lines -->
+    <rect x="10" y="70" width="30" height="8" rx="4" fill="#2196F3" />
+    <rect x="20" y="85" width="40" height="8" rx="4" fill="#1E88E5" />
+    <rect x="30" y="100" width="50" height="8" rx="4" fill="#1976D2" />
+    <rect x="20" y="115" width="40" height="8" rx="4" fill="#1565C0" />
+    <rect x="10" y="130" width="30" height="8" rx="4" fill="#0D47A1" />
+    <rect x="20" y="145" width="40" height="8" rx="4" fill="#7B1FA2" />
+    <rect x="30" y="160" width="30" height="8" rx="4" fill="#9C27B0" />
+
+    <!-- D shape -->
+    <path d="M90 50C90 39 99 30 110 30H140C151 30 160 39 160 50V150C160 161 151 170 140 170H110C99 170 90 161 90 150V50Z" fill="#1A2A38"/>
+    <path d="M90 50V150C90 161 99 170 110 170H140C151 170 160 161 160 150V50C160 39 151 30 140 30H110C99 30 90 39 90 50ZM110 50H140V150H110V50Z" fill="#1A2A38"/>
+  </g>
+
+  <!-- M -->
+  <path d="M180 30H200V170H180V30Z" fill="#1A2A38"/>
+  <path d="M200 30H220L260 100L300 30H320V170H300V70L270 130H250L220 70V170H200V30Z" fill="#1A2A38"/>
+
+  <!-- A -->
+  <path d="M340 170V30H360L420 120L480 30H500V170H480V70L430 140H410L360 70V170H340Z" fill="#1A2A38"/>
+
+  <!-- C -->
+  <path d="M520 50C520 39 529 30 540 30H580C591 30 600 39 600 50V70H580V50H540V150H580V130H600V150C600 161 591 170 580 170H540C529 170 520 161 520 150V50Z" fill="#1A2A38"/>
+</svg>

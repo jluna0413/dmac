@@ -1,0 +1,12 @@
+{
+  "name": "macoder-plugin-sample",
+  "displayName": "MaCoder Sample Plugin",
+  "description": "A sample plugin for MaCoder",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "DMac",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.60.0"
+  }
+}

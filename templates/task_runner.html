@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block title %}Task Runner{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Task Runner</h5>
+                </div>
+                <div class="card-body">
+                    <form id="task-form">
+                        <div class="mb-3">
+                            <label for="task-select" class="form-label">Select Task</label>
+                            <select class="form-select" id="task-select" required>
+                                <option value="" selected disabled>Choose a task...</option>
+                                <!-- Task options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="model-select" class="form-label">Select Model</label>
+                            <select class="form-select" id="model-select" required>
+                                <option value="" selected disabled>Choose a model...</option>
+                                <!-- Model options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="task-description" class="form-label">Task Description</label>
+                            <div id="task-description" class="form-control bg-light" style="height: auto; min-height: 60px;"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="run-task-btn">Run Task</button>
+                        <button type="button" class="btn btn-success ms-2" id="run-all-btn">Run All Tasks with Selected Model</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Task Results</h5>
+                </div>
+                <div class="card-body">
+                    <div id="loading-indicator" class="text-center d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Running task, this may take a few minutes...</p>
+                    </div>
+                    <div id="results-container" class="d-none">
+                        <div class="alert alert-success" id="result-status"></div>
+                        <div class="mb-3">
+                            <label class="form-label">Task ID</label>
+                            <div id="result-task-id" class="form-control bg-light"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Model</label>
+                            <div id="result-model" class="form-control bg-light"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Results</label>
+                            <div id="result-content" class="border rounded p-3 bg-light" style="max-height: 500px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Recent Runs</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Run ID</th>
+                                    <th>Task</th>
+                                    <th>Model</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="runs-table-body">
+                                <!-- Runs will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load tasks
+        fetch('/api/tasks/all')
+            .then(response => response.json())
+            .then(data => {
+                const taskSelect = document.getElementById('task-select');
+                data.tasks.forEach(task => {
+                    const option = document.createElement('option');
+                    option.value = task.id;
+                    option.textContent = task.name;
+                    option.dataset.description = task.description;
+                    option.dataset.type = task.type;
+                    taskSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading tasks:', error));
+
+        // Load models
+        fetch('/api/ollama/models')
+            .then(response => response.json())
+            .then(data => {
+                const modelSelect = document.getElementById('model-select');
+                data.models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = `${model.name} (${model.source})`;
+                    modelSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading models:', error));
+
+        // Load recent runs
+        loadRecentRuns();
+
+        // Update task description when task is selected
+        document.getElementById('task-select').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            document.getElementById('task-description').textContent = selectedOption.dataset.description;
+        });
+
+        // Handle form submission
+        document.getElementById('task-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const taskId = document.getElementById('task-select').value;
+            const model = document.getElementById('model-select').value;
+            
+            if (!taskId || !model) {
+                alert('Please select both a task and a model');
+                return;
+            }
+            
+            runTask(taskId, model);
+        });
+
+        // Handle run all button
+        document.getElementById('run-all-btn').addEventListener('click', function() {
+            const model = document.getElementById('model-select').value;
+            
+            if (!model) {
+                alert('Please select a model');
+                return;
+            }
+            
+            runAllTasks(model);
+        });
+    });
+
+    function runTask(taskId, model) {
+        // Show loading indicator
+        document.getElementById('loading-indicator').classList.remove('d-none');
+        document.getElementById('results-container').classList.add('d-none');
+        
+        // Run the task
+        fetch('/api/tasks/execute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                task_id: taskId,
+                model: model
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading indicator
+            document.getElementById('loading-indicator').classList.add('d-none');
+            document.getElementById('results-container').classList.remove('d-none');
+            
+            if (data.success) {
+                document.getElementById('result-status').textContent = 'Task executed successfully';
+                document.getElementById('result-status').classList.remove('alert-danger');
+                document.getElementById('result-status').classList.add('alert-success');
+                document.getElementById('result-task-id').textContent = data.result.task_id;
+                document.getElementById('result-model').textContent = data.result.model;
+                
+                // Format the result content
+                const resultContent = document.getElementById('result-content');
+                resultContent.innerHTML = formatTaskResult(data.result);
+                
+                // Reload recent runs
+                loadRecentRuns();
+            } else {
+                document.getElementById('result-status').textContent = 'Error: ' + data.error;
+                document.getElementById('result-status').classList.remove('alert-success');
+                document.getElementById('result-status').classList.add('alert-danger');
+                document.getElementById('result-task-id').textContent = taskId;
+                document.getElementById('result-model').textContent = model;
+                document.getElementById('result-content').textContent = JSON.stringify(data, null, 2);
+            }
+        })
+        .catch(error => {
+            // Hide loading indicator
+            document.getElementById('loading-indicator').classList.add('d-none');
+            document.getElementById('results-container').classList.remove('d-none');
+            
+            document.getElementById('result-status').textContent = 'Error: ' + error.message;
+            document.getElementById('result-status').classList.remove('alert-success');
+            document.getElementById('result-status').classList.add('alert-danger');
+            document.getElementById('result-task-id').textContent = taskId;
+            document.getElementById('result-model').textContent = model;
+            document.getElementById('result-content').textContent = error.stack;
+            
+            console.error('Error running task:', error);
+        });
+    }
+
+    function runAllTasks(model) {
+        // Show loading indicator
+        document.getElementById('loading-indicator').classList.remove('d-none');
+        document.getElementById('results-container').classList.add('d-none');
+        
+        // Run all tasks with the selected model
+        fetch('/api/tasks/execute_all', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: model
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading indicator
+            document.getElementById('loading-indicator').classList.add('d-none');
+            document.getElementById('results-container').classList.remove('d-none');
+            
+            if (data.success) {
+                document.getElementById('result-status').textContent = data.message;
+                document.getElementById('result-status').classList.remove('alert-danger');
+                document.getElementById('result-status').classList.add('alert-success');
+                document.getElementById('result-task-id').textContent = 'All Tasks';
+                document.getElementById('result-model').textContent = model;
+                document.getElementById('result-content').textContent = 'Tasks are running in the background. Check the Recent Runs section for results.';
+                
+                // Set up a timer to reload recent runs
+                setTimeout(loadRecentRuns, 5000);
+                setTimeout(loadRecentRuns, 15000);
+                setTimeout(loadRecentRuns, 30000);
+            } else {
+                document.getElementById('result-status').textContent = 'Error: ' + data.error;
+                document.getElementById('result-status').classList.remove('alert-success');
+                document.getElementById('result-status').classList.add('alert-danger');
+                document.getElementById('result-task-id').textContent = 'All Tasks';
+                document.getElementById('result-model').textContent = model;
+                document.getElementById('result-content').textContent = JSON.stringify(data, null, 2);
+            }
+        })
+        .catch(error => {
+            // Hide loading indicator
+            document.getElementById('loading-indicator').classList.add('d-none');
+            document.getElementById('results-container').classList.remove('d-none');
+            
+            document.getElementById('result-status').textContent = 'Error: ' + error.message;
+            document.getElementById('result-status').classList.remove('alert-success');
+            document.getElementById('result-status').classList.add('alert-danger');
+            document.getElementById('result-task-id').textContent = 'All Tasks';
+            document.getElementById('result-model').textContent = model;
+            document.getElementById('result-content').textContent = error.stack;
+            
+            console.error('Error running all tasks:', error);
+        });
+    }
+
+    function loadRecentRuns() {
+        fetch('/api/webarena/runs')
+            .then(response => response.json())
+            .then(data => {
+                const runsTableBody = document.getElementById('runs-table-body');
+                runsTableBody.innerHTML = '';
+                
+                if (data.runs && data.runs.length > 0) {
+                    data.runs.forEach(run => {
+                        const tr = document.createElement('tr');
+                        
+                        // Run ID
+                        const tdId = document.createElement('td');
+                        tdId.textContent = run.id;
+                        tr.appendChild(tdId);
+                        
+                        // Task
+                        const tdTask = document.createElement('td');
+                        tdTask.textContent = run.task_name;
+                        tr.appendChild(tdTask);
+                        
+                        // Model
+                        const tdModel = document.createElement('td');
+                        tdModel.textContent = run.model_name;
+                        tr.appendChild(tdModel);
+                        
+                        // Status
+                        const tdStatus = document.createElement('td');
+                        const statusBadge = document.createElement('span');
+                        statusBadge.classList.add('badge');
+                        
+                        if (run.status === 'completed') {
+                            statusBadge.classList.add('bg-success');
+                            statusBadge.textContent = 'Completed';
+                        } else if (run.status === 'running') {
+                            statusBadge.classList.add('bg-primary');
+                            statusBadge.textContent = 'Running';
+                        } else if (run.status === 'failed') {
+                            statusBadge.classList.add('bg-danger');
+                            statusBadge.textContent = 'Failed';
+                        } else {
+                            statusBadge.classList.add('bg-secondary');
+                            statusBadge.textContent = run.status;
+                        }
+                        
+                        tdStatus.appendChild(statusBadge);
+                        tr.appendChild(tdStatus);
+                        
+                        // Created
+                        const tdCreated = document.createElement('td');
+                        const createdDate = new Date(run.created_at * 1000);
+                        tdCreated.textContent = createdDate.toLocaleString();
+                        tr.appendChild(tdCreated);
+                        
+                        // Actions
+                        const tdActions = document.createElement('td');
+                        const viewButton = document.createElement('button');
+                        viewButton.classList.add('btn', 'btn-sm', 'btn-primary');
+                        viewButton.textContent = 'View';
+                        viewButton.addEventListener('click', function() {
+                            viewRunResult(run.id);
+                        });
+                        tdActions.appendChild(viewButton);
+                        tr.appendChild(tdActions);
+                        
+                        runsTableBody.appendChild(tr);
+                    });
+                } else {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = 6;
+                    td.textContent = 'No runs found';
+                    td.classList.add('text-center');
+                    tr.appendChild(td);
+                    runsTableBody.appendChild(tr);
+                }
+            })
+            .catch(error => console.error('Error loading runs:', error));
+    }
+
+    function viewRunResult(runId) {
+        // Show loading indicator
+        document.getElementById('loading-indicator').classList.remove('d-none');
+        document.getElementById('results-container').classList.add('d-none');
+        
+        // Get the run result
+        fetch(`/api/webarena/runs/${runId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading indicator
+                document.getElementById('loading-indicator').classList.add('d-none');
+                document.getElementById('results-container').classList.remove('d-none');
+                
+                if (data.success) {
+                    document.getElementById('result-status').textContent = `Run ${runId} details`;
+                    document.getElementById('result-status').classList.remove('alert-danger');
+                    document.getElementById('result-status').classList.add('alert-success');
+                    document.getElementById('result-task-id').textContent = data.run.task_id;
+                    document.getElementById('result-model').textContent = data.run.model;
+                    
+                    // Format the result content
+                    const resultContent = document.getElementById('result-content');
+                    resultContent.innerHTML = formatTaskResult(data.run);
+                } else {
+                    document.getElementById('result-status').textContent = 'Error: ' + data.error;
+                    document.getElementById('result-status').classList.remove('alert-success');
+                    document.getElementById('result-status').classList.add('alert-danger');
+                    document.getElementById('result-task-id').textContent = runId;
+                    document.getElementById('result-model').textContent = '';
+                    document.getElementById('result-content').textContent = JSON.stringify(data, null, 2);
+                }
+            })
+            .catch(error => {
+                // Hide loading indicator
+                document.getElementById('loading-indicator').classList.add('d-none');
+                document.getElementById('results-container').classList.remove('d-none');
+                
+                document.getElementById('result-status').textContent = 'Error: ' + error.message;
+                document.getElementById('result-status').classList.remove('alert-success');
+                document.getElementById('result-status').classList.add('alert-danger');
+                document.getElementById('result-task-id').textContent = runId;
+                document.getElementById('result-model').textContent = '';
+                document.getElementById('result-content').textContent = error.stack;
+                
+                console.error('Error viewing run result:', error);
+            });
+    }
+
+    function formatTaskResult(result) {
+        // Format the result based on the task type
+        if (result.task_type === 'web_scraping') {
+            return formatWebScrapingResult(result);
+        } else {
+            // Default formatting for other task types
+            return `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+    }
+
+    function formatWebScrapingResult(result) {
+        let html = '';
+        
+        if (result.url) {
+            html += `<h5>URL: <a href="${result.url}" target="_blank">${result.url}</a></h5>`;
+        }
+        
+        if (result.title) {
+            html += `<h6>Page Title: ${result.title}</h6>`;
+        }
+        
+        if (result.articles && result.articles.length > 0) {
+            html += `<h6>Articles (${result.articles.length}):</h6>`;
+            html += '<div class="accordion" id="articlesAccordion">';
+            
+            result.articles.forEach((article, index) => {
+                html += `
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading${index}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
+                                ${article.title || 'Untitled Article'}
+                            </button>
+                        </h2>
+                        <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#articlesAccordion">
+                            <div class="accordion-body">
+                                ${article.date ? `<p><strong>Date:</strong> ${article.date}</p>` : ''}
+                                ${article.url ? `<p><strong>URL:</strong> <a href="${article.url}" target="_blank">${article.url}</a></p>` : ''}
+                                <p><strong>Content:</strong></p>
+                                <div class="border rounded p-2 mb-2 bg-white">${article.content}</div>
+                                ${article.summary ? `
+                                    <p><strong>Summary:</strong></p>
+                                    <div class="border rounded p-2 bg-white">${article.summary}</div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+        } else {
+            html += '<p>No articles found.</p>';
+        }
+        
+        return html;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{
+  "task_id": "task_1743826300_f9e76fc9",
+  "task_type": "prompt_creation",
+  "description": "Create a prompt for generating a product description for an eco-friendly water bottle",
+  "data": {},
+  "priority": 1,
+  "status": "pending",
+  "agent_id": "perry",
+  "created_at": 1743826300.9848168,
+  "updated_at": 1743826300.9848168
+}

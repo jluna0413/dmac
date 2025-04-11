@@ -54,6 +54,8 @@ class ConfigValidator:
 
             'models.ollama.api_url': {'type': str, 'required': True, 'default': 'http://localhost:11434'},
             'models.ollama.models_dir': {'type': str, 'required': True, 'default': 'models/ollama'},
+            'models.ollama.enabled': {'type': bool, 'required': True, 'default': True},
+            'models.ollama.models': {'type': list, 'required': True, 'default': ['llama2', 'mistral', 'gemma']},
 
             # Learning system configuration
             'learning.enabled': {'type': bool, 'required': True, 'default': True},
@@ -71,6 +73,30 @@ class ConfigValidator:
 
             'security.encryption.enabled': {'type': bool, 'required': True, 'default': True},
             'security.encryption.key_file': {'type': str, 'required': True, 'default': 'config/encryption_key.key'},
+
+            # WebArena configuration
+            'webarena.enabled': {'type': bool, 'required': True, 'default': True},
+            'webarena.dir': {'type': str, 'required': True, 'default': 'external/webarena'},
+            'webarena.data_dir': {'type': str, 'required': True, 'default': 'data/webarena'},
+            'webarena.max_concurrent_runs': {'type': int, 'min': 1, 'required': True, 'default': 2},
+            'webarena.default_timeout': {'type': int, 'min': 60, 'required': True, 'default': 3600},
+
+            'webarena.ollama.enabled': {'type': bool, 'required': True, 'default': True},
+            'webarena.ollama.default_system_prompt': {'type': str, 'required': True, 'default': 'You are a helpful AI assistant that controls a web browser to help users with their tasks.'},
+
+            'webarena.visualization.enabled': {'type': bool, 'required': True, 'default': True},
+
+            # Dashboard configuration
+            'dashboard.enabled': {'type': bool, 'required': True, 'default': True},
+            'dashboard.host': {'type': str, 'required': True, 'default': '0.0.0.0'},
+            'dashboard.port': {'type': int, 'min': 1024, 'max': 65535, 'required': True, 'default': 8080},
+            'dashboard.static_dir': {'type': str, 'required': True, 'default': 'dashboard/static'},
+            'dashboard.templates_dir': {'type': str, 'required': True, 'default': 'dashboard/templates'},
+
+            # API configuration
+            'api.enabled': {'type': bool, 'required': True, 'default': True},
+            'api.host': {'type': str, 'required': True, 'default': '0.0.0.0'},
+            'api.port': {'type': int, 'min': 1024, 'max': 65535, 'required': True, 'default': 8000},
         }
 
     def validate(self) -> List[str]:
