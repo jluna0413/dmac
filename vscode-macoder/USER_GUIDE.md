@@ -8,6 +8,7 @@ This guide provides detailed instructions on how to use the MaCoder VS Code exte
 2. [Getting Started](#getting-started)
 3. [Modes of Operation](#modes-of-operation)
 4. [Basic Features](#basic-features)
+5. [Sidebar Interface](#sidebar-interface)
 5. [Advanced Features](#advanced-features)
 6. [Configuration](#configuration)
 7. [Troubleshooting](#troubleshooting)
@@ -111,6 +112,59 @@ Refactor selected code:
 1. Select the code you want to refactor
 2. Right-click and select `MaCoder: Refactor Code` or use the Command Palette
 3. Describe how you want to refactor the code
+
+## Sidebar Interface
+
+MaCoder provides a full sidebar interface in the VS Code Activity Bar. Click on the MaCoder icon in the Activity Bar to access the sidebar.
+
+### Chat View
+
+The Chat view allows you to interact with MaCoder directly:
+
+1. Type your message in the text area at the bottom
+2. Press Enter or click the Send button
+3. MaCoder will respond with helpful information
+
+### Code Generation View
+
+The Code Generation view helps you generate code based on your instructions:
+
+1. Enter your instructions in the text area
+2. Select the programming language from the dropdown
+3. Click the "Generate Code" button
+4. Review the generated code
+5. Use the action buttons to insert the code, create a new file, or copy to clipboard
+
+### Brainstorming View
+
+The Brainstorming view helps you generate ideas and create development roadmaps:
+
+1. Enter a topic in the "Topic" field
+2. Optionally add context in the "Context" field
+3. Click "Start Brainstorming"
+4. Review the generated ideas
+5. Click "Generate Roadmap" to create a development plan
+6. Use "Export Roadmap" to save the roadmap as a Markdown file
+
+### Sandbox View
+
+The Sandbox view allows you to test code snippets without affecting your project files:
+
+1. Select a programming language from the dropdown
+2. Enter your code in the editor
+3. Click "Run Code" to execute it
+4. View the output in the output panel
+5. Use "Save to File" to save your code
+6. Use "Load from File" to load existing code
+
+### Settings View
+
+The Settings view allows you to configure MaCoder according to your preferences:
+
+- Model Provider (Ollama, OpenAI, Gemini)
+- Provider-specific settings (API keys, models, URLs)
+- Generation settings (temperature, max tokens, context size)
+- Feature toggles (project indexing, code verification, etc.)
 
 ## Advanced Features
 

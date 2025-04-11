@@ -7,18 +7,21 @@ MaCoder is a powerful AI coding assistant with code completion functionality, in
 
 ## Features
 
+- **Full Sidebar UI**: Access all features from the VS Code Activity Bar
 - **Chat**: Get answers about your code and codebase
 - **Next Edit**: Step-by-step guidance for complex changes
 - **Code Completions**: Context-aware code suggestions
 - **Instructions**: Use natural language to modify code
+- **Code Generation**: Generate code based on natural language instructions
 - **Autonomous Mode**: Autonomous coding assistance for complex tasks
 - **Project Indexing**: Local code indexing for better context awareness
 - **Brainstorming**: Generate and organize ideas for your projects
 - **Roadmap Generation**: Create project roadmaps from brainstorming sessions
+- **Sandbox**: Test code snippets in an isolated environment
 - **Deep Reasoning**: Perform deep reasoning on complex problems
 - **Code Verification**: Verify code syntax and style
 - **Enhanced Context Awareness**: Track code edits for better context
-- **Multiple Model Providers**: Support for Ollama and LM Studio
+- **Multiple Model Providers**: Support for Ollama, OpenAI, Gemini, and LM Studio
 
 ## Requirements
 
@@ -39,6 +42,16 @@ MaCoder is a powerful AI coding assistant with code completion functionality, in
 3. Set `macoder.preferStandalone` to `true` in VS Code settings
 
 ## Usage
+
+### Sidebar Interface
+
+MaCoder provides a full sidebar interface in the VS Code Activity Bar. Click on the MaCoder icon in the Activity Bar to access the following views:
+
+- **Chat**: Interact with MaCoder directly
+- **Code Generation**: Generate code based on instructions
+- **Brainstorming**: Generate ideas and create roadmaps
+- **Sandbox**: Test code snippets in an isolated environment
+- **Settings**: Configure MaCoder according to your preferences
 
 ### Chat
 

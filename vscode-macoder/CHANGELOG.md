@@ -2,6 +2,28 @@
 
 All notable changes to the "MaCoder" extension will be documented in this file.
 
+## [0.4.0-alpha] - 2025-04-15
+
+### Added
+- Full sidebar UI in the Activity Bar
+  - Chat view for direct interaction
+  - Code Generation view for generating code
+  - Brainstorming view for generating ideas and roadmaps
+  - Sandbox view for testing code snippets
+  - Settings view for configuring MaCoder
+- Additional model providers
+  - OpenAI integration
+  - Gemini integration
+- Enhanced UI/UX
+  - Improved styling and layout
+  - Better error handling
+  - More intuitive interface
+
+### Improved
+- Code generation capabilities
+- Context awareness
+- Performance optimizations
+
 ## [0.3.0-alpha] - 2025-01-15
 
 ### Added
