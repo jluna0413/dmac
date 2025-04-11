@@ -1,0 +1,345 @@
+{
+  "name": "vscode-macoder",
+  "displayName": "MaCoder",
+  "description": "Native code assistant with code completion, inspired by Augment Code but using local models",
+  "version": "0.3.0-alpha",
+  "publisher": "dmac",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "macoder.startChat",
+        "title": "MaCoder: Start Chat"
+      },
+      {
+        "command": "macoder.nextEdit",
+        "title": "MaCoder: Next Edit"
+      },
+      {
+        "command": "macoder.generateCode",
+        "title": "MaCoder: Generate Code"
+      },
+      {
+        "command": "macoder.explainCode",
+        "title": "MaCoder: Explain Code"
+      },
+      {
+        "command": "macoder.refactorCode",
+        "title": "MaCoder: Refactor Code"
+      },
+      {
+        "command": "macoder.findBugs",
+        "title": "MaCoder: Find Bugs"
+      },
+      {
+        "command": "macoder.generateTests",
+        "title": "MaCoder: Generate Tests"
+      },
+      {
+        "command": "macoder.documentCode",
+        "title": "MaCoder: Document Code"
+      },
+      {
+        "command": "macoder.benchmarkModels",
+        "title": "MaCoder: Benchmark Models"
+      },
+      {
+        "command": "macoder.toggleMode",
+        "title": "MaCoder: Toggle Between DMac and Standalone Mode"
+      },
+      {
+        "command": "macoder.switchModelProvider",
+        "title": "MaCoder: Switch Local Model Provider"
+      },
+      {
+        "command": "macoder.toggleAutonomousMode",
+        "title": "MaCoder: Toggle Autonomous Mode"
+      },
+      {
+        "command": "macoder.showAutonomousPanel",
+        "title": "MaCoder: Show Autonomous Mode Panel"
+      },
+      {
+        "command": "macoder.executeTask",
+        "title": "MaCoder: Execute Autonomous Task"
+      },
+      {
+        "command": "macoder.refreshIndex",
+        "title": "MaCoder: Refresh Code Index"
+      },
+      {
+        "command": "macoder.showBrainstormingPanel",
+        "title": "MaCoder: Show Brainstorming Panel"
+      },
+      {
+        "command": "macoder.showDeepReasoningPanel",
+        "title": "MaCoder: Show Deep Reasoning Panel"
+      },
+      {
+        "command": "macoder.performDeepReasoning",
+        "title": "MaCoder: Perform Deep Reasoning"
+      },
+      {
+        "command": "macoder.verifyCode",
+        "title": "MaCoder: Verify Code"
+      },
+      {
+        "command": "macoder.startEditSession",
+        "title": "MaCoder: Start New Edit Session"
+      },
+      {
+        "command": "macoder.endEditSession",
+        "title": "MaCoder: End Current Edit Session"
+      },
+      {
+        "command": "macoder.showSandboxPanel",
+        "title": "MaCoder: Show Sandbox Panel"
+      },
+      {
+        "command": "macoder.executeCodeInSandbox",
+        "title": "MaCoder: Execute Code in Sandbox"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "macoder",
+          "title": "MaCoder",
+          "icon": "resources/macoder.svg"
+        }
+      ]
+    },
+    "views": {
+      "macoder": [
+        {
+          "id": "macoderChat",
+          "name": "Chat"
+        },
+        {
+          "id": "macoderNextEdit",
+          "name": "Next Edit"
+        },
+        {
+          "id": "macoderBenchmark",
+          "name": "Benchmark"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "MaCoder",
+      "properties": {
+        "macoder.modelName": {
+          "type": "string",
+          "default": "gemma3:12b",
+          "description": "The name of the model to use for code generation and completion"
+        },
+        "macoder.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "description": "The temperature to use for code generation and completion"
+        },
+        "macoder.maxContextLength": {
+          "type": "number",
+          "default": 8192,
+          "description": "The maximum context length to use for code generation and completion"
+        },
+        "macoder.benchmarkModels": {
+          "type": "array",
+          "default": [
+            "gemma3:12b",
+            "qwen2.5-coder:1.5b-base",
+            "llama3:8b"
+          ],
+          "description": "The models to use for benchmarking"
+        },
+        "macoder.enableCompletions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable code completions"
+        },
+        "macoder.enableChat": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable chat"
+        },
+        "macoder.enableNextEdit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable next edit"
+        },
+        "macoder.enableInstructions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable instructions"
+        },
+        "macoder.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:1302",
+          "description": "The URL of the DMac server"
+        },
+        "macoder.preferStandalone": {
+          "type": "boolean",
+          "default": false,
+          "description": "Prefer standalone mode even if DMac server is available"
+        },
+        "macoder.localModelProvider": {
+          "type": "string",
+          "default": "ollama",
+          "enum": [
+            "ollama",
+            "lmstudio"
+          ],
+          "description": "The local model provider to use in standalone mode"
+        },
+        "macoder.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "The URL of the Ollama server"
+        },
+        "macoder.lmStudioUrl": {
+          "type": "string",
+          "default": "http://localhost:1234",
+          "description": "The URL of the LM Studio server"
+        },
+        "macoder.brainstorming": {
+          "type": "object",
+          "default": {
+            "sessions": [],
+            "roadmaps": []
+          },
+          "description": "Storage for brainstorming sessions and roadmaps"
+        },
+        "macoder.deepReasoning": {
+          "type": "object",
+          "default": {
+            "chains": []
+          },
+          "description": "Storage for deep reasoning chains"
+        },
+        "macoder.codeVerification": {
+          "type": "object",
+          "default": {},
+          "description": "Settings for code verification"
+        },
+        "macoder.enableCodeEditLogging": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable code edit logging for enhanced context awareness"
+        },
+        "macoder.enableSandbox": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable sandbox for testing and debugging code"
+        },
+        "macoder.laminar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Laminar integration for tracing and evaluation"
+        },
+        "macoder.laminar.projectApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "The Laminar project API key"
+        },
+        "macoder.laminar.baseUrl": {
+          "type": "string",
+          "default": "https://api.lmnr.ai",
+          "description": "The Laminar API base URL"
+        },
+        "macoder.laminar.selfHosted": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use self-hosted Laminar instance"
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "macoder.startChat",
+          "group": "macoder"
+        },
+        {
+          "command": "macoder.nextEdit",
+          "group": "macoder"
+        },
+        {
+          "command": "macoder.explainCode",
+          "group": "macoder",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "macoder.refactorCode",
+          "group": "macoder",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "macoder.findBugs",
+          "group": "macoder",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "macoder.generateTests",
+          "group": "macoder",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "macoder.documentCode",
+          "group": "macoder",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "macoder.verifyCode",
+          "group": "macoder",
+          "when": "editorHasSelection || editorIsOpen"
+        },
+        {
+          "command": "macoder.executeCodeInSandbox",
+          "group": "macoder",
+          "when": "editorHasSelection || editorIsOpen"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.75.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0",
+    "ts-loader": "^9.2.2"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "vscode-languageclient": "^7.0.0",
+    "@lmnr-ai/lmnr": "^0.1.0",
+    "@opentelemetry/api": "^1.7.0",
+    "@opentelemetry/sdk-node": "^0.48.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.48.0"
+  }
+}
