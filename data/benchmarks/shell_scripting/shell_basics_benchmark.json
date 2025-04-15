@@ -1,0 +1,46 @@
+{
+  "id": "shell_scripting_shell_basics_1685432791",
+  "name": "Shell Scripting Basics Benchmark",
+  "category": "shell_scripting",
+  "description": "Basic benchmark for testing shell scripting capabilities",
+  "tasks": [
+    {
+      "type": "generate_command",
+      "data": {
+        "description": "Find all Python files in the current directory and its subdirectories that contain the word 'import'.",
+        "platform": "linux"
+      },
+      "expected_result": "find . -name \"*.py\" -type f -exec grep -l \"import\" {} \\;"
+    },
+    {
+      "type": "create_script",
+      "data": {
+        "description": "Create a bash script that backs up all .txt files in the current directory to a 'backups' folder with the current date appended to the filename.",
+        "platform": "linux",
+        "script_type": "bash"
+      }
+    },
+    {
+      "type": "explain_command",
+      "data": {
+        "command": "ps aux | grep python | awk '{print $2}' | xargs kill -9"
+      }
+    },
+    {
+      "type": "diagnose_system",
+      "data": {
+        "description": "The system is running out of disk space. Provide commands to identify what's using the most space and how to clean it up."
+      }
+    }
+  ],
+  "evaluation_criteria": {
+    "evaluation_type": "contains_keywords",
+    "keywords": ["find", "grep", "mkdir", "cp", "date", "backup", "ps", "awk", "xargs", "kill", "df", "du"],
+    "weight": 1.0
+  },
+  "created_at": "2023-05-30T12:33:11.123456",
+  "metadata": {
+    "difficulty": "intermediate",
+    "tags": ["bash", "shell", "linux", "command-line", "system-administration"]
+  }
+}

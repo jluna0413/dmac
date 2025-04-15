@@ -1,0 +1,54 @@
+{
+  "folders": [
+    {
+      "name": "Root",
+      "path": "."
+    },
+    {
+      "name": "VS Code Extension",
+      "path": "./vscode-macoder"
+    },
+    {
+      "name": "Core Package",
+      "path": "./packages/core"
+    },
+    {
+      "name": "UI Package",
+      "path": "./packages/ui"
+    },
+    {
+      "name": "API Package",
+      "path": "./packages/api"
+    },
+    {
+      "name": "State Package",
+      "path": "./packages/state"
+    }
+  ],
+  "settings": {
+    "typescript.tsdk": "Root/node_modules/typescript/lib",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/node_modules": true,
+      "**/dist": true
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-typescript-next"
+    ]
+  }
+}

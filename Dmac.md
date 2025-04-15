@@ -1,13 +1,13 @@
 # **Dmac: an Integrated-Agent Swarm System – Complete Developer Guide**
 
-**Project Title:**  
+**Project Title:**
  DMac: a Multi-Agent AI Swarm Orchestrated by OpenManus-RL with Vibe Coding, Manufacturing Automation, and Creative Design
 
-**Version:**  
- v3.0 (Comprehensive Blueprint)
+**Version:**
+ v3.1 (Comprehensive Blueprint with UI Enhancements)
 
-**Last Updated:**  
- 2025-03-26
+**Last Updated:**
+ 2024-07-10
 
 ---
 
@@ -31,7 +31,7 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
 * **Interactive UI & Virtual Agents:**
 
-  * Real-time dashboards (SwarmUI, ComfyUI), visual workflow building (LangChain OpenCanvas), and lifelike agent interaction (Unreal Engine 5 Metahumans).
+  * Real-time dashboards (SwarmUI, ComfyUI), visual workflow building (LangChain OpenCanvas), and lifelike agent interaction (Unreal Engine 5 Metahumans). Modern Material Design UI with light/dark mode.
 
 * **Home Automation & IoT:**
 
@@ -47,7 +47,7 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
 * **Automate manufacturing pipelines** using open-source tools for 3D printing (Klipper, OctoPrint, Slic3r), CNC machining, laser engraving, and packaging (with Cricut integration and free template APIs).
 
-* **Leverage cloud-based AI models** (Gemini Flash 2.0 via API) alongside local models (DeepSeek-RL, Gemma 3 Vision) for specialized tasks.
+* **Leverage cloud-based AI models** (Gemini 2.5 pro via API) alongside local models (DeepSeek-RL, Gemma3:12b) for specialized tasks.
 
 ## **2\. Technology Stack & Components**
 
@@ -75,9 +75,9 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
   * Local model server hosting models for inference.
 
-  * Hosts models like DeepSeek-RL (for reasoning) and Gemma 3 Vision (for visual tasks).
+  * Hosts models like DeepSeek-RL (for reasoning) and Gemma3:12b (for visual tasks).
 
-  * **Gemini 2.5 pro** is accessed via its cloud API at `http://gemini.google.com`.
+  * **Gemini 2.5 pro** is accessed via its cloud API.
 
 ### **AI Models & Services**
 
@@ -90,6 +90,8 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
       * Cloud-based code generation with low-latency responses.
 
       * Provides creative and fast coding outputs.
+
+      * Used strategically to leverage free compute when local models need assistance.
 
     * **DeepSeek-RL 0.324:**
 
@@ -207,19 +209,19 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
 #### **Step 1: User Interaction & Command Input**
 
-* **Voice Command:**  
-   The user speaks a command, such as:  
+* **Voice Command:**
+   The user speaks a command, such as:
    *"Generate a Python function for sorting a list, then send it to the printer for 3D prototype packaging."*
 
-* **STT Processing:**  
+* **STT Processing:**
    CoquiSST/py3SST transcribes the voice command into text.
 
-* **CLI Input:**  
+* **CLI Input:**
    The transcribed command is processed by **Cline**, which translates it into actionable tasks.
 
 #### **Step 2: Task Orchestration via OpenManus-RL**
 
-* **Command Routing:**  
+* **Command Routing:**
    OpenManus-RL receives the command and breaks it down:
 
   * Code generation for sorting function → DeepClaude.
@@ -228,7 +230,7 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
   * Manufacturing instructions → 3D printing/CNC modules.
 
-* **Versioning & Logging:**  
+* **Versioning & Logging:**
    Every task is logged and versioned, and milestone reports are generated.
 
 #### **Step 3: AI Processing & Code Generation**
@@ -239,10 +241,10 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
   * **DeepSeek-RL** then verifies and refines the code for accuracy.
 
-* **Aider Collaboration:**  
+* **Aider Collaboration:**
    Aider provides interactive, iterative improvements and can be used for additional code refactoring or debugging.
 
-* **CLI Feedback:**  
+* **CLI Feedback:**
    Results are displayed through the CLI (via Cline) and logged in OpenManus-RL.
 
 #### **Step 4: Design & Manufacturing Pipeline**
@@ -263,7 +265,7 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
   * Klipper controls the 3D printer based on the generated G-code.
 
-  * OctoPrint monitors the printing process, and feedback is used by Gemma 3 Vision for quality assurance.
+  * OctoPrint monitors the printing process, and feedback is used by Gemma3:12b for quality assurance.
 
 * **Packaging Integration:**
 
@@ -315,72 +317,72 @@ Create a **modular, locally hosted AI ecosystem** that coordinates a swarm of sp
 
 Clone the OpenManus-RL repository:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `https://github.com/OpenManus/OpenManus-RL.git`
 
 `cd OpenManus-RL`
 
 `pip install -r requirements.txt`
 
-* 
+*
 
 Configure and start the OpenManus-RL server:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `openmanus start`
 
-*   
+*
 2. **Ollama Setup:**
 
    * Install Ollama per its documentation.
 
 Pull the required models:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `ollama pull deepseek_r1:0.324`
 
-`ollama pull gemma3_vision:latest`
+`ollama pull gemma3:12b`
 
-* 
+*
 
-Note: Gemini Flash 2.0 is accessed via API at `http://gemini.google.com`. Ensure you have the API key if required:
+Note: Gemini 2.5 pro is accessed via API. Ensure you have the API key if required:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `export GEMINI_API_KEY="your_api_key_here"`
 
-*   
+*
 3. **Cline & Aider Installation:**
 
 Install Cline:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `pip install cline`
 
 `cline --version  # Verify installation`
 
-* 
+*
 
 Install Aider:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `pip install aider`
 
-*   
+*
 4. **Voice Interface Setup (STT):**
 
 Choose CoquiSST or py3SST and install:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `pip install coquisst`
 
-*   
+*
   * Configure the STT module to listen and transcribe voice commands.
 
 ### **Integration of AI Models**
@@ -389,32 +391,32 @@ CopyEdit
 
 Clone DeepClaude from GitHub:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `git clone https://github.com/ErlichLiu/deepclaude.git`
 
 `cd deepclaude`
 
 `pip install -r requirements.txt`
 
-*   
+*
   * Configure the service to route:
 
-    * Code generation tasks to Gemini Flash 2.0 via its API.
+    * Code generation tasks to Gemini 2.5 pro via its API.
 
     * Reasoning/verification tasks to DeepSeek-RL (local via Ollama).
 
 Update configuration files (e.g., `config.yml`) with:
 
- yaml  
-CopyEdit  
+ yaml
+CopyEdit
 `models:`
 
   `code_generation:`
 
-    `provider: gemini_flash`
+    `provider: gemini_pro`
 
-    `api_url: "http://gemini.google.com/api/generate"`
+    `api_url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"`
 
     `api_key: "${GEMINI_API_KEY}"`
 
@@ -424,16 +426,16 @@ CopyEdit
 
     `endpoint: "http://127.0.0.1:11434/api/generate"`
 
-*   
+*
 2. **Testing DeepClaude:**
 
 Use curl or a Python script to send test prompts:
 
- bash  
-CopyEdit  
-`curl -X POST http://gemini.google.com/api/generate -d '{"prompt": "Generate a Python function for factorial."}'`
+ bash
+CopyEdit
+`curl -X POST https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent -H "Content-Type: application/json" -H "Authorization: Bearer $GEMINI_API_KEY" -d '{"contents":[{"parts":[{"text":"Generate a Python function for factorial."}]}]}'`
 
-* 
+*
 
 ### **Manufacturing & Design Pipeline Setup**
 
@@ -445,26 +447,26 @@ CopyEdit
 
 Install OctoPrint:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `pip install octoprint`
 
-*   
+*
   * Configure OctoPrint to monitor printer activity.
 
   * **Slic3r:**
 
 Install Slic3r from its repository:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `git clone https://github.com/slic3r/Slic3r.git`
 
 `cd Slic3r`
 
 `./configure && make`
 
-*   
+*
   * Configure slicing parameters based on your printer and material.
 
 2. **Cricut Integration:**
@@ -487,26 +489,26 @@ CopyEdit
 
 Clone and set up SwarmUI:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `git clone https://github.com/SwarmUI/SwarmUI.git`
 
 `cd SwarmUI`
 
 `npm install && npm start`
 
-*   
+*
   * Set up ComfyUI following its documentation.
 
 2. **LangChain OpenCanvas:**
 
 Install LangChain:
 
- bash  
-CopyEdit  
+ bash
+CopyEdit
 `pip install langchain`
 
-*   
+*
   * Configure OpenCanvas as per LangChain’s docs to build interactive prompt chains.
 
 3. **Unreal Engine 5 & Metahumans:**
@@ -527,8 +529,8 @@ CopyEdit
 
 Example:
 
- python  
-CopyEdit  
+ python
+CopyEdit
 `import coquisst`
 
 `import subprocess`
@@ -545,7 +547,7 @@ CopyEdit
 
     `listen_and_execute()`
 
-*   
+*
 2. **Integration with OpenManus-RL:**
 
    * Ensure that voice commands are logged and versioned in OpenManus-RL for auditing and feedback.
@@ -582,7 +584,7 @@ CopyEdit
 
 3. **AI Processing:**
 
-   * **DeepClaude** routes code requests to Gemini Flash 2.0 (via API) and reasoning requests to DeepSeek-RL.
+   * **DeepClaude** routes code requests to Gemini 2.5 pro (via API) and reasoning requests to DeepSeek-RL.
 
    * **Aider** offers real-time feedback and iterative improvement on coding tasks.
 
@@ -610,23 +612,26 @@ CopyEdit
 
 ## **5\. Final Notes & Best Practices**
 
-* **Modularity:**  
+* **Modularity:**
    Each component (AI models, hardware controllers, UI dashboards) should be developed as independent modules with clear APIs, ensuring that they can be updated or replaced without disrupting the overall system.
 
-* **Scalability:**  
+* **Scalability:**
    Design your workflows to handle parallel tasks. Use asynchronous processing (via Python’s asyncio or multi-threading) where possible to maximize throughput.
 
-* **Error Handling:**  
+* **Error Handling:**
    Implement robust logging and error-handling routines in each module. Ensure that OpenManus-RL can detect failures and trigger corrective actions or notifications.
 
-* **Documentation & Versioning:**  
+* **Documentation & Versioning:**
    Maintain thorough documentation for each module. Use OpenManus-RL to store milestone reports and versioned logs so that future updates are guided by historical performance data.
 
-* **Testing & Feedback:**  
+* **Testing & Feedback:**
    Regularly test each component independently and within the integrated system. Use continuous integration (CI) tools to automate testing, and iterate based on feedback from actual usage.
 
-* **Security & Privacy:**  
-   Since the system operates locally and may interface with cloud-based models, ensure that API keys and sensitive data are securely stored (e.g., using environment variables and encrypted storage).
+* **Security & Privacy:**
+   Since the system operates locally and may interface with cloud-based models, ensure that API keys and sensitive data are securely stored (e.g., using environment variables and encrypted storage). Never hardcode API keys in your code.
+
+* **UI Design:**
+   Follow Google Material Design principles for a consistent, modern UI experience. Implement light/dark mode toggle for better user experience. Use visual loading indicators to provide feedback during data processing.
 
 ---
 

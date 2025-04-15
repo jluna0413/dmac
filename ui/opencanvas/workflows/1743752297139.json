@@ -1,0 +1,44 @@
+{
+  "id": "1743752297139",
+  "name": "manual test",
+  "description": "i added this myself not AI",
+  "created": "2025-04-04T07:38:17.139Z",
+  "updated": "2025-04-04T07:38:17.139Z",
+  "nodes": [
+    {
+      "id": "1743752274423",
+      "type": "tool",
+      "title": "New Tool",
+      "x": 100,
+      "y": 250
+    },
+    {
+      "id": "1743752276257",
+      "type": "agent",
+      "title": "New Agent",
+      "x": 78,
+      "y": 79
+    },
+    {
+      "id": "1743752277851",
+      "type": "data",
+      "title": "New Data",
+      "x": 100,
+      "y": 400
+    },
+    {
+      "id": "1743752279287",
+      "type": "output",
+      "title": "New Output",
+      "x": 320,
+      "y": 79
+    }
+  ],
+  "connections": [
+    {
+      "id": "1743752285036",
+      "startNodeId": "1743752276257",
+      "endNodeId": "1743752274423"
+    }
+  ]
+}

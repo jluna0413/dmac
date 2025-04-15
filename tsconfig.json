@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "outDir": "dist",
+    "lib": [
+      "ES2020"
+    ],
+    "sourceMap": true,
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@dmac/core": [
+        "packages/core/src"
+      ],
+      "@dmac/core/*": [
+        "packages/core/src/*"
+      ],
+      "@dmac/ui": [
+        "packages/ui/src"
+      ],
+      "@dmac/ui/*": [
+        "packages/ui/src/*"
+      ],
+      "@dmac/api": [
+        "packages/api/src"
+      ],
+      "@dmac/api/*": [
+        "packages/api/src/*"
+      ],
+      "@dmac/state": [
+        "packages/state/src"
+      ],
+      "@dmac/state/*": [
+        "packages/state/src/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    ".vscode-test"
+  ]
+}

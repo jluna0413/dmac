@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>WebArena Run Details</h1>
+        <p>Details for run: {{ run_id }}</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Run Information</h5>
+            </div>
+            <div class="card-body">
+                <div id="runInfo">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Loading run information...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Results</h5>
+            </div>
+            <div class="card-body">
+                <div id="runResults">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Loading run results...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Action Breakdown</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="actionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Timeline</h5>
+            </div>
+            <div class="card-body">
+                <div id="timeline">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Loading timeline...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Load run details
+        loadRunDetails();
+    });
+    
+    function loadRunDetails() {
+        const token = localStorage.getItem('dmac_token');
+        const runId = '{{ run_id }}';
+        
+        $.ajax({
+            url: `/api/webarena/runs/${runId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const run = response.run_status;
+                
+                // Update run information
+                let infoHtml = `
+                    <table class="table table-sm">
+                        <tr>
+                            <th>ID</th>
+                            <td>${run.id}</td>
+                        </tr>
+                        <tr>
+                            <th>Task</th>
+                            <td>${run.task_name}</td>
+                        </tr>
+                        <tr>
+                            <th>Model</th>
+                            <td>${run.model_name}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td><span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Start Time</th>
+                            <td>${formatDate(run.start_time)}</td>
+                        </tr>
+                        <tr>
+                            <th>End Time</th>
+                            <td>${run.end_time ? formatDate(run.end_time) : 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <th>Duration</th>
+                            <td>${run.duration ? `${run.duration.toFixed(2)} seconds` : 'N/A'}</td>
+                        </tr>
+                    </table>
+                `;
+                $('#runInfo').html(infoHtml);
+                
+                // Update run results
+                if (run.results) {
+                    const results = run.results;
+                    
+                    let resultsHtml = `
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Success Rate</th>
+                                <td>${results.success_rate !== undefined ? `${(results.success_rate * 100).toFixed(2)}%` : 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <th>Completion Time</th>
+                                <td>${results.completion_time !== undefined ? `${results.completion_time.toFixed(2)} seconds` : 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Actions</th>
+                                <td>${results.total_actions !== undefined ? results.total_actions : 'N/A'}</td>
+                            </tr>
+                        </table>
+                    `;
+                    $('#runResults').html(resultsHtml);
+                    
+                    // Create action breakdown chart
+                    if (results.action_counts) {
+                        const actionLabels = Object.keys(results.action_counts);
+                        const actionData = actionLabels.map(action => results.action_counts[action]);
+                        
+                        const actionCtx = document.getElementById('actionChart').getContext('2d');
+                        window.actionChart = new Chart(actionCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: actionLabels,
+                                datasets: [{
+                                    data: actionData,
+                                    backgroundColor: [
+                                        '#28a745', '#17a2b8', '#ffc107', '#dc3545', '#6f42c1',
+                                        '#fd7e14', '#20c997', '#e83e8c', '#6c757d', '#007bff'
+                                    ]
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                legend: {
+                                    position: 'right'
+                                }
+                            }
+                        });
+                    }
+                    
+                    // Create timeline
+                    let timelineHtml = `
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-item-marker">
+                                    <div class="timeline-item-marker-text">Start</div>
+                                    <div class="timeline-item-marker-indicator bg-primary"></div>
+                                </div>
+                                <div class="timeline-item-content">
+                                    <p class="fw-bold">Run started</p>
+                                    <p class="text-muted">${formatDate(run.start_time)}</p>
+                                </div>
+                            </div>
+                    `;
+                    
+                    // Add some mock timeline events
+                    timelineHtml += `
+                        <div class="timeline-item">
+                            <div class="timeline-item-marker">
+                                <div class="timeline-item-marker-text">+30s</div>
+                                <div class="timeline-item-marker-indicator bg-info"></div>
+                            </div>
+                            <div class="timeline-item-content">
+                                <p class="fw-bold">Navigation started</p>
+                                <p class="text-muted">Agent navigated to the task website</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-item-marker">
+                                <div class="timeline-item-marker-text">+60s</div>
+                                <div class="timeline-item-marker-indicator bg-info"></div>
+                            </div>
+                            <div class="timeline-item-content">
+                                <p class="fw-bold">Form interaction</p>
+                                <p class="text-muted">Agent interacted with form elements</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (run.end_time) {
+                        timelineHtml += `
+                            <div class="timeline-item">
+                                <div class="timeline-item-marker">
+                                    <div class="timeline-item-marker-text">End</div>
+                                    <div class="timeline-item-marker-indicator ${run.status === 'completed' ? 'bg-success' : 'bg-danger'}"></div>
+                                </div>
+                                <div class="timeline-item-content">
+                                    <p class="fw-bold">Run ${run.status}</p>
+                                    <p class="text-muted">${formatDate(run.end_time)}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    timelineHtml += `</div>`;
+                    $('#timeline').html(timelineHtml);
+                } else {
+                    $('#runResults').html('<div class="alert alert-info">No results available yet.</div>');
+                    $('#timeline').html('<div class="alert alert-info">No timeline available yet.</div>');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading run details:', xhr);
+                $('#runInfo').html('<div class="alert alert-danger">Error loading run information.</div>');
+                $('#runResults').html('<div class="alert alert-danger">Error loading run results.</div>');
+                $('#timeline').html('<div class="alert alert-danger">Error loading timeline.</div>');
+            }
+        });
+    }
+    
+    function getStatusBadgeClass(status) {
+        switch (status) {
+            case 'completed':
+            case 'success':
+                return 'bg-success';
+            case 'running':
+            case 'active':
+                return 'bg-info';
+            case 'pending':
+                return 'bg-warning';
+            case 'failed':
+            case 'error':
+                return 'bg-danger';
+            default:
+                return 'bg-secondary';
+        }
+    }
+    
+    function formatDate(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp * 1000);
+        return date.toLocaleString();
+    }
+</script>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .timeline:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0.5rem;
+        height: 100%;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .timeline-item-marker {
+        position: absolute;
+        left: -2rem;
+        width: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .timeline-item-marker-text {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    
+    .timeline-item-marker-indicator {
+        height: 1rem;
+        width: 1rem;
+        border-radius: 100%;
+    }
+    
+    .timeline-item-content {
+        padding: 0 0 0 1rem;
+    }
+</style>
+{% endblock %}

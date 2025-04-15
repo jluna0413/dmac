@@ -1,0 +1,614 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>AI Agents</h1>
+        <p>Manage and monitor the AI agents in the DMac system.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Active Agents</h5>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAgentModal">Create New Agent</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="agentsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Model</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="loading-container">
+                                        <div class="progress mb-3">
+                                            <div id="agentsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary me-3" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span id="agentsLoadingPercent" class="loading-percentage">0%</span>
+                                        </div>
+                                        <p id="agentsLoadingText" class="mt-2">Loading agents...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Agent Types</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Coding Agent
+                        <span class="badge bg-primary rounded-pill">3</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        WebArena Agent
+                        <span class="badge bg-primary rounded-pill">2</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        UI Agent
+                        <span class="badge bg-primary rounded-pill">1</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Manufacturing Agent
+                        <span class="badge bg-primary rounded-pill">2</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Design Agent
+                        <span class="badge bg-primary rounded-pill">1</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Agent Activity</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="agentActivityChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Agent Modal -->
+<div class="modal fade" id="createAgentModal" tabindex="-1" aria-labelledby="createAgentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createAgentModalLabel">Create New Agent</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createAgentForm">
+                    <div class="mb-3">
+                        <label for="agentName" class="form-label">Agent Name</label>
+                        <input type="text" class="form-control" id="agentName" placeholder="Enter agent name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="agentType" class="form-label">Agent Type</label>
+                        <select class="form-control" id="agentType">
+                            <option value="">Select agent type...</option>
+                            <option value="coding">Coding Agent</option>
+                            <option value="webarena">WebArena Agent</option>
+                            <option value="ui">UI Agent</option>
+                            <option value="manufacturing">Manufacturing Agent</option>
+                            <option value="design">Design Agent</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="agentModel" class="form-label">Model</label>
+                        <select class="form-control" id="agentModel">
+                            <option value="">Select model...</option>
+                            <option value="gemini">Gemini 2.5 Pro</option>
+                            <option value="llama2">Llama 2</option>
+                            <option value="mistral">Mistral</option>
+                            <option value="gemma">Gemma</option>
+                            <option value="deepseek">DeepSeek Coder</option>
+                        </select>
+                    </div>
+                    <div class="alert alert-danger d-none" id="createAgentError"></div>
+                    <div class="d-none" id="createAgentLoadingContainer">
+                        <div class="progress mb-3">
+                            <div id="createAgentLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="spinner-border text-primary me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span id="createAgentLoadingPercent" class="loading-percentage">0%</span>
+                        </div>
+                        <p id="createAgentLoadingText" class="text-center">Creating agent...</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="createAgentSubmitBtn">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Agent Details Modal -->
+<div class="modal fade" id="agentDetailsModal" tabindex="-1" aria-labelledby="agentDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agentDetailsModalLabel">Agent Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="agentDetailsLoading">
+                    <div class="progress mb-3">
+                        <div id="agentDetailsLoadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <div class="spinner-border text-primary me-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span id="agentDetailsLoadingPercent" class="loading-percentage">0%</span>
+                    </div>
+                    <p id="agentDetailsLoadingText">Loading agent details...</p>
+                </div>
+                <div id="agentDetailsContent" class="d-none">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Basic Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>ID</th>
+                                    <td id="detailsAgentId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Name</th>
+                                    <td id="detailsAgentName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Type</th>
+                                    <td id="detailsAgentType"></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td id="detailsAgentStatus"></td>
+                                </tr>
+                                <tr>
+                                    <th>Model</th>
+                                    <td id="detailsAgentModel"></td>
+                                </tr>
+                                <tr>
+                                    <th>Created</th>
+                                    <td id="detailsAgentCreated"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Performance Metrics</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Tasks Completed</th>
+                                    <td id="detailsTasksCompleted"></td>
+                                </tr>
+                                <tr>
+                                    <th>Success Rate</th>
+                                    <td id="detailsSuccessRate"></td>
+                                </tr>
+                                <tr>
+                                    <th>Average Response Time</th>
+                                    <td id="detailsResponseTime"></td>
+                                </tr>
+                                <tr>
+                                    <th>Memory Usage</th>
+                                    <td id="detailsMemoryUsage"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h6>Recent Activity</h6>
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Task Completed</h6>
+                                        <small>3 minutes ago</small>
+                                    </div>
+                                    <p class="mb-1">Generated code for user interface component</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Task Started</h6>
+                                        <small>10 minutes ago</small>
+                                    </div>
+                                    <p class="mb-1">Started working on UI component generation</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Task Completed</h6>
+                                        <small>1 hour ago</small>
+                                    </div>
+                                    <p class="mb-1">Analyzed user requirements for new feature</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="sendMessageBtn">Send Message</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Load agents
+        loadAgents();
+        
+        // Set up event handlers
+        $('#createAgentSubmitBtn').click(function() {
+            createAgent();
+        });
+        
+        // Initialize agent activity chart
+        initAgentActivityChart();
+    });
+    
+    function loadAgents() {
+        const token = localStorage.getItem('dmac_token');
+        
+        // Show loading indicators
+        $('#agentsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#agentsLoadingPercent').text('10%');
+        $('#agentsLoadingText').text('Connecting to server...');
+        
+        // Simulate loading agents
+        setTimeout(function() {
+            $('#agentsLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#agentsLoadingPercent').text('30%');
+            $('#agentsLoadingText').text('Fetching agent data...');
+            
+            setTimeout(function() {
+                $('#agentsLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                $('#agentsLoadingPercent').text('60%');
+                $('#agentsLoadingText').text('Processing agent information...');
+                
+                setTimeout(function() {
+                    $('#agentsLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#agentsLoadingPercent').text('90%');
+                    $('#agentsLoadingText').text('Preparing agent list...');
+                    
+                    // Mock agent data
+                    const agents = [
+                        { id: 'agent_1', name: 'Code Generator', type: 'coding', status: 'Active', model: 'DeepSeek Coder' },
+                        { id: 'agent_2', name: 'Web Navigator', type: 'webarena', status: 'Active', model: 'Llama 2' },
+                        { id: 'agent_3', name: 'UI Designer', type: 'ui', status: 'Idle', model: 'Gemini 2.5 Pro' },
+                        { id: 'agent_4', name: 'Manufacturing Controller', type: 'manufacturing', status: 'Active', model: 'Mistral' },
+                        { id: 'agent_5', name: 'Design Assistant', type: 'design', status: 'Idle', model: 'Gemma' }
+                    ];
+                    
+                    setTimeout(function() {
+                        $('#agentsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#agentsLoadingPercent').text('100%');
+                        $('#agentsLoadingText').text('Completed!');
+                        
+                        setTimeout(function() {
+                            // Update agents table
+                            let tableHtml = '';
+                            agents.forEach(agent => {
+                                const statusClass = agent.status === 'Active' ? 'bg-success' : 'bg-warning';
+                                tableHtml += `
+                                    <tr>
+                                        <td>${agent.id}</td>
+                                        <td>${agent.name}</td>
+                                        <td>${agent.type}</td>
+                                        <td><span class="badge ${statusClass}">${agent.status}</span></td>
+                                        <td>${agent.model}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info view-agent-btn" data-agent-id="${agent.id}">View</button>
+                                            <button class="btn btn-sm btn-primary message-agent-btn" data-agent-id="${agent.id}">Message</button>
+                                            <button class="btn btn-sm btn-danger delete-agent-btn" data-agent-id="${agent.id}">Delete</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                            $('#agentsTable tbody').html(tableHtml);
+                            
+                            // Attach event handlers
+                            $('.view-agent-btn').click(function() {
+                                const agentId = $(this).data('agent-id');
+                                viewAgentDetails(agentId);
+                            });
+                            
+                            $('.message-agent-btn').click(function() {
+                                const agentId = $(this).data('agent-id');
+                                messageAgent(agentId);
+                            });
+                            
+                            $('.delete-agent-btn').click(function() {
+                                const agentId = $(this).data('agent-id');
+                                deleteAgent(agentId);
+                            });
+                        }, 500);
+                    }, 300);
+                }, 700);
+            }, 600);
+        }, 500);
+    }
+    
+    function createAgent() {
+        const token = localStorage.getItem('dmac_token');
+        const name = $('#agentName').val();
+        const type = $('#agentType').val();
+        const model = $('#agentModel').val();
+        
+        if (!name) {
+            $('#createAgentError').text('Please enter an agent name').removeClass('d-none');
+            return;
+        }
+        
+        if (!type) {
+            $('#createAgentError').text('Please select an agent type').removeClass('d-none');
+            return;
+        }
+        
+        if (!model) {
+            $('#createAgentError').text('Please select a model').removeClass('d-none');
+            return;
+        }
+        
+        // Hide error message
+        $('#createAgentError').addClass('d-none');
+        
+        // Show loading container
+        $('#createAgentLoadingContainer').removeClass('d-none');
+        
+        // Disable button
+        $('#createAgentSubmitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...');
+        
+        // Start loading animation
+        $('#createAgentLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#createAgentLoadingPercent').text('10%');
+        $('#createAgentLoadingText').text('Initializing agent creation...');
+        
+        setTimeout(function() {
+            $('#createAgentLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#createAgentLoadingPercent').text('30%');
+            $('#createAgentLoadingText').text('Sending request to server...');
+            
+            setTimeout(function() {
+                $('#createAgentLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                $('#createAgentLoadingPercent').text('60%');
+                $('#createAgentLoadingText').text('Initializing agent...');
+                
+                setTimeout(function() {
+                    $('#createAgentLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#createAgentLoadingPercent').text('90%');
+                    $('#createAgentLoadingText').text('Configuring agent...');
+                    
+                    setTimeout(function() {
+                        // Complete loading
+                        $('#createAgentLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#createAgentLoadingPercent').text('100%');
+                        $('#createAgentLoadingText').text('Agent created successfully!');
+                        
+                        setTimeout(function() {
+                            // Hide loading container
+                            $('#createAgentLoadingContainer').addClass('d-none');
+                            
+                            // Reset loading bar
+                            $('#createAgentLoadingBar').css('width', '0%').attr('aria-valuenow', 0);
+                            
+                            // Enable button
+                            $('#createAgentSubmitBtn').prop('disabled', false).text('Create');
+                            
+                            // Close modal
+                            $('#createAgentModal').modal('hide');
+                            
+                            // Reset form
+                            $('#createAgentForm')[0].reset();
+                            
+                            // Reload agents
+                            loadAgents();
+                            
+                            // Show success message
+                            alert(`Agent "${name}" created successfully!`);
+                        }, 500);
+                    }, 500);
+                }, 600);
+            }, 700);
+        }, 500);
+    }
+    
+    function viewAgentDetails(agentId) {
+        // Show modal
+        $('#agentDetailsModal').modal('show');
+        
+        // Show loading indicator
+        $('#agentDetailsLoading').removeClass('d-none');
+        $('#agentDetailsContent').addClass('d-none');
+        
+        // Start loading animation
+        $('#agentDetailsLoadingBar').css('width', '10%').attr('aria-valuenow', 10);
+        $('#agentDetailsLoadingPercent').text('10%');
+        $('#agentDetailsLoadingText').text('Connecting to server...');
+        
+        setTimeout(function() {
+            $('#agentDetailsLoadingBar').css('width', '30%').attr('aria-valuenow', 30);
+            $('#agentDetailsLoadingPercent').text('30%');
+            $('#agentDetailsLoadingText').text('Fetching agent details...');
+            
+            setTimeout(function() {
+                $('#agentDetailsLoadingBar').css('width', '60%').attr('aria-valuenow', 60);
+                $('#agentDetailsLoadingPercent').text('60%');
+                $('#agentDetailsLoadingText').text('Processing agent information...');
+                
+                // Mock agent details based on ID
+                let agentDetails;
+                
+                if (agentId === 'agent_1') {
+                    agentDetails = {
+                        id: 'agent_1',
+                        name: 'Code Generator',
+                        type: 'coding',
+                        status: 'Active',
+                        model: 'DeepSeek Coder',
+                        created: '2023-07-01 10:00:00',
+                        tasksCompleted: 42,
+                        successRate: '95%',
+                        responseTime: '200ms',
+                        memoryUsage: '1.2 GB'
+                    };
+                } else if (agentId === 'agent_2') {
+                    agentDetails = {
+                        id: 'agent_2',
+                        name: 'Web Navigator',
+                        type: 'webarena',
+                        status: 'Active',
+                        model: 'Llama 2',
+                        created: '2023-07-02 11:30:00',
+                        tasksCompleted: 35,
+                        successRate: '88%',
+                        responseTime: '250ms',
+                        memoryUsage: '1.5 GB'
+                    };
+                } else {
+                    agentDetails = {
+                        id: agentId,
+                        name: 'Unknown Agent',
+                        type: 'unknown',
+                        status: 'Unknown',
+                        model: 'Unknown',
+                        created: 'Unknown',
+                        tasksCompleted: 0,
+                        successRate: '0%',
+                        responseTime: 'N/A',
+                        memoryUsage: 'N/A'
+                    };
+                }
+                
+                setTimeout(function() {
+                    $('#agentDetailsLoadingBar').css('width', '90%').attr('aria-valuenow', 90);
+                    $('#agentDetailsLoadingPercent').text('90%');
+                    $('#agentDetailsLoadingText').text('Preparing visualization...');
+                    
+                    setTimeout(function() {
+                        // Update agent details
+                        $('#detailsAgentId').text(agentDetails.id);
+                        $('#detailsAgentName').text(agentDetails.name);
+                        $('#detailsAgentType').text(agentDetails.type);
+                        $('#detailsAgentStatus').html(`<span class="badge bg-success">${agentDetails.status}</span>`);
+                        $('#detailsAgentModel').text(agentDetails.model);
+                        $('#detailsAgentCreated').text(agentDetails.created);
+                        
+                        $('#detailsTasksCompleted').text(agentDetails.tasksCompleted);
+                        $('#detailsSuccessRate').text(agentDetails.successRate);
+                        $('#detailsResponseTime').text(agentDetails.responseTime);
+                        $('#detailsMemoryUsage').text(agentDetails.memoryUsage);
+                        
+                        // Complete loading
+                        $('#agentDetailsLoadingBar').css('width', '100%').attr('aria-valuenow', 100);
+                        $('#agentDetailsLoadingPercent').text('100%');
+                        $('#agentDetailsLoadingText').text('Completed!');
+                        
+                        setTimeout(function() {
+                            // Hide loading indicator and show content
+                            $('#agentDetailsLoading').addClass('d-none');
+                            $('#agentDetailsContent').removeClass('d-none');
+                        }, 300);
+                    }, 400);
+                }, 500);
+            }, 600);
+        }, 500);
+    }
+    
+    function messageAgent(agentId) {
+        alert(`Messaging agent: ${agentId}. This feature is not yet implemented.`);
+    }
+    
+    function deleteAgent(agentId) {
+        if (confirm(`Are you sure you want to delete agent "${agentId}"?`)) {
+            alert(`Agent "${agentId}" deleted successfully!`);
+            loadAgents();
+        }
+    }
+    
+    function initAgentActivityChart() {
+        const ctx = document.getElementById('agentActivityChart').getContext('2d');
+        
+        // Mock activity data
+        const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Tasks Completed',
+                    data: [12, 19, 15, 8, 22, 14, 10],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Messages Sent',
+                    data: [5, 12, 8, 4, 15, 10, 6],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        };
+        
+        window.agentActivityChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

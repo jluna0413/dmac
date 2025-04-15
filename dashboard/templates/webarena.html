@@ -1,0 +1,740 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>WebArena</h1>
+        <p>WebArena is a benchmark for evaluating web agents. You can run experiments with different models and tasks, and visualize the results.</p>
+        <div class="mb-3">
+            <a href="/webarena/dashboard" class="btn btn-primary">Go to WebArena Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Run New Experiment</h5>
+            </div>
+            <div class="card-body">
+                <form id="experimentForm">
+                    <div class="form-group mb-3">
+                        <label for="taskSelect">Task</label>
+                        <select class="form-control" id="taskSelect" required>
+                            <option value="">Select a task...</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="modelSelect">Model</label>
+                        <select class="form-control" id="modelSelect" required>
+                            <option value="">Select a model...</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="numEpisodes">Number of Episodes</label>
+                        <input type="number" class="form-control" id="numEpisodes" min="1" max="10" value="1">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="timeout">Timeout (seconds)</label>
+                        <input type="number" class="form-control" id="timeout" min="300" max="7200" value="3600">
+                    </div>
+                    <div class="alert alert-danger d-none" id="experimentError"></div>
+                    <button type="submit" class="btn btn-primary">Run Experiment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Runs</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="recentRunsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Task</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/webarena/runs" class="btn btn-primary btn-sm">View All Runs</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Performance Overview</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Task Success Rates</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="successRateChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Model Comparison</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="modelComparisonChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Run Details Modal -->
+<div class="modal fade" id="runDetailsModal" tabindex="-1" aria-labelledby="runDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="runDetailsModalLabel">Run Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="runDetailsLoading">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Loading run details...</p>
+                </div>
+                <div id="runDetailsContent" class="d-none">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Run Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>ID</th>
+                                    <td id="detailsRunId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Task</th>
+                                    <td id="detailsTaskName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Model</th>
+                                    <td id="detailsModelName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td id="detailsStatus"></td>
+                                </tr>
+                                <tr>
+                                    <th>Start Time</th>
+                                    <td id="detailsStartTime"></td>
+                                </tr>
+                                <tr>
+                                    <th>Duration</th>
+                                    <td id="detailsDuration"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Results</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Success Rate</th>
+                                    <td id="detailsSuccessRate"></td>
+                                </tr>
+                                <tr>
+                                    <th>Avg. Completion Time</th>
+                                    <td id="detailsCompletionTime"></td>
+                                </tr>
+                                <tr>
+                                    <th>Total Actions</th>
+                                    <td id="detailsTotalActions"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h6>Action Breakdown</h6>
+                            <canvas id="detailsActionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-primary" id="viewFullDetailsButton">View Full Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Load tasks and models
+        loadTasks();
+        loadModels();
+
+        // Load recent runs
+        loadRecentRuns();
+
+        // Initialize charts
+        initializeCharts();
+
+        // Handle experiment form submission
+        $('#experimentForm').submit(function(e) {
+            e.preventDefault();
+            runExperiment();
+        });
+
+        // Refresh data every 30 seconds
+        setInterval(loadRecentRuns, 30000);
+    });
+
+    function loadTasks() {
+        const token = localStorage.getItem('dmac_token');
+
+        $.ajax({
+            url: '/api/webarena/tasks',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const tasks = response.tasks || [];
+                let html = '<option value="">Select a task...</option>';
+
+                tasks.forEach(task => {
+                    html += `<option value="${task.id}">${task.name}</option>`;
+                });
+
+                $('#taskSelect').html(html);
+            },
+            error: function(xhr) {
+                console.error('Error loading tasks:', xhr);
+                $('#taskSelect').html('<option value="">Error loading tasks</option>');
+            }
+        });
+    }
+
+    function loadModels() {
+        const token = localStorage.getItem('dmac_token');
+
+        $.ajax({
+            url: '/api/webarena/models',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const models = response.models || [];
+                let html = '<option value="">Select a model...</option>';
+
+                models.forEach(model => {
+                    html += `<option value="${model.name}">${model.name}</option>`;
+                });
+
+                $('#modelSelect').html(html);
+            },
+            error: function(xhr) {
+                console.error('Error loading models:', xhr);
+                $('#modelSelect').html('<option value="">Error loading models</option>');
+            }
+        });
+    }
+
+    function loadRecentRuns() {
+        const token = localStorage.getItem('dmac_token');
+
+        $.ajax({
+            url: '/api/webarena/runs?limit=5',
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const runs = response.runs || [];
+                let html = '';
+
+                if (runs.length === 0) {
+                    html = '<tr><td colspan="5" class="text-center">No runs found</td></tr>';
+                } else {
+                    runs.forEach(run => {
+                        html += `
+                            <tr>
+                                <td>${run.id}</td>
+                                <td>${run.task_name}</td>
+                                <td>${run.model_name}</td>
+                                <td><span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-run-btn" data-run-id="${run.id}">View</button>
+                                    <a href="/webarena/runs/${run.id}" class="btn btn-sm btn-primary">Details</a>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                $('#recentRunsTable tbody').html(html);
+
+                // Attach event handlers to view buttons
+                $('.view-run-btn').click(function() {
+                    const runId = $(this).data('run-id');
+                    showRunDetails(runId);
+                });
+
+                // Update charts with the new data
+                updateCharts(runs);
+            },
+            error: function(xhr) {
+                console.error('Error loading recent runs:', xhr);
+                $('#recentRunsTable tbody').html('<tr><td colspan="5" class="text-center">Error loading runs</td></tr>');
+            }
+        });
+    }
+
+    function initializeCharts() {
+        // Performance overview chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        window.performanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Success Rate',
+                    data: [],
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Run'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Success Rate'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Success rate chart
+        const successRateCtx = document.getElementById('successRateChart').getContext('2d');
+        window.successRateChart = new Chart(successRateCtx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Success Rate',
+                    data: [],
+                    backgroundColor: '#17a2b8'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Task'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Success Rate'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Model comparison chart
+        const modelComparisonCtx = document.getElementById('modelComparisonChart').getContext('2d');
+        window.modelComparisonChart = new Chart(modelComparisonCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Success Rate', 'Speed', 'Efficiency'],
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scale: {
+                    ticks: {
+                        beginAtZero: true,
+                        max: 1
+                    }
+                }
+            }
+        });
+    }
+
+    function updateCharts(runs) {
+        // Extract completed runs with results
+        const completedRuns = runs.filter(run => run.status === 'completed' && run.results);
+
+        if (completedRuns.length === 0) {
+            return;
+        }
+
+        // Update performance chart
+        const performanceLabels = completedRuns.map(run => run.id);
+        const performanceData = completedRuns.map(run => {
+            if (run.results && run.results.success_rate !== undefined) {
+                return run.results.success_rate;
+            }
+            return 0;
+        });
+
+        window.performanceChart.data.labels = performanceLabels;
+        window.performanceChart.data.datasets[0].data = performanceData;
+        window.performanceChart.update();
+
+        // Update success rate chart
+        const taskSuccessRates = {};
+        completedRuns.forEach(run => {
+            if (run.results && run.results.success_rate !== undefined) {
+                if (!taskSuccessRates[run.task_name]) {
+                    taskSuccessRates[run.task_name] = [];
+                }
+                taskSuccessRates[run.task_name].push(run.results.success_rate);
+            }
+        });
+
+        const taskLabels = Object.keys(taskSuccessRates);
+        const taskData = taskLabels.map(task => {
+            const rates = taskSuccessRates[task];
+            return rates.reduce((sum, rate) => sum + rate, 0) / rates.length;
+        });
+
+        window.successRateChart.data.labels = taskLabels;
+        window.successRateChart.data.datasets[0].data = taskData;
+        window.successRateChart.update();
+
+        // Update model comparison chart
+        const modelData = {};
+        completedRuns.forEach(run => {
+            if (run.results) {
+                if (!modelData[run.model_name]) {
+                    modelData[run.model_name] = {
+                        successRates: [],
+                        completionTimes: [],
+                        actionCounts: []
+                    };
+                }
+
+                if (run.results.success_rate !== undefined) {
+                    modelData[run.model_name].successRates.push(run.results.success_rate);
+                }
+
+                if (run.results.completion_time !== undefined) {
+                    modelData[run.model_name].completionTimes.push(run.results.completion_time);
+                }
+
+                if (run.results.total_actions !== undefined) {
+                    modelData[run.model_name].actionCounts.push(run.results.total_actions);
+                }
+            }
+        });
+
+        // Calculate average metrics for each model
+        const modelMetrics = {};
+        Object.keys(modelData).forEach(model => {
+            const data = modelData[model];
+
+            const avgSuccessRate = data.successRates.length > 0
+                ? data.successRates.reduce((sum, rate) => sum + rate, 0) / data.successRates.length
+                : 0;
+
+            const avgCompletionTime = data.completionTimes.length > 0
+                ? data.completionTimes.reduce((sum, time) => sum + time, 0) / data.completionTimes.length
+                : 0;
+
+            const avgActionCount = data.actionCounts.length > 0
+                ? data.actionCounts.reduce((sum, count) => sum + count, 0) / data.actionCounts.length
+                : 0;
+
+            // Normalize speed and efficiency (lower is better, so invert)
+            const maxTime = 3600; // 1 hour
+            const maxActions = 100;
+
+            const normalizedSpeed = avgCompletionTime > 0 ? 1 - (avgCompletionTime / maxTime) : 0;
+            const normalizedEfficiency = avgActionCount > 0 ? 1 - (avgActionCount / maxActions) : 0;
+
+            modelMetrics[model] = [avgSuccessRate, normalizedSpeed, normalizedEfficiency];
+        });
+
+        // Create datasets for the radar chart
+        const colors = ['#28a745', '#17a2b8', '#ffc107', '#dc3545', '#6f42c1'];
+        const datasets = Object.keys(modelMetrics).map((model, index) => {
+            const color = colors[index % colors.length];
+            return {
+                label: model,
+                data: modelMetrics[model],
+                backgroundColor: `${color}33`,
+                borderColor: color,
+                pointBackgroundColor: color,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: color
+            };
+        });
+
+        window.modelComparisonChart.data.datasets = datasets;
+        window.modelComparisonChart.update();
+    }
+
+    function runExperiment() {
+        const token = localStorage.getItem('dmac_token');
+
+        // Get form values
+        const taskName = $('#taskSelect').val();
+        const modelName = $('#modelSelect').val();
+        const numEpisodes = $('#numEpisodes').val();
+        const timeout = $('#timeout').val();
+
+        // Validate form
+        if (!taskName || !modelName) {
+            $('#experimentError').text('Please select a task and model').removeClass('d-none');
+            return;
+        }
+
+        // Hide error message
+        $('#experimentError').addClass('d-none');
+
+        // Disable form
+        $('#experimentForm button[type="submit"]').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Running...');
+
+        // Send request
+        $.ajax({
+            url: '/api/webarena/runs',
+            type: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                task_name: taskName,
+                model_name: modelName,
+                num_episodes: parseInt(numEpisodes),
+                timeout: parseInt(timeout)
+            }),
+            success: function(response) {
+                // Show success message
+                alert(`Experiment started successfully! Run ID: ${response.run_id}`);
+
+                // Reset form
+                $('#experimentForm')[0].reset();
+
+                // Reload recent runs
+                loadRecentRuns();
+            },
+            error: function(xhr) {
+                // Show error message
+                let errorMessage = 'Error starting experiment';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
+                $('#experimentError').text(errorMessage).removeClass('d-none');
+            },
+            complete: function() {
+                // Enable form
+                $('#experimentForm button[type="submit"]').prop('disabled', false).text('Run Experiment');
+            }
+        });
+    }
+
+    function showRunDetails(runId) {
+        const token = localStorage.getItem('dmac_token');
+
+        // Show modal
+        $('#runDetailsModal').modal('show');
+
+        // Show loading indicator
+        $('#runDetailsLoading').removeClass('d-none');
+        $('#runDetailsContent').addClass('d-none');
+
+        // Set the full details link
+        $('#viewFullDetailsButton').attr('href', `/webarena/runs/${runId}`);
+
+        // Load run details
+        $.ajax({
+            url: `/api/webarena/runs/${runId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                const run = response.run_status;
+
+                // Set run information
+                $('#detailsRunId').text(run.id);
+                $('#detailsTaskName').text(run.task_name);
+                $('#detailsModelName').text(run.model_name);
+                $('#detailsStatus').html(`<span class="badge ${getStatusBadgeClass(run.status)}">${run.status}</span>`);
+                $('#detailsStartTime').text(formatDate(run.start_time));
+
+                if (run.duration) {
+                    $('#detailsDuration').text(`${run.duration.toFixed(2)} seconds`);
+                } else if (run.start_time && run.end_time) {
+                    const duration = run.end_time - run.start_time;
+                    $('#detailsDuration').text(`${duration.toFixed(2)} seconds`);
+                } else {
+                    $('#detailsDuration').text('N/A');
+                }
+
+                // Set results information
+                if (run.results) {
+                    const results = run.results;
+
+                    if (results.success_rate !== undefined) {
+                        $('#detailsSuccessRate').text(`${(results.success_rate * 100).toFixed(2)}%`);
+                    } else {
+                        $('#detailsSuccessRate').text('N/A');
+                    }
+
+                    if (results.completion_time !== undefined) {
+                        $('#detailsCompletionTime').text(`${results.completion_time.toFixed(2)} seconds`);
+                    } else {
+                        $('#detailsCompletionTime').text('N/A');
+                    }
+
+                    if (results.total_actions !== undefined) {
+                        $('#detailsTotalActions').text(results.total_actions);
+                    } else {
+                        $('#detailsTotalActions').text('N/A');
+                    }
+
+                    // Create action breakdown chart
+                    if (results.action_counts) {
+                        const actionLabels = Object.keys(results.action_counts);
+                        const actionData = actionLabels.map(action => results.action_counts[action]);
+
+                        if (window.detailsActionChart) {
+                            window.detailsActionChart.destroy();
+                        }
+
+                        const actionCtx = document.getElementById('detailsActionChart').getContext('2d');
+                        window.detailsActionChart = new Chart(actionCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: actionLabels,
+                                datasets: [{
+                                    data: actionData,
+                                    backgroundColor: [
+                                        '#28a745', '#17a2b8', '#ffc107', '#dc3545', '#6f42c1',
+                                        '#fd7e14', '#20c997', '#e83e8c', '#6c757d', '#007bff'
+                                    ]
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                legend: {
+                                    position: 'right'
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    $('#detailsSuccessRate').text('N/A');
+                    $('#detailsCompletionTime').text('N/A');
+                    $('#detailsTotalActions').text('N/A');
+                }
+
+                // Hide loading indicator and show content
+                $('#runDetailsLoading').addClass('d-none');
+                $('#runDetailsContent').removeClass('d-none');
+            },
+            error: function(xhr) {
+                console.error('Error loading run details:', xhr);
+                $('#runDetailsModal').modal('hide');
+                alert('Error loading run details');
+            }
+        });
+    }
+
+    function getStatusBadgeClass(status) {
+        switch (status) {
+            case 'completed':
+            case 'success':
+                return 'bg-success';
+            case 'running':
+            case 'active':
+                return 'bg-info';
+            case 'pending':
+                return 'bg-warning';
+            case 'failed':
+            case 'error':
+                return 'bg-danger';
+            default:
+                return 'bg-secondary';
+        }
+    }
+
+    function formatDate(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp * 1000);
+        return date.toLocaleString();
+    }
+</script>
+{% endblock %}

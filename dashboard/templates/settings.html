@@ -1,0 +1,850 @@
+{% extends "base.html" %}
+
+{% block title %}DMac - Settings{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/settings.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Settings</h1>
+        <p>Configure your profile and DMac system settings.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="list-group">
+            <a href="#profile" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                <i class="fas fa-user me-2"></i>Profile
+            </a>
+            <a href="#account" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                <i class="fas fa-user-shield me-2"></i>Account & Security
+            </a>
+            <a href="#general" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                <i class="fas fa-cog me-2"></i>General
+            </a>
+            <a href="#models" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                <i class="fas fa-brain me-2"></i>Models
+            </a>
+            <a href="#agents" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                <i class="fas fa-robot me-2"></i>Agents
+            </a>
+            <a href="#webarena" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                <i class="fas fa-globe me-2"></i>WebArena
+            </a>
+            <a href="#advanced" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                <i class="fas fa-tools me-2"></i>Advanced
+            </a>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="profile">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">User Profile</h5>
+                        <button type="button" class="btn btn-sm btn-primary" id="saveProfileBtn">Save Changes</button>
+                    </div>
+                    <div class="card-body">
+                        <form id="profileForm">
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-4">
+                                    <div class="avatar-upload">
+                                        <div class="avatar-preview">
+                                            <img src="/static/img/user-avatar.png" id="userAvatarPreview" class="img-fluid rounded-circle" alt="User Avatar" style="width: 150px; height: 150px; object-fit: cover;">
+                                        </div>
+                                        <div class="avatar-edit mt-3">
+                                            <label for="userAvatarUpload" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-camera me-2"></i>Change Photo
+                                            </label>
+                                            <input type="file" id="userAvatarUpload" accept="image/*" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="displayName" class="form-label">Display Name</label>
+                                        <input type="text" class="form-control" id="displayName" value="John Doe">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="userEmail" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="userEmail" value="john.doe@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="userRole" class="form-label">Role</label>
+                                        <input type="text" class="form-control" id="userRole" value="Administrator" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="userBio" class="form-label">Bio</label>
+                                        <textarea class="form-control" id="userBio" rows="3">AI enthusiast and developer working on agent swarms.</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="account">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Account Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Connected Accounts</h6>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fab fa-google me-2 text-danger"></i>
+                                        <span>Google</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-success me-2">Connected</span>
+                                        <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                                    </div>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fab fa-github me-2"></i>
+                                        <span>GitHub</span>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary">Connect</button>
+                                    </div>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fab fa-apple me-2"></i>
+                                        <span>Apple</span>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Account Switching</h6>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <img src="/static/img/user-avatar.png" class="rounded-circle me-2" alt="Current User" style="width: 32px; height: 32px; object-fit: cover;">
+                                        <div>
+                                            <div>John Doe (Current)</div>
+                                            <small class="text-muted">john.doe@example.com</small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">Active</span>
+                                    </div>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <img src="/static/img/user-avatar.png" class="rounded-circle me-2" alt="Other User" style="width: 32px; height: 32px; object-fit: cover; filter: grayscale(100%);">
+                                        <div>
+                                            <div>Jane Smith</div>
+                                            <small class="text-muted">jane.smith@example.com</small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary">Switch</button>
+                                    </div>
+                                </div>
+                                <div class="list-group-item">
+                                    <button class="btn btn-sm btn-success w-100">
+                                        <i class="fas fa-plus me-2"></i>Add Another Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Two-Factor Authentication</h6>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="enable2FA">
+                                        <label class="form-check-label" for="enable2FA">Enable Two-Factor Authentication</label>
+                                    </div>
+                                    <p class="text-muted small">Protect your account with an additional layer of security. When enabled, you'll need to enter a code from your mobile authenticator app when signing in.</p>
+                                    <button class="btn btn-primary" id="setup2FABtn" disabled>Set Up Authenticator</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h6 class="fw-bold">Account Actions</h6>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary" id="changePasswordBtn">
+                                    <i class="fas fa-key me-2"></i>Change Password
+                                </button>
+                                <button class="btn btn-outline-danger" id="logoutAllDevicesBtn">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout from All Devices
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="general">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">General Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="generalSettingsForm">
+                            <div class="mb-3">
+                                <label for="systemName" class="form-label">System Name</label>
+                                <input type="text" class="form-control" id="systemName" value="DMac AI Agent Swarm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="logLevel" class="form-label">Log Level</label>
+                                <select class="form-control" id="logLevel">
+                                    <option value="debug">Debug</option>
+                                    <option value="info" selected>Info</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="error">Error</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="dataDirectory" class="form-label">Data Directory</label>
+                                <input type="text" class="form-control" id="dataDirectory" value="./data">
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableTelemetry" checked>
+                                <label class="form-check-label" for="enableTelemetry">Enable Telemetry</label>
+                                <div class="form-text">Send anonymous usage data to help improve DMac.</div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="saveGeneralSettingsBtn">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="models">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Model Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="modelSettingsForm">
+                            <div class="mb-3">
+                                <label for="defaultModel" class="form-label">Default Model</label>
+                                <select class="form-control" id="defaultModel">
+                                    <option value="gemini">Gemini 2.5 Pro</option>
+                                    <option value="llama2" selected>Llama 2</option>
+                                    <option value="mistral">Mistral</option>
+                                    <option value="gemma">Gemma</option>
+                                    <option value="deepseek">DeepSeek Coder</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ollamaEndpoint" class="form-label">Ollama Endpoint</label>
+                                <input type="text" class="form-control" id="ollamaEndpoint" value="http://localhost:11434">
+                            </div>
+                            <div class="mb-3">
+                                <label for="modelCacheSize" class="form-label">Model Cache Size (MB)</label>
+                                <input type="number" class="form-control" id="modelCacheSize" value="1024">
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableModelFallback" checked>
+                                <label class="form-check-label" for="enableModelFallback">Enable Model Fallback</label>
+                                <div class="form-text">Automatically fall back to alternative models if the primary model fails.</div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="saveModelSettingsBtn">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="agents">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Agent Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="agentSettingsForm">
+                            <div class="mb-3">
+                                <label for="maxAgents" class="form-label">Maximum Concurrent Agents</label>
+                                <input type="number" class="form-control" id="maxAgents" value="10">
+                            </div>
+                            <div class="mb-3">
+                                <label for="agentTimeout" class="form-label">Agent Timeout (seconds)</label>
+                                <input type="number" class="form-control" id="agentTimeout" value="300">
+                            </div>
+                            <div class="mb-3">
+                                <label for="agentMemoryLimit" class="form-label">Agent Memory Limit (MB)</label>
+                                <input type="number" class="form-control" id="agentMemoryLimit" value="512">
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableAgentLogging" checked>
+                                <label class="form-check-label" for="enableAgentLogging">Enable Agent Logging</label>
+                                <div class="form-text">Log agent activities for debugging and analysis.</div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="saveAgentSettingsBtn">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="webarena">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">WebArena Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="webArenaSettingsForm">
+                            <div class="mb-3">
+                                <label for="webArenaEndpoint" class="form-label">WebArena Endpoint</label>
+                                <input type="text" class="form-control" id="webArenaEndpoint" value="http://localhost:8000">
+                            </div>
+                            <div class="mb-3">
+                                <label for="webArenaTimeout" class="form-label">WebArena Timeout (seconds)</label>
+                                <input type="number" class="form-control" id="webArenaTimeout" value="600">
+                            </div>
+                            <div class="mb-3">
+                                <label for="webArenaResultsDir" class="form-label">Results Directory</label>
+                                <input type="text" class="form-control" id="webArenaResultsDir" value="./data/webarena/results">
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableWebArenaVisualization" checked>
+                                <label class="form-check-label" for="enableWebArenaVisualization">Enable Visualization</label>
+                                <div class="form-text">Generate visualizations for WebArena results.</div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="useOpenSourceVisualization" checked>
+                                <label class="form-check-label" for="useOpenSourceVisualization">Use Open-Source Visualization</label>
+                                <div class="form-text">Use completely free and open-source visualization tools.</div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="saveWebArenaSettingsBtn">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="security">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Security Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="securitySettingsForm">
+                            <div class="mb-3">
+                                <label for="authMethod" class="form-label">Authentication Method</label>
+                                <select class="form-control" id="authMethod">
+                                    <option value="none">None</option>
+                                    <option value="basic" selected>Basic</option>
+                                    <option value="oauth">OAuth</option>
+                                    <option value="jwt">JWT</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sessionTimeout" class="form-label">Session Timeout (minutes)</label>
+                                <input type="number" class="form-control" id="sessionTimeout" value="30">
+                            </div>
+                            <div class="mb-3">
+                                <label for="apiKeyExpiration" class="form-label">API Key Expiration (days)</label>
+                                <input type="number" class="form-control" id="apiKeyExpiration" value="30">
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableSSL" checked>
+                                <label class="form-check-label" for="enableSSL">Enable SSL</label>
+                                <div class="form-text">Use HTTPS for secure communication.</div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableRateLimiting" checked>
+                                <label class="form-check-label" for="enableRateLimiting">Enable Rate Limiting</label>
+                                <div class="form-text">Limit the number of requests per minute to prevent abuse.</div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="saveSecuritySettingsBtn">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="advanced">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Advanced Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="advancedSettingsForm">
+                            <div class="mb-3">
+                                <label for="workerThreads" class="form-label">Worker Threads</label>
+                                <input type="number" class="form-control" id="workerThreads" value="4">
+                            </div>
+                            <div class="mb-3">
+                                <label for="maxRequestSize" class="form-label">Maximum Request Size (MB)</label>
+                                <input type="number" class="form-control" id="maxRequestSize" value="10">
+                            </div>
+                            <div class="mb-3">
+                                <label for="debugMode" class="form-label">Debug Mode</label>
+                                <select class="form-control" id="debugMode">
+                                    <option value="off">Off</option>
+                                    <option value="on">On</option>
+                                    <option value="verbose">Verbose</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableProfiling">
+                                <label class="form-check-label" for="enableProfiling">Enable Profiling</label>
+                                <div class="form-text">Enable performance profiling for debugging.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="configJson" class="form-label">Configuration JSON</label>
+                                <textarea class="form-control" id="configJson" rows="10">{
+  "system": {
+    "name": "DMac AI Agent Swarm",
+    "log_level": "info",
+    "data_directory": "./data",
+    "enable_telemetry": true
+  },
+  "models": {
+    "default_model": "llama2",
+    "ollama_endpoint": "http://localhost:11434",
+    "model_cache_size": 1024,
+    "enable_model_fallback": true
+  },
+  "agents": {
+    "max_agents": 10,
+    "agent_timeout": 300,
+    "agent_memory_limit": 512,
+    "enable_agent_logging": true
+  },
+  "webarena": {
+    "endpoint": "http://localhost:8000",
+    "timeout": 600,
+    "results_dir": "./data/webarena/results",
+    "enable_visualization": true,
+    "use_open_source_visualization": true
+  },
+  "security": {
+    "auth_method": "basic",
+    "session_timeout": 30,
+    "api_key_expiration": 30,
+    "enable_ssl": true,
+    "enable_rate_limiting": true
+  },
+  "advanced": {
+    "worker_threads": 4,
+    "max_request_size": 10,
+    "debug_mode": "off",
+    "enable_profiling": false
+  }
+}</textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="saveAdvancedSettingsBtn">Save Changes</button>
+                            <button type="button" class="btn btn-danger" id="resetSettingsBtn">Reset to Defaults</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Check if the user is logged in
+        const token = localStorage.getItem('dmac_token');
+        if (!token) {
+            // Redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+
+        // Set up avatar upload preview
+        $('#userAvatarUpload').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#userAvatarPreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Set up 2FA toggle
+        $('#enable2FA').change(function() {
+            $('#setup2FABtn').prop('disabled', !this.checked);
+        });
+
+        // Set up event handlers for profile
+        $('#saveProfileBtn').click(function() {
+            saveProfile();
+        });
+
+        // Set up event handlers for account actions
+        $('#changePasswordBtn').click(function() {
+            showChangePasswordModal();
+        });
+
+        $('#logoutAllDevicesBtn').click(function() {
+            if (confirm('Are you sure you want to log out from all devices? You will need to log in again on this device.')) {
+                // Simulate logging out from all devices
+                showToast('Success', 'Logged out from all devices successfully.');
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            }
+        });
+
+        // Set up event handlers for settings
+        $('#saveGeneralSettingsBtn').click(function() {
+            saveSettings('general');
+        });
+
+        $('#saveModelSettingsBtn').click(function() {
+            saveSettings('models');
+        });
+
+        $('#saveAgentSettingsBtn').click(function() {
+            saveSettings('agents');
+        });
+
+        $('#saveWebArenaSettingsBtn').click(function() {
+            saveSettings('webarena');
+        });
+
+        $('#saveAdvancedSettingsBtn').click(function() {
+            saveSettings('advanced');
+        });
+
+        $('#resetSettingsBtn').click(function() {
+            resetSettings();
+        });
+
+        // Update JSON when form fields change
+        $('form input, form select, form textarea').on('change', function() {
+            updateConfigJson();
+        });
+
+        // Update form fields when JSON changes
+        $('#configJson').on('change', function() {
+            updateFormFields();
+        });
+
+        // Handle account connection buttons
+        $('.list-group-item button').click(function() {
+            const $button = $(this);
+            const provider = $button.closest('.list-group-item').find('span').text();
+
+            if ($button.hasClass('btn-outline-primary')) {
+                // Connect account
+                $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+                // Simulate connecting account
+                setTimeout(function() {
+                    $button.removeClass('btn-outline-primary').addClass('btn-outline-danger').text('Disconnect');
+                    $button.prop('disabled', false);
+                    $button.closest('.list-group-item').find('div:first').append('<span class="badge bg-success ms-2">Connected</span>');
+                    showToast('Success', `Connected to ${provider} successfully.`);
+                }, 1500);
+            } else {
+                // Disconnect account
+                if (confirm(`Are you sure you want to disconnect your ${provider} account?`)) {
+                    $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+                    // Simulate disconnecting account
+                    setTimeout(function() {
+                        $button.removeClass('btn-outline-danger').addClass('btn-outline-primary').text('Connect');
+                        $button.prop('disabled', false);
+                        $button.closest('.list-group-item').find('.badge').remove();
+                        showToast('Success', `Disconnected from ${provider} successfully.`);
+                    }, 1500);
+                }
+            }
+        });
+    });
+
+    function saveProfile() {
+        // Show loading indicator
+        const $button = $('#saveProfileBtn');
+        const originalText = $button.text();
+        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+        // Get form data
+        const formData = new FormData();
+        formData.append('displayName', $('#displayName').val());
+        formData.append('email', $('#userEmail').val());
+        formData.append('bio', $('#userBio').val());
+
+        // Add avatar if changed
+        const avatarFile = $('#userAvatarUpload')[0].files[0];
+        if (avatarFile) {
+            formData.append('avatar', avatarFile);
+        }
+
+        // Simulate API call
+        setTimeout(function() {
+            // Enable button
+            $button.prop('disabled', false).text(originalText);
+
+            // Show success message
+            showToast('Success', 'Profile updated successfully!');
+
+            // Update sidebar avatar if changed
+            if (avatarFile) {
+                $('.user-avatar').attr('src', URL.createObjectURL(avatarFile));
+            }
+        }, 1500);
+    }
+
+    function showChangePasswordModal() {
+        // Create modal if it doesn't exist
+        if (!$('#changePasswordModal').length) {
+            const modalHTML = `
+                <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="changePasswordForm">
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="currentPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="newPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword" required>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="savePasswordBtn">Change Password</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('body').append(modalHTML);
+
+            // Set up event handler for save button
+            $('#savePasswordBtn').click(function() {
+                const currentPassword = $('#currentPassword').val();
+                const newPassword = $('#newPassword').val();
+                const confirmPassword = $('#confirmPassword').val();
+
+                // Validate form
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    showToast('Error', 'Please fill in all fields.');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    showToast('Error', 'New passwords do not match.');
+                    return;
+                }
+
+                // Show loading indicator
+                const $button = $('#savePasswordBtn');
+                const originalText = $button.text();
+                $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                // Simulate API call
+                setTimeout(function() {
+                    // Enable button
+                    $button.prop('disabled', false).text(originalText);
+
+                    // Close modal
+                    $('#changePasswordModal').modal('hide');
+
+                    // Show success message
+                    showToast('Success', 'Password changed successfully!');
+
+                    // Reset form
+                    $('#changePasswordForm')[0].reset();
+                }, 1500);
+            });
+        }
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+        modal.show();
+    }
+
+    function showToast(title, message) {
+        // Create toast container if it doesn't exist
+        if (!$('.toast-container').length) {
+            $('body').append('<div class="toast-container position-fixed bottom-0 end-0 p-3"></div>');
+        }
+
+        // Create toast
+        const toastId = 'toast-' + Date.now();
+        const toastHTML = `
+            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">${title}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            </div>
+        `;
+        $('.toast-container').append(toastHTML);
+
+        // Show toast
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+        toast.show();
+
+        // Remove toast after it's hidden
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            $(this).remove();
+        });
+    }
+
+    function saveSettings(section) {
+        // Show loading indicator
+        const $button = $(`#save${section.charAt(0).toUpperCase() + section.slice(1)}SettingsBtn`);
+        const originalText = $button.text();
+        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+        // Simulate saving settings
+        setTimeout(function() {
+            // Enable button
+            $button.prop('disabled', false).text(originalText);
+
+            // Show success message
+            showToast('Success', `${section.charAt(0).toUpperCase() + section.slice(1)} settings saved successfully!`);
+        }, 1000);
+    }
+
+    function resetSettings() {
+        if (confirm('Are you sure you want to reset all settings to defaults?')) {
+            // Show loading indicator
+            const $button = $('#resetSettingsBtn');
+            const originalText = $button.text();
+            $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Resetting...');
+
+            // Simulate resetting settings
+            setTimeout(function() {
+                // Enable button
+                $button.prop('disabled', false).text(originalText);
+
+                // Show success message
+                showToast('Success', 'Settings reset to defaults successfully!');
+
+                // Reload the page
+                location.reload();
+            }, 1000);
+        }
+    }
+
+    function updateConfigJson() {
+        // Create config object from form fields
+        const config = {
+            system: {
+                name: $('#systemName').val(),
+                log_level: $('#logLevel').val(),
+                data_directory: $('#dataDirectory').val(),
+                enable_telemetry: $('#enableTelemetry').prop('checked')
+            },
+            models: {
+                default_model: $('#defaultModel').val(),
+                ollama_endpoint: $('#ollamaEndpoint').val(),
+                model_cache_size: parseInt($('#modelCacheSize').val()),
+                enable_model_fallback: $('#enableModelFallback').prop('checked')
+            },
+            agents: {
+                max_agents: parseInt($('#maxAgents').val()),
+                agent_timeout: parseInt($('#agentTimeout').val()),
+                agent_memory_limit: parseInt($('#agentMemoryLimit').val()),
+                enable_agent_logging: $('#enableAgentLogging').prop('checked')
+            },
+            webarena: {
+                endpoint: $('#webArenaEndpoint').val(),
+                timeout: parseInt($('#webArenaTimeout').val()),
+                results_dir: $('#webArenaResultsDir').val(),
+                enable_visualization: $('#enableWebArenaVisualization').prop('checked'),
+                use_open_source_visualization: $('#useOpenSourceVisualization').prop('checked')
+            },
+            security: {
+                auth_method: $('#authMethod').val(),
+                session_timeout: parseInt($('#sessionTimeout').val()),
+                api_key_expiration: parseInt($('#apiKeyExpiration').val()),
+                enable_ssl: $('#enableSSL').prop('checked'),
+                enable_rate_limiting: $('#enableRateLimiting').prop('checked')
+            },
+            advanced: {
+                worker_threads: parseInt($('#workerThreads').val()),
+                max_request_size: parseInt($('#maxRequestSize').val()),
+                debug_mode: $('#debugMode').val(),
+                enable_profiling: $('#enableProfiling').prop('checked')
+            }
+        };
+
+        // Update config JSON
+        $('#configJson').val(JSON.stringify(config, null, 2));
+    }
+
+    function updateFormFields() {
+        try {
+            // Parse config JSON
+            const config = JSON.parse($('#configJson').val());
+
+            // Update form fields
+            if (config.system) {
+                $('#systemName').val(config.system.name);
+                $('#logLevel').val(config.system.log_level);
+                $('#dataDirectory').val(config.system.data_directory);
+                $('#enableTelemetry').prop('checked', config.system.enable_telemetry);
+            }
+
+            if (config.models) {
+                $('#defaultModel').val(config.models.default_model);
+                $('#ollamaEndpoint').val(config.models.ollama_endpoint);
+                $('#modelCacheSize').val(config.models.model_cache_size);
+                $('#enableModelFallback').prop('checked', config.models.enable_model_fallback);
+            }
+
+            if (config.agents) {
+                $('#maxAgents').val(config.agents.max_agents);
+                $('#agentTimeout').val(config.agents.agent_timeout);
+                $('#agentMemoryLimit').val(config.agents.agent_memory_limit);
+                $('#enableAgentLogging').prop('checked', config.agents.enable_agent_logging);
+            }
+
+            if (config.webarena) {
+                $('#webArenaEndpoint').val(config.webarena.endpoint);
+                $('#webArenaTimeout').val(config.webarena.timeout);
+                $('#webArenaResultsDir').val(config.webarena.results_dir);
+                $('#enableWebArenaVisualization').prop('checked', config.webarena.enable_visualization);
+                $('#useOpenSourceVisualization').prop('checked', config.webarena.use_open_source_visualization);
+            }
+
+            if (config.security) {
+                $('#authMethod').val(config.security.auth_method);
+                $('#sessionTimeout').val(config.security.session_timeout);
+                $('#apiKeyExpiration').val(config.security.api_key_expiration);
+                $('#enableSSL').prop('checked', config.security.enable_ssl);
+                $('#enableRateLimiting').prop('checked', config.security.enable_rate_limiting);
+            }
+
+            if (config.advanced) {
+                $('#workerThreads').val(config.advanced.worker_threads);
+                $('#maxRequestSize').val(config.advanced.max_request_size);
+                $('#debugMode').val(config.advanced.debug_mode);
+                $('#enableProfiling').prop('checked', config.advanced.enable_profiling);
+            }
+        } catch (error) {
+            console.error('Error parsing config JSON:', error);
+            showToast('Error', 'Error parsing config JSON: ' + error.message);
+        }
+    }
+</script>
+{% endblock %}
