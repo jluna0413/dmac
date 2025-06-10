@@ -47,11 +47,11 @@ class TestInputValidator(unittest.TestCase):
         # Test with dangerous patterns
         self.assertEqual(
             validator.sanitize_prompt("exec('import os; os.system(\"rm -rf /\")'))"),
-            "[REMOVED]'import os; os.system(\"rm -rf /\")'))"))
+            "[REMOVED]'import os; os.system(\"rm -rf /\")'))")
         
         self.assertEqual(
             validator.sanitize_prompt("eval('__import__(\"os\").system(\"rm -rf /\")'))"),
-            "[REMOVED]'__import__(\"os\").system(\"rm -rf /\")'))"))
+            "[REMOVED]'__import__(\"os\").system(\"rm -rf /\")'))")
         
         self.assertEqual(
             validator.sanitize_prompt("os.system('rm -rf /')"),
